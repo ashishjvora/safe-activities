@@ -610,6 +610,197 @@
   .storymap-lane.high-priority { background: #f1f8f4; border-color: #a8d8b8; }
   .storymap-lane.low-priority  { background: #f4f5f7; border-color: #ccd5dd; }
   .storymap-lane.dragging-over { background: #d4e8f7 !important; outline: 2px dashed #1f5fa8; outline-offset: -4px; }
+
+  /* ---------- FEATURE SPLITTING (compact feature bar + storming-vs-refine layout) ---------- */
+  .fsplit-feature-bar {
+    background: #b8d8f0; border: 2px solid #6ea5d0;
+    border-radius: 6px; padding: 12px 14px;
+    margin-bottom: 14px;
+    display: grid; grid-template-columns: auto 1fr 2fr; gap: 12px; align-items: start;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  @media (max-width: 800px) { .fsplit-feature-bar { grid-template-columns: 1fr; } }
+  .fsplit-feature-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+    color: #1f5fa8; padding-top: 8px;
+    white-space: nowrap;
+  }
+  .fsplit-feature-title {
+    border: 1px solid #87aacb; background: white;
+    padding: 7px 10px; border-radius: 4px; font-size: 14px; font-weight: 600;
+    font-family: inherit;
+  }
+  .fsplit-feature-title:focus { outline: none; border-color: #1f5fa8; }
+  .fsplit-feature-desc {
+    border: 1px solid #87aacb; background: white;
+    padding: 7px 10px; border-radius: 4px; font-size: 13px;
+    resize: vertical; font-family: inherit; line-height: 1.45;
+  }
+  .fsplit-feature-desc:focus { outline: none; border-color: #1f5fa8; }
+  /* Storming wider than refine */
+  .fsplit-board {
+    display: grid; grid-template-columns: 1.85fr 1fr; gap: 12px;
+    min-height: 480px;
+  }
+  @media (max-width: 850px) { .fsplit-board { grid-template-columns: 1fr; } }
+
+  /* ---------- WSJF FIBONACCI BUTTON CELL + PICKER POPOVER ---------- */
+  .wsjf-fib-btn {
+    width: 100%; height: 100%; min-height: 44px;
+    background: transparent; border: none;
+    text-align: center; font-size: 18px; font-weight: 700;
+    color: #1f5fa8; padding: 12px 4px; cursor: pointer;
+    font-family: 'Courier New', monospace;
+  }
+  .wsjf-fib-btn:hover { background: rgba(255,255,255,0.4); }
+  .wsjf-fib-btn.unset { color: #c0392b; font-weight: 700; }
+  .wsjf-picker {
+    position: fixed; z-index: 9999; background: white;
+    border: 1px solid #ddd; border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    padding: 12px; width: 240px;
+  }
+  .wsjf-picker.hidden { display: none; }
+  .wsjf-picker-title { font-size: 13px; font-weight: 700; color: #1f5fa8; margin-bottom: 2px; text-align: center; }
+  .wsjf-picker-sub { font-size: 11px; color: #777; margin-bottom: 8px; text-align: center; }
+  .wsjf-picker-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 8px; }
+  .wsjf-picker-btn {
+    background: #f4f7fb; border: 1px solid #ccc; padding: 8px;
+    border-radius: 4px; cursor: pointer; font-weight: 700; font-size: 14px;
+  }
+  .wsjf-picker-btn:hover { background: #1f5fa8; color: white; border-color: #1f5fa8; }
+  .wsjf-picker-btn.current { background: #1f5fa8; color: white; border-color: #1f5fa8; }
+  .wsjf-picker-clear {
+    width: 100%; background: #fdedec; border: 1px solid #e6b0aa; color: #c0392b;
+    padding: 6px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;
+  }
+  .wsjf-picker-clear:hover { background: #fadbd8; }
+
+  /* ---------- STORY MAPPING (column-per-activity layout) ---------- */
+  .sm-context-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+    background: #eaf3fb; border: 1px solid #b8d4ec;
+    border-radius: 6px; padding: 10px; margin-bottom: 12px;
+  }
+  @media (max-width: 800px) { .sm-context-row { grid-template-columns: 1fr; } }
+  .sm-ctx-block { display: flex; flex-direction: column; gap: 4px; }
+  .sm-ctx-label {
+    font-size: 10px; font-weight: 700; color: #1f5fa8;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .sm-ctx-block textarea {
+    width: 100%; border: 1px solid #ccd5dd;
+    padding: 6px 8px; border-radius: 3px;
+    font-family: inherit; font-size: 12px; resize: vertical;
+    line-height: 1.4; background: white;
+  }
+  .sm-ctx-block textarea:focus { outline: none; border-color: #1f5fa8; }
+
+  .sm-journey-label {
+    font-size: 11px; font-weight: 700; color: #1f5fa8;
+    letter-spacing: 1px; padding: 6px 4px;
+    background: #f4f7fb; border-radius: 4px;
+    margin-bottom: 6px;
+  }
+
+  .sm-board-wrap { overflow-x: auto; padding-bottom: 8px; }
+  .sm-board {
+    display: flex; gap: 8px; align-items: stretch;
+    min-height: 540px;
+  }
+
+  .sm-column {
+    background: #f9fbfd; border: 1px solid #ccd5dd;
+    border-radius: 4px; padding: 8px;
+    min-width: 200px; max-width: 240px;
+    display: flex; flex-direction: column;
+  }
+  .sm-add-activity-col {
+    min-width: 150px; display: flex; align-items: flex-start;
+  }
+  .sm-add-activity-btn {
+    width: 100%; min-height: 80px;
+    background: white; border: 2px dashed #1f5fa8;
+    color: #1f5fa8; border-radius: 4px;
+    cursor: pointer; padding: 12px;
+    font-weight: 600; font-size: 13px;
+  }
+  .sm-add-activity-btn:hover { background: #f4f7fb; }
+
+  .sm-activity-card {
+    background: #fff8a8; border: 1px solid #d4c668;
+    border-radius: 3px; padding: 8px 10px; margin-bottom: 8px;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.08);
+    display: flex; align-items: center; gap: 4px;
+    position: relative;
+  }
+  .sm-activity-title {
+    flex: 1; background: transparent; border: none;
+    font-size: 13px; font-weight: 600; color: #1a2a3a;
+    font-family: inherit; outline: none;
+    padding: 2px 4px;
+  }
+  .sm-activity-del {
+    background: rgba(0,0,0,0.08); border: none; color: #555;
+    cursor: pointer; font-size: 12px;
+    width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.1s;
+  }
+  .sm-activity-card:hover .sm-activity-del { opacity: 1; }
+  .sm-activity-del:hover { background: rgba(192,57,43,0.85); color: white; }
+
+  .sm-stories-section {
+    margin-bottom: 8px; display: flex; flex-direction: column; gap: 5px;
+  }
+  .sm-stories-header {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.8px;
+    padding: 3px 6px; border-radius: 2px; color: white;
+    text-transform: uppercase;
+  }
+  .sm-stories-header.high { background: #229954; }
+  .sm-stories-header.low  { background: #6c7a89; }
+
+  .sm-story-card {
+    background: #c4e8b8; border: 1px solid #82b974;
+    border-radius: 3px; padding: 6px 24px 6px 8px;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.1);
+    position: relative; min-height: 40px;
+  }
+  .sm-story-card.green  { background: #c4e8b8; border-color: #82b974; }
+  .sm-story-card.blue   { background: #b8d8f0; border-color: #6ea5d0; }
+  .sm-story-card.yellow { background: #fff8a8; border-color: #d4c668; }
+  .sm-story-card.pink   { background: #f4c0d4; border-color: #c4849c; }
+  .sm-story-card textarea {
+    width: 100%; background: transparent; border: none;
+    font-family: inherit; font-size: 12px; resize: vertical;
+    min-height: 30px; outline: none; line-height: 1.35;
+    padding: 0;
+  }
+  .sm-card-close, .sm-card-toggle {
+    position: absolute; top: 3px; background: rgba(0,0,0,0.08);
+    border: none; color: #555; cursor: pointer;
+    font-size: 10px; line-height: 1;
+    width: 16px; height: 16px; border-radius: 50%;
+    opacity: 0; transition: opacity 0.1s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sm-card-close  { right: 3px; }
+  .sm-card-toggle { right: 22px; font-size: 9px; font-weight: 700; }
+  .sm-story-card:hover .sm-card-close,
+  .sm-story-card:hover .sm-card-toggle { opacity: 1; }
+  .sm-card-close:hover  { background: rgba(192,57,43,0.85); color: white; }
+  .sm-card-toggle:hover { background: rgba(31,95,168,0.85); color: white; }
+
+  .sm-add-card-btn {
+    background: white; border: 1.5px dashed #82b974;
+    color: #229954; border-radius: 3px;
+    cursor: pointer; padding: 5px 8px;
+    font-size: 11px; font-weight: 600;
+  }
+  .sm-add-card-btn.low { border-color: #aab5c0; color: #6c7a89; }
+  .sm-add-card-btn:hover { background: #f1f8f4; }
+  .sm-add-card-btn.low:hover { background: #f4f5f7; }
 </style>
 </head>
 <body>
@@ -696,6 +887,22 @@
 <!-- DYNAMIC GROUP VIEWS -->
 <div id="dynamicViews"></div>
 
+<!-- WSJF Fibonacci picker popover -->
+<div id="wsjfPicker" class="wsjf-picker hidden">
+  <div class="wsjf-picker-title">Pick a value</div>
+  <div class="wsjf-picker-sub">Fibonacci scale</div>
+  <div class="wsjf-picker-buttons">
+    <button class="wsjf-picker-btn" data-val="1"  onclick="setWsjfValue(1)">1</button>
+    <button class="wsjf-picker-btn" data-val="2"  onclick="setWsjfValue(2)">2</button>
+    <button class="wsjf-picker-btn" data-val="3"  onclick="setWsjfValue(3)">3</button>
+    <button class="wsjf-picker-btn" data-val="5"  onclick="setWsjfValue(5)">5</button>
+    <button class="wsjf-picker-btn" data-val="8"  onclick="setWsjfValue(8)">8</button>
+    <button class="wsjf-picker-btn" data-val="13" onclick="setWsjfValue(13)">13</button>
+    <button class="wsjf-picker-btn" data-val="21" onclick="setWsjfValue(21)">21</button>
+  </div>
+  <button class="wsjf-picker-clear" onclick="setWsjfValue(null)">Clear value</button>
+</div>
+
 <script>
 /* ============================================================
    FIREBASE CONFIG  ← PASTE YOUR CONFIG HERE
@@ -775,7 +982,10 @@ let pendingRemoteUpdate = false;
 function defaultGroupActivityState() {
   return {
     'feature-storming': {
-      epic: { title: '', description: '' },
+      epic: {
+        title: 'Online Bookstore',
+        description: 'An online site to enable consumers to browse, search, and purchase books with credit card. Provides a personalised experience with recommendations, ratings, and reviews.'
+      },
       stickies: []
     },
     'wsjf': {
@@ -783,12 +993,25 @@ function defaultGroupActivityState() {
       rows: []
     },
     'feature-splitting': {
-      feature: { title: '', description: '' },
+      feature: {
+        title: 'Purchase by credit card',
+        description: 'Customer can pay for an order using a saved or new credit card during checkout, with secure handling of card details.'
+      },
       stickies: []
     },
     'story-mapping': {
-      feature: { description: '', benefitHypothesis: '', acceptanceCriteria: '' },
-      stickies: []
+      feature: {
+        description: 'Online order placement for books',
+        benefitHypothesis: 'Reduce time to purchase by 50% and increase checkout conversion.',
+        acceptanceCriteria: 'User can complete checkout in under 3 minutes; payment is processed securely.'
+      },
+      activities: [
+        { id: 'a1', title: 'Browse catalog' },
+        { id: 'a2', title: 'Select book' },
+        { id: 'a3', title: 'Checkout' },
+        { id: 'a4', title: 'Receive order' }
+      ],
+      stories: []
     }
   };
 }
@@ -828,9 +1051,13 @@ function ensureStateStructure() {
     if (!acts['feature-splitting'].feature) acts['feature-splitting'].feature = { title:'', description:'' };
     if (!Array.isArray(acts['feature-splitting'].stickies)) acts['feature-splitting'].stickies = [];
 
-    if (!acts['story-mapping']) acts['story-mapping'] = { feature: { description:'', benefitHypothesis:'', acceptanceCriteria:'' }, stickies: [] };
+    if (!acts['story-mapping']) acts['story-mapping'] = {
+      feature: { description:'', benefitHypothesis:'', acceptanceCriteria:'' },
+      activities: [], stories: []
+    };
     if (!acts['story-mapping'].feature) acts['story-mapping'].feature = { description:'', benefitHypothesis:'', acceptanceCriteria:'' };
-    if (!Array.isArray(acts['story-mapping'].stickies)) acts['story-mapping'].stickies = [];
+    if (!Array.isArray(acts['story-mapping'].activities)) acts['story-mapping'].activities = [];
+    if (!Array.isArray(acts['story-mapping'].stories)) acts['story-mapping'].stories = [];
   });
 }
 
@@ -1584,11 +1811,21 @@ function updateEpic(gid, field, value) {
 }
 
 /* ============================================================
-   ACTIVITY: WSJF Prioritization  (table grid)
+   ACTIVITY: WSJF Prioritization  (Fibonacci picker per cell)
    ============================================================ */
+const FIB_VALUES = [1, 2, 3, 5, 8, 13, 21];
+let wsjfPickerCtx = null;
+
 function renderWSJF(gid) {
   const data = state.groups[gid].activities['wsjf'];
   const rows = data.rows || [];
+
+  const cellBtn = (rowId, field, val) => {
+    const display = (val === null || val === undefined || val === '') ? '?' : val;
+    const cls = (val === null || val === undefined || val === '') ? 'unset' : '';
+    return `<button class="wsjf-fib-btn ${cls}"
+              onclick="showWsjfPicker('${gid}','${rowId}','${field}',event)">${display}</button>`;
+  };
 
   const rowHTML = (r) => {
     const ubv = Number(r.ubv) || 0;
@@ -1603,27 +1840,15 @@ function renderWSJF(gid) {
           <textarea placeholder="Feature name / description"
                     onblur="updateWsjfRow('${gid}','${r.id}','feature',this.value)">${escHTML(r.feature || '')}</textarea>
         </td>
-        <td class="wsjf-input-cell">
-          <input type="number" min="0" step="1" value="${r.ubv ?? ''}"
-                 onchange="updateWsjfRow('${gid}','${r.id}','ubv',this.value)" placeholder="0">
-        </td>
+        <td class="wsjf-input-cell">${cellBtn(r.id, 'ubv', r.ubv)}</td>
         <td class="wsjf-op">+</td>
-        <td class="wsjf-input-cell">
-          <input type="number" min="0" step="1" value="${r.tc ?? ''}"
-                 onchange="updateWsjfRow('${gid}','${r.id}','tc',this.value)" placeholder="0">
-        </td>
+        <td class="wsjf-input-cell">${cellBtn(r.id, 'tc', r.tc)}</td>
         <td class="wsjf-op">+</td>
-        <td class="wsjf-input-cell">
-          <input type="number" min="0" step="1" value="${r.rrOe ?? ''}"
-                 onchange="updateWsjfRow('${gid}','${r.id}','rrOe',this.value)" placeholder="0">
-        </td>
+        <td class="wsjf-input-cell">${cellBtn(r.id, 'rrOe', r.rrOe)}</td>
         <td class="wsjf-op">=</td>
         <td class="wsjf-calc-cell">${cod}</td>
         <td class="wsjf-op">÷</td>
-        <td class="wsjf-input-cell">
-          <input type="number" min="0" step="1" value="${r.jobSize ?? ''}"
-                 onchange="updateWsjfRow('${gid}','${r.id}','jobSize',this.value)" placeholder="0">
-        </td>
+        <td class="wsjf-input-cell">${cellBtn(r.id, 'jobSize', r.jobSize)}</td>
         <td class="wsjf-op">=</td>
         <td class="wsjf-result-cell">${wsjf}</td>
         <td class="wsjf-actions">
@@ -1635,7 +1860,7 @@ function renderWSJF(gid) {
   return `
     <div class="fs-toolbar">
       <span class="fs-tb-label">WSJF = Cost of Delay ÷ Job Size</span>
-      <span class="fs-help-text">Use a relative scale (1, 2, 3, 5, 8, 13). Cost of Delay and WSJF auto-calculate.</span>
+      <span class="fs-help-text">Click any cell to pick a Fibonacci value (1, 2, 3, 5, 8, 13, 21). Cost of Delay and WSJF auto-calculate.</span>
     </div>
     <div class="wsjf-table-wrap">
       <table class="wsjf-table">
@@ -1674,9 +1899,8 @@ function updateWsjfRow(gid, rowId, field, value) {
   const data = state.groups[gid].activities['wsjf'];
   const r = data.rows.find(x => x.id === rowId);
   if (!r) return;
-  r[field] = (field === 'feature') ? value : (value === '' ? '' : Number(value));
+  r[field] = (field === 'feature') ? value : (value === '' || value === null ? '' : Number(value));
   save({ type: 'group', id: gid });
-  // Re-render so Cost of Delay + WSJF update
   renderActivityBody();
 }
 function deleteWsjfRow(gid, rowId) {
@@ -1685,6 +1909,41 @@ function deleteWsjfRow(gid, rowId) {
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
+function showWsjfPicker(gid, rowId, field, ev) {
+  ev.stopPropagation();
+  wsjfPickerCtx = { gid, rowId, field };
+  const popover = document.getElementById('wsjfPicker');
+  popover.classList.remove('hidden');
+  const x = Math.min(ev.clientX + 6, window.innerWidth - 260);
+  const y = Math.min(ev.clientY + 6, window.innerHeight - 220);
+  popover.style.left = Math.max(8, x) + 'px';
+  popover.style.top  = Math.max(8, y) + 'px';
+  // Mark current value
+  const data = state.groups[gid].activities['wsjf'];
+  const r = data.rows.find(x => x.id === rowId);
+  const current = r ? r[field] : null;
+  popover.querySelectorAll('.wsjf-picker-btn').forEach(b => {
+    b.classList.toggle('current', current !== '' && current !== null && Number(b.dataset.val) === Number(current));
+  });
+}
+function setWsjfValue(val) {
+  if (!wsjfPickerCtx) return;
+  const { gid, rowId, field } = wsjfPickerCtx;
+  hideWsjfPicker();
+  updateWsjfRow(gid, rowId, field, val === null ? '' : val);
+}
+function hideWsjfPicker() {
+  const p = document.getElementById('wsjfPicker');
+  if (p) p.classList.add('hidden');
+  wsjfPickerCtx = null;
+}
+document.addEventListener('click', (e) => {
+  const popover = document.getElementById('wsjfPicker');
+  if (!popover || popover.classList.contains('hidden')) return;
+  if (popover.contains(e.target)) return;
+  if (e.target.classList && e.target.classList.contains('wsjf-fib-btn')) return;
+  hideWsjfPicker();
+});
 
 /* ============================================================
    ACTIVITY: Feature Splitting
@@ -1694,57 +1953,63 @@ function renderFeatureSplitting(gid) {
   const feature = data.feature || { title: '', description: '' };
   const stickies = data.stickies || [];
   const byZone = {
-    asA:    stickies.filter(s => s.zone === 'asA'),
-    iWant:  stickies.filter(s => s.zone === 'iWant'),
-    soThat: stickies.filter(s => s.zone === 'soThat'),
-    ac:     stickies.filter(s => s.zone === 'ac')
+    stories: stickies.filter(s => s.zone === 'stories'),
+    asA:     stickies.filter(s => s.zone === 'asA'),
+    iWant:   stickies.filter(s => s.zone === 'iWant'),
+    soThat:  stickies.filter(s => s.zone === 'soThat'),
+    ac:      stickies.filter(s => s.zone === 'ac')
   };
   const sticky = (s) => stickyHTML(s, gid, 'feature-splitting');
 
   return `
     <div class="fs-toolbar">
-      <span class="fs-tb-label">Add sticky:</span>
-      <button class="fs-add-btn"       onclick="addSticky('${gid}','feature-splitting','yellow','asA')">+ Yellow</button>
-      <button class="fs-add-btn green" onclick="addSticky('${gid}','feature-splitting','green','asA')">+ Green</button>
-      <button class="fs-add-btn blue"  onclick="addSticky('${gid}','feature-splitting','blue','asA')">+ Blue</button>
-      <button class="fs-add-btn pink"  onclick="addSticky('${gid}','feature-splitting','pink','asA')">+ Pink</button>
-      <span class="fs-help-text">Drag stickies between lanes • Double-click empty space to add</span>
+      <span class="fs-tb-label">Add story sticky:</span>
+      <button class="fs-add-btn"       onclick="addSticky('${gid}','feature-splitting','yellow','stories')">+ Yellow</button>
+      <button class="fs-add-btn green" onclick="addSticky('${gid}','feature-splitting','green','stories')">+ Green</button>
+      <button class="fs-add-btn blue"  onclick="addSticky('${gid}','feature-splitting','blue','stories')">+ Blue</button>
+      <button class="fs-add-btn pink"  onclick="addSticky('${gid}','feature-splitting','pink','stories')">+ Pink</button>
+      <span class="fs-help-text">Brainstorm many stories on the left • Pick ONE and refine it on the right • Double-click to add</span>
     </div>
+
+    <!-- Compact feature card spanning the top -->
+    <div class="fsplit-feature-bar">
+      <div class="fsplit-feature-label">SELECTED FEATURE</div>
+      <input class="fsplit-feature-title" placeholder="Feature title" value="${escAttr(feature.title)}"
+             onblur="updateFeatureSplit('${gid}','title',this.value)">
+      <textarea class="fsplit-feature-desc" rows="2" placeholder="Brief description / context..."
+             onblur="updateFeatureSplit('${gid}','description',this.value)">${escHTML(feature.description)}</textarea>
+    </div>
+
     <div class="fsplit-board">
       <div class="activity-zone">
-        <div class="activity-zone-header">SELECTED FEATURE</div>
-        <div class="activity-zone-body" style="padding:18px">
-          <div class="feature-card-large">
-            <div class="feature-card-label">FEATURE</div>
-            <input class="feature-card-title" placeholder="Feature title" value="${escAttr(feature.title)}"
-                   onblur="updateFeatureSplit('${gid}','title',this.value)">
-            <textarea class="feature-card-desc" rows="6" placeholder="Feature description, context, expected outcome..."
-                   onblur="updateFeatureSplit('${gid}','description',this.value)">${escHTML(feature.description)}</textarea>
-          </div>
+        <div class="activity-zone-header">STORY STORMING — identify many candidate stories</div>
+        <div class="activity-zone-body drop-target" data-zone="stories" data-group="${gid}" data-activity="feature-splitting" style="min-height:480px">
+          ${byZone.stories.map(sticky).join('')}
+          ${byZone.stories.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:20px;text-align:center;width:auto">Brainstorm story ideas as stickies. Double-click any empty space to add.</div>' : ''}
         </div>
       </div>
       <div class="activity-zone refinement">
-        <div class="activity-zone-header refinement">REFINE — split into stories using "As a / I want / So that"</div>
-        <div class="activity-zone-body refinement-zone">
+        <div class="activity-zone-header refinement">REFINE ONE STORY</div>
+        <div class="activity-zone-body refinement-zone" style="min-height:480px">
           <div class="refinement-lane drop-target" data-zone="asA" data-group="${gid}" data-activity="feature-splitting">
             <div class="refinement-lane-label">As a... (user / role)</div>
             ${byZone.asA.map(sticky).join('')}
-            ${byZone.asA.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop "user/role" stickies here</div>' : ''}
+            ${byZone.asA.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop "user/role"</div>' : ''}
           </div>
           <div class="refinement-lane drop-target" data-zone="iWant" data-group="${gid}" data-activity="feature-splitting">
             <div class="refinement-lane-label">I want... (capability)</div>
             ${byZone.iWant.map(sticky).join('')}
-            ${byZone.iWant.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop "capability" stickies here</div>' : ''}
+            ${byZone.iWant.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop "capability"</div>' : ''}
           </div>
           <div class="refinement-lane drop-target" data-zone="soThat" data-group="${gid}" data-activity="feature-splitting">
             <div class="refinement-lane-label">So that... (benefit / outcome)</div>
             ${byZone.soThat.map(sticky).join('')}
-            ${byZone.soThat.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop "benefit" stickies here</div>' : ''}
+            ${byZone.soThat.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop "benefit"</div>' : ''}
           </div>
           <div class="refinement-lane drop-target" data-zone="ac" data-group="${gid}" data-activity="feature-splitting">
             <div class="refinement-lane-label">Acceptance criteria</div>
             ${byZone.ac.map(sticky).join('')}
-            ${byZone.ac.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop AC stickies here</div>' : ''}
+            ${byZone.ac.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop AC</div>' : ''}
           </div>
         </div>
       </div>
@@ -1758,68 +2023,72 @@ function updateFeatureSplit(gid, field, value) {
 }
 
 /* ============================================================
-   ACTIVITY: Story Mapping
+   ACTIVITY: Story Mapping  (column per activity, stories stacked)
    ============================================================ */
 function renderStoryMapping(gid) {
   const data = state.groups[gid].activities['story-mapping'];
   const feature = data.feature || { description:'', benefitHypothesis:'', acceptanceCriteria:'' };
-  const stickies = data.stickies || [];
-  const byZone = {
-    activities:    stickies.filter(s => s.zone === 'activities'),
-    highPriority:  stickies.filter(s => s.zone === 'highPriority'),
-    lowPriority:   stickies.filter(s => s.zone === 'lowPriority')
+  const activities = data.activities || [];
+  const stories    = data.stories || [];
+
+  const cardHTML = (s) => `
+    <div class="sm-story-card ${s.color || 'green'}" data-id="${s.id}">
+      <button class="sm-card-close" onclick="event.stopPropagation(); deleteStoryMapStory('${gid}','${s.id}')" title="Delete">×</button>
+      <button class="sm-card-toggle" onclick="event.stopPropagation(); toggleStoryMapPriority('${gid}','${s.id}')" title="Move to ${s.priority === 'high' ? 'Low' : 'High'} priority">↕</button>
+      <textarea oninput="onSmStoryInput('${gid}','${s.id}', this)" onblur="onSmStoryBlur('${gid}','${s.id}', this)" placeholder="Story...">${escHTML(s.text || '')}</textarea>
+    </div>`;
+
+  const columnHTML = (act) => {
+    const high = stories.filter(s => s.activityId === act.id && s.priority === 'high');
+    const low  = stories.filter(s => s.activityId === act.id && s.priority === 'low');
+    return `
+      <div class="sm-column" data-activity-id="${act.id}">
+        <div class="sm-activity-card">
+          <input class="sm-activity-title" placeholder="Activity..." value="${escAttr(act.title)}"
+                 onblur="updateSmActivity('${gid}','${act.id}',this.value)">
+          <button class="sm-activity-del" onclick="deleteSmActivity('${gid}','${act.id}')" title="Delete activity (and its stories)">×</button>
+        </div>
+        <div class="sm-stories-section">
+          <div class="sm-stories-header high">High priority</div>
+          ${high.map(cardHTML).join('')}
+          <button class="sm-add-card-btn" onclick="addSmStory('${gid}','${act.id}','high')">+ Add story</button>
+        </div>
+        <div class="sm-stories-section">
+          <div class="sm-stories-header low">Low priority</div>
+          ${low.map(cardHTML).join('')}
+          <button class="sm-add-card-btn low" onclick="addSmStory('${gid}','${act.id}','low')">+ Add story</button>
+        </div>
+      </div>`;
   };
-  const sticky = (s) => stickyHTML(s, gid, 'story-mapping');
 
   return `
-    <div class="fs-toolbar">
-      <span class="fs-tb-label">Add story:</span>
-      <button class="fs-add-btn"       onclick="addSticky('${gid}','story-mapping','yellow','activities')">+ Activity (Yellow)</button>
-      <button class="fs-add-btn green" onclick="addSticky('${gid}','story-mapping','green','highPriority')">+ Story (Green)</button>
-      <button class="fs-add-btn blue"  onclick="addSticky('${gid}','story-mapping','blue','highPriority')">+ Story (Blue)</button>
-      <span class="fs-help-text">Drag stories between High/Low priority • Double-click any lane to add</span>
-    </div>
-    <div class="storymap-board">
-      <div class="storymap-context">
-        <div class="storymap-context-card">
-          <div class="storymap-context-label">FEATURE CONTEXT</div>
-          <div class="storymap-context-grid">
-            <div>
-              <div class="storymap-context-sublabel">Feature description</div>
-              <textarea rows="3" placeholder="What feature are we mapping?"
-                onblur="updateStoryMapFeature('${gid}','description',this.value)">${escHTML(feature.description)}</textarea>
-            </div>
-            <div>
-              <div class="storymap-context-sublabel">Benefit hypothesis</div>
-              <textarea rows="3" placeholder="What outcome do we expect?"
-                onblur="updateStoryMapFeature('${gid}','benefitHypothesis',this.value)">${escHTML(feature.benefitHypothesis)}</textarea>
-            </div>
-            <div>
-              <div class="storymap-context-sublabel">Acceptance criteria</div>
-              <textarea rows="3" placeholder="What does done look like?"
-                onblur="updateStoryMapFeature('${gid}','acceptanceCriteria',this.value)">${escHTML(feature.acceptanceCriteria)}</textarea>
-            </div>
-          </div>
-        </div>
+    <!-- Compact feature context -->
+    <div class="sm-context-row">
+      <div class="sm-ctx-block">
+        <div class="sm-ctx-label">Feature description</div>
+        <textarea rows="2" placeholder="What feature are we mapping?"
+          onblur="updateStoryMapFeature('${gid}','description',this.value)">${escHTML(feature.description)}</textarea>
       </div>
+      <div class="sm-ctx-block">
+        <div class="sm-ctx-label">Benefit hypothesis</div>
+        <textarea rows="2" placeholder="What outcome do we expect?"
+          onblur="updateStoryMapFeature('${gid}','benefitHypothesis',this.value)">${escHTML(feature.benefitHypothesis)}</textarea>
+      </div>
+      <div class="sm-ctx-block">
+        <div class="sm-ctx-label">Acceptance criteria</div>
+        <textarea rows="2" placeholder="What does done look like?"
+          onblur="updateStoryMapFeature('${gid}','acceptanceCriteria',this.value)">${escHTML(feature.acceptanceCriteria)}</textarea>
+      </div>
+    </div>
 
-      <div class="storymap-lane-wrap">
-        <div class="storymap-lane-header activities-h">ACTIVITIES OR TASKS — left-to-right user journey</div>
-        <div class="storymap-lane drop-target" data-zone="activities" data-group="${gid}" data-activity="story-mapping" style="min-height:140px">
-          ${byZone.activities.map(sticky).join('')}
-          ${byZone.activities.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:14px;text-align:center;width:auto">Drop activities here in user-journey order</div>' : ''}
-        </div>
-
-        <div class="storymap-lane-header high-h">HIGH PRIORITY — stories for this release</div>
-        <div class="storymap-lane drop-target high-priority" data-zone="highPriority" data-group="${gid}" data-activity="story-mapping" style="min-height:170px">
-          ${byZone.highPriority.map(sticky).join('')}
-          ${byZone.highPriority.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:14px;text-align:center;width:auto">Drop the must-have stories here</div>' : ''}
-        </div>
-
-        <div class="storymap-lane-header low-h">LOW PRIORITY — stories for future releases</div>
-        <div class="storymap-lane drop-target low-priority" data-zone="lowPriority" data-group="${gid}" data-activity="story-mapping" style="min-height:170px">
-          ${byZone.lowPriority.map(sticky).join('')}
-          ${byZone.lowPriority.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:14px;text-align:center;width:auto">Drop the nice-to-have stories here</div>' : ''}
+    <div class="sm-journey-label">USER JOURNEY — read activities left-to-right, stories stacked by priority</div>
+    <div class="sm-board-wrap">
+      <div class="sm-board">
+        ${activities.map(columnHTML).join('')}
+        <div class="sm-add-activity-col">
+          <button class="sm-add-activity-btn" onclick="addSmActivity('${gid}')" title="Add a new activity column">
+            + Add Activity
+          </button>
         </div>
       </div>
     </div>`;
@@ -1829,6 +2098,72 @@ function updateStoryMapFeature(gid, field, value) {
   if (!data.feature) data.feature = { description:'', benefitHypothesis:'', acceptanceCriteria:'' };
   data.feature[field] = value;
   save({ type: 'group', id: gid });
+}
+function addSmActivity(gid) {
+  const data = state.groups[gid].activities['story-mapping'];
+  if (!Array.isArray(data.activities)) data.activities = [];
+  data.activities.push({ id: uid(), title: '' });
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+  // focus the newly-added activity title
+  setTimeout(() => {
+    const view = document.getElementById('view-group-' + gid);
+    if (!view) return;
+    const inputs = view.querySelectorAll('.sm-activity-title');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }, 30);
+}
+function updateSmActivity(gid, actId, value) {
+  const data = state.groups[gid].activities['story-mapping'];
+  const a = data.activities.find(x => x.id === actId);
+  if (a) { a.title = value; save({ type: 'group', id: gid }); }
+}
+function deleteSmActivity(gid, actId) {
+  const data = state.groups[gid].activities['story-mapping'];
+  if (!confirm('Delete this activity and all its stories?')) return;
+  data.activities = data.activities.filter(a => a.id !== actId);
+  data.stories    = data.stories.filter(s => s.activityId !== actId);
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function addSmStory(gid, activityId, priority) {
+  const data = state.groups[gid].activities['story-mapping'];
+  if (!Array.isArray(data.stories)) data.stories = [];
+  const newStory = { id: uid(), activityId, priority, text: '', color: priority === 'high' ? 'green' : 'blue' };
+  data.stories.push(newStory);
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+  setTimeout(() => {
+    const view = document.getElementById('view-group-' + gid);
+    if (!view) return;
+    const ta = view.querySelector(`.sm-story-card[data-id="${newStory.id}"] textarea`);
+    if (ta) ta.focus();
+  }, 30);
+}
+function deleteStoryMapStory(gid, storyId) {
+  const data = state.groups[gid].activities['story-mapping'];
+  data.stories = data.stories.filter(s => s.id !== storyId);
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function toggleStoryMapPriority(gid, storyId) {
+  const data = state.groups[gid].activities['story-mapping'];
+  const s = data.stories.find(x => x.id === storyId);
+  if (!s) return;
+  s.priority = s.priority === 'high' ? 'low' : 'high';
+  s.color = s.priority === 'high' ? 'green' : 'blue';
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function onSmStoryInput(gid, sid, ta) {
+  const data = state.groups[gid].activities['story-mapping'];
+  const s = data.stories.find(x => x.id === sid);
+  if (s) s.text = ta.value;
+}
+function onSmStoryBlur(gid, sid, ta) {
+  const data = state.groups[gid].activities['story-mapping'];
+  const s = data.stories.find(x => x.id === sid);
+  if (s) { s.text = ta.value; save({ type: 'group', id: gid }); }
 }
 
 /* ============================================================
