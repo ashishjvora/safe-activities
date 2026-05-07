@@ -386,6 +386,230 @@
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
     width: 80%;
   }
+
+  /* ---------- TIMER BAR (top of every activity) ---------- */
+  .timer-bar {
+    background: white; border: 1px solid #ccd5dd; border-radius: 6px;
+    padding: 10px 16px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .timer-bar.status-running { background: #f1f8f4; border-color: #2ecc71; }
+  .timer-bar.status-paused  { background: #fef5e7; border-color: #f39c12; }
+  .timer-bar.status-finished { background: #fdedec; border-color: #c0392b; animation: timerPulse 1.5s infinite; }
+  @keyframes timerPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(192,57,43,0.4); }
+    50%      { box-shadow: 0 0 0 6px rgba(192,57,43,0); }
+  }
+  .timer-icon { font-size: 18px; }
+  .timer-remaining {
+    font-size: 28px; font-weight: 700;
+    font-family: 'Courier New', monospace;
+    color: #1f5fa8; letter-spacing: 1px;
+    min-width: 90px;
+  }
+  .timer-bar.status-running .timer-remaining { color: #229954; }
+  .timer-bar.status-paused .timer-remaining  { color: #b9770e; }
+  .timer-bar.status-finished .timer-remaining{ color: #c0392b; }
+  .timer-badge {
+    font-size: 10px; padding: 3px 10px; border-radius: 12px;
+    font-weight: 700; letter-spacing: 0.5px;
+    background: #95a5a6; color: white;
+  }
+  .timer-badge.idle     { background: #95a5a6; }
+  .timer-badge.running  { background: #229954; }
+  .timer-badge.paused   { background: #f39c12; }
+  .timer-badge.finished { background: #c0392b; }
+  .timer-controls { margin-left: auto; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .timer-controls select {
+    padding: 5px 8px; border: 1px solid #ccd5dd; border-radius: 4px;
+    font-size: 13px; background: white; cursor: pointer;
+  }
+
+  /* ---------- EPIC CARD (Feature Storming) ---------- */
+  .epic-card {
+    background: linear-gradient(135deg, #1f5fa8, #154378);
+    color: white; padding: 12px 14px;
+    border-radius: 4px; margin-bottom: 14px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+    width: 220px; min-height: 120px;
+    display: inline-block; vertical-align: top;
+    position: relative; z-index: 2;
+  }
+  .epic-card-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    opacity: 0.85; margin-bottom: 6px;
+  }
+  .epic-card-title {
+    width: 100%; background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3); color: white;
+    padding: 5px 8px; border-radius: 3px; font-size: 13px; font-weight: 600;
+    margin-bottom: 6px; font-family: inherit;
+  }
+  .epic-card-title::placeholder { color: rgba(255,255,255,0.7); }
+  .epic-card-title:focus { outline: none; background: rgba(255,255,255,0.25); }
+  .epic-card-desc {
+    width: 100%; background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25); color: white;
+    padding: 5px 8px; border-radius: 3px; font-size: 11px;
+    resize: vertical; font-family: inherit; line-height: 1.4;
+  }
+  .epic-card-desc::placeholder { color: rgba(255,255,255,0.65); }
+  .epic-card-desc:focus { outline: none; background: rgba(255,255,255,0.22); }
+  .stickies-area {
+    position: relative; min-height: 360px;
+    margin-top: 6px;
+  }
+
+  /* ---------- FEATURE CARD (Feature Splitting left side) ---------- */
+  .feature-card-large {
+    background: #b8d8f0; border: 2px solid #6ea5d0;
+    border-radius: 6px; padding: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .feature-card-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    color: #1f5fa8; margin-bottom: 8px;
+  }
+  .feature-card-title {
+    width: 100%; border: 1px solid #87aacb;
+    background: white; padding: 7px 10px;
+    border-radius: 4px; font-size: 14px; font-weight: 600;
+    margin-bottom: 8px; font-family: inherit;
+  }
+  .feature-card-title:focus { outline: none; border-color: #1f5fa8; }
+  .feature-card-desc {
+    width: 100%; border: 1px solid #87aacb;
+    background: white; padding: 7px 10px;
+    border-radius: 4px; font-size: 13px;
+    resize: vertical; font-family: inherit; line-height: 1.45;
+  }
+  .feature-card-desc:focus { outline: none; border-color: #1f5fa8; }
+  .fsplit-board {
+    display: grid; grid-template-columns: 320px 1fr; gap: 12px;
+    min-height: 580px;
+  }
+  @media (max-width: 850px) { .fsplit-board { grid-template-columns: 1fr; } }
+
+  /* ---------- WSJF TABLE ---------- */
+  .wsjf-table-wrap { overflow-x: auto; padding-bottom: 8px; }
+  .wsjf-table {
+    border-collapse: separate; border-spacing: 4px;
+    width: 100%; min-width: 1100px;
+    font-size: 13px;
+  }
+  .wsjf-table thead th {
+    background: #1f5fa8; color: white;
+    padding: 10px 8px; text-align: center; font-weight: 600;
+    font-size: 11px; letter-spacing: 0.3px;
+    border-radius: 4px;
+  }
+  .wsjf-table thead th.wsjf-op-h {
+    background: transparent; color: transparent;
+    width: 18px; padding: 0;
+  }
+  .wsjf-table tbody tr td { background: white; }
+  .wsjf-feature-cell {
+    background: #fff8a8 !important;
+    border: 1px solid #d4c668; border-radius: 4px;
+    padding: 4px;
+    width: 200px;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.08);
+  }
+  .wsjf-feature-cell textarea {
+    width: 100%; background: transparent; border: none;
+    font-family: inherit; font-size: 12px; resize: vertical;
+    min-height: 50px; padding: 4px;
+    outline: none;
+  }
+  .wsjf-input-cell {
+    background: #b8d8f0 !important;
+    border: 1px solid #6ea5d0; border-radius: 4px;
+    width: 80px;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.08);
+    padding: 0;
+  }
+  .wsjf-input-cell input {
+    width: 100%; height: 100%;
+    background: transparent; border: none;
+    text-align: center; font-size: 16px; font-weight: 700;
+    color: #1f5fa8; padding: 12px 4px;
+    font-family: 'Courier New', monospace;
+    outline: none;
+  }
+  .wsjf-input-cell input:focus { background: rgba(255,255,255,0.4); }
+  .wsjf-calc-cell {
+    background: #d4e8f7 !important; border: 1px solid #87aacb;
+    border-radius: 4px; width: 70px;
+    text-align: center; font-size: 16px; font-weight: 700;
+    color: #154378; padding: 12px 4px;
+    font-family: 'Courier New', monospace;
+  }
+  .wsjf-result-cell {
+    background: #c4e8b8 !important; border: 1px solid #82b974;
+    border-radius: 4px; width: 80px;
+    text-align: center; font-size: 18px; font-weight: 700;
+    color: #1d7e44; padding: 12px 4px;
+    font-family: 'Courier New', monospace;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.1);
+  }
+  .wsjf-op {
+    text-align: center; vertical-align: middle;
+    font-weight: 700; font-size: 18px;
+    color: #6c7a89; background: transparent !important;
+    width: 18px; padding: 0;
+  }
+  .wsjf-actions { width: 36px; text-align: center; background: transparent !important; }
+  .wsjf-empty { text-align: center; padding: 30px; color: #95a5a6; font-style: italic; background: white !important; }
+
+  /* ---------- STORY MAPPING ---------- */
+  .storymap-board { display: flex; flex-direction: column; gap: 12px; }
+  .storymap-context {
+    background: #eaf3fb; border: 1px solid #b8d4ec;
+    border-radius: 6px; padding: 14px;
+  }
+  .storymap-context-card {
+    background: white; padding: 12px 14px;
+    border-radius: 4px;
+  }
+  .storymap-context-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    color: #1f5fa8; margin-bottom: 10px;
+  }
+  .storymap-context-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  }
+  @media (max-width: 850px) { .storymap-context-grid { grid-template-columns: 1fr; } }
+  .storymap-context-sublabel {
+    font-size: 11px; font-weight: 600; color: #1f5fa8;
+    margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .storymap-context-grid textarea {
+    width: 100%; border: 1px solid #ccd5dd;
+    padding: 6px 8px; border-radius: 3px;
+    font-family: inherit; font-size: 12px; resize: vertical;
+    line-height: 1.4;
+  }
+  .storymap-context-grid textarea:focus { outline: none; border-color: #1f5fa8; }
+  .storymap-lane-wrap { display: flex; flex-direction: column; gap: 6px; }
+  .storymap-lane-header {
+    color: white; padding: 8px 14px;
+    font-weight: 700; font-size: 12px; letter-spacing: 1px;
+    border-radius: 4px 4px 0 0;
+  }
+  .storymap-lane-header.activities-h { background: #1f5fa8; }
+  .storymap-lane-header.high-h       { background: #229954; }
+  .storymap-lane-header.low-h        { background: #6c7a89; }
+  .storymap-lane {
+    position: relative;
+    background: #f9fbfd; border: 1px solid #ccd5dd;
+    border-radius: 0 0 4px 4px;
+    padding: 14px;
+    overflow: auto;
+  }
+  .storymap-lane.high-priority { background: #f1f8f4; border-color: #a8d8b8; }
+  .storymap-lane.low-priority  { background: #f4f5f7; border-color: #ccd5dd; }
+  .storymap-lane.dragging-over { background: #d4e8f7 !important; outline: 2px dashed #1f5fa8; outline-offset: -4px; }
 </style>
 </head>
 <body>
@@ -504,9 +728,9 @@ const COURSES = {
     description: 'Hands-on activities for Product Owner and Product Manager training: feature storming, prioritization, story splitting, and story mapping.',
     activities: [
       { id: 'feature-storming', label: 'Feature Storming & Refinement',  built: true  },
-      { id: 'wsjf',             label: 'WSJF Prioritization',            built: false },
-      { id: 'feature-splitting',label: 'Feature Splitting',              built: false },
-      { id: 'story-mapping',    label: 'Story Mapping',                  built: false }
+      { id: 'wsjf',             label: 'WSJF Prioritization',            built: true  },
+      { id: 'feature-splitting',label: 'Feature Splitting',              built: true  },
+      { id: 'story-mapping',    label: 'Story Mapping',                  built: true  }
     ],
     enabled: true
   },
@@ -551,19 +775,33 @@ let pendingRemoteUpdate = false;
 function defaultGroupActivityState() {
   return {
     'feature-storming': {
+      epic: { title: '', description: '' },
       stickies: []
-      // sticky: { id, text, color, zone: 'storming'|'description'|'hypothesis'|'criteria', x, y }
     },
-    'wsjf': {},
-    'feature-splitting': {},
-    'story-mapping': {}
+    'wsjf': {
+      // table: rows are features, each row has { id, feature, ubv, tc, rrOe, jobSize }
+      rows: []
+    },
+    'feature-splitting': {
+      feature: { title: '', description: '' },
+      stickies: []
+    },
+    'story-mapping': {
+      feature: { description: '', benefitHypothesis: '', acceptanceCriteria: '' },
+      stickies: []
+    }
   };
 }
 function defaultGroupState() {
   return { activities: defaultGroupActivityState() };
 }
 function defaultGameState(courseId) {
-  const s = { course: courseId, groups:{}, enabledGroupCount: 5 };
+  const s = {
+    course: courseId,
+    groups: {},
+    enabledGroupCount: 5,
+    timer: { endsAtMs: null, pausedRemainingMs: null, lastDurationMs: 600000 } // 10 min default
+  };
   GROUPS.forEach(g => { s.groups[g.id] = defaultGroupState(); });
   return s;
 }
@@ -573,15 +811,26 @@ function ensureStateStructure() {
   if (!state) state = defaultGameState('POPM');
   if (typeof state.enabledGroupCount !== 'number') state.enabledGroupCount = 5;
   if (!state.groups) state.groups = {};
+  if (!state.timer) state.timer = { endsAtMs: null, pausedRemainingMs: null, lastDurationMs: 600000 };
   GROUPS.forEach(g => {
     if (!state.groups[g.id]) state.groups[g.id] = defaultGroupState();
     if (!state.groups[g.id].activities) state.groups[g.id].activities = defaultGroupActivityState();
     const acts = state.groups[g.id].activities;
-    if (!acts['feature-storming']) acts['feature-storming'] = { stickies: [] };
+
+    if (!acts['feature-storming']) acts['feature-storming'] = { epic: { title:'', description:'' }, stickies: [] };
+    if (!acts['feature-storming'].epic) acts['feature-storming'].epic = { title:'', description:'' };
     if (!Array.isArray(acts['feature-storming'].stickies)) acts['feature-storming'].stickies = [];
-    if (!acts['wsjf']) acts['wsjf'] = {};
-    if (!acts['feature-splitting']) acts['feature-splitting'] = {};
-    if (!acts['story-mapping']) acts['story-mapping'] = {};
+
+    if (!acts['wsjf']) acts['wsjf'] = { rows: [] };
+    if (!Array.isArray(acts['wsjf'].rows)) acts['wsjf'].rows = [];
+
+    if (!acts['feature-splitting']) acts['feature-splitting'] = { feature: { title:'', description:'' }, stickies: [] };
+    if (!acts['feature-splitting'].feature) acts['feature-splitting'].feature = { title:'', description:'' };
+    if (!Array.isArray(acts['feature-splitting'].stickies)) acts['feature-splitting'].stickies = [];
+
+    if (!acts['story-mapping']) acts['story-mapping'] = { feature: { description:'', benefitHypothesis:'', acceptanceCriteria:'' }, stickies: [] };
+    if (!acts['story-mapping'].feature) acts['story-mapping'].feature = { description:'', benefitHypothesis:'', acceptanceCriteria:'' };
+    if (!Array.isArray(acts['story-mapping'].stickies)) acts['story-mapping'].stickies = [];
   });
 }
 
@@ -846,6 +1095,10 @@ async function joinGame(code, urlAdminSecret) {
       state.enabledGroupCount = remote.enabledGroupCount;
       changed = true;
     }
+    if (remote.timer && JSON.stringify(remote.timer) !== JSON.stringify(state.timer)) {
+      state.timer = remote.timer;
+      changed = true;
+    }
     if (changed) {
       ensureStateStructure();
       if (isActivelyEditing) { pendingRemoteUpdate = true; }
@@ -1035,112 +1288,65 @@ function renderActivityBody() {
       <div class="placeholder-msg">
         <div class="ph-emoji">🚧</div>
         <div><strong>${activity ? activity.label : 'Activity'} — coming soon</strong></div>
-        <div style="margin-top:8px">This activity is on the roadmap. Use the Feature Storming tab in the meantime.</div>
+        <div style="margin-top:8px">This activity is on the roadmap.</div>
       </div>`;
     return;
   }
 
-  if (activity.id === 'feature-storming') {
-    body.innerHTML = renderFeatureStorming(activeGroupId);
-    attachFeatureStormingHandlers(activeGroupId);
-  }
+  // Timer bar appears at top of every activity
+  const timerHTML = renderTimerBar();
+  let activityHTML = '';
+  if (activity.id === 'feature-storming')      activityHTML = renderFeatureStorming(activeGroupId);
+  else if (activity.id === 'wsjf')             activityHTML = renderWSJF(activeGroupId);
+  else if (activity.id === 'feature-splitting')activityHTML = renderFeatureSplitting(activeGroupId);
+  else if (activity.id === 'story-mapping')    activityHTML = renderStoryMapping(activeGroupId);
+
+  body.innerHTML = timerHTML + activityHTML;
+  attachStickyHandlers(activeGroupId, activity.id);
 }
 
 /* ============================================================
-   ACTIVITY: Feature Storming & Refinement
+   GENERIC STICKY HELPERS  (activity-aware)
    ============================================================ */
-function renderFeatureStorming(gid) {
-  const data = state.groups[gid].activities['feature-storming'];
-  const stickies = data.stickies || [];
-  const stickiesByZone = {
-    storming: stickies.filter(s => s.zone === 'storming'),
-    description: stickies.filter(s => s.zone === 'description'),
-    hypothesis: stickies.filter(s => s.zone === 'hypothesis'),
-    criteria: stickies.filter(s => s.zone === 'criteria')
-  };
-
-  const stickyHTML = (s) => `
-    <div class="sticky ${s.color} size-${s.size || 'm'}" data-id="${s.id}" style="left:${s.x}px;top:${s.y}px">
-      <button class="sticky-close" onclick="event.stopPropagation(); deleteSticky('${gid}','${s.id}')" title="Delete">×</button>
-      <button class="sticky-resize" onclick="event.stopPropagation(); cycleStickySize('${gid}','${s.id}')" title="Resize (cycle small/medium/large)">⇲</button>
-      <textarea oninput="onStickyTextInput('${gid}','${s.id}', this)" onblur="onStickyTextBlur('${gid}','${s.id}', this)" placeholder="...">${escHTML(s.text || '')}</textarea>
-    </div>`;
-
-  return `
-    <div class="fs-toolbar">
-      <span class="fs-tb-label">Add sticky:</span>
-      <button class="fs-add-btn"        onclick="addSticky('${gid}','yellow')">+ Yellow</button>
-      <button class="fs-add-btn green"  onclick="addSticky('${gid}','green')">+ Green</button>
-      <button class="fs-add-btn blue"   onclick="addSticky('${gid}','blue')">+ Blue</button>
-      <button class="fs-add-btn pink"   onclick="addSticky('${gid}','pink')">+ Pink</button>
-      <span class="fs-help-text">Drag to move • Double-click empty space to add • Hover for resize/delete</span>
-    </div>
-    <div class="fs-board">
-      <div class="activity-zone">
-        <div class="activity-zone-header">FEATURE STORMING — brainstorm features as stickies</div>
-        <div class="activity-zone-body drop-target" data-zone="storming" data-group="${gid}">
-          ${stickiesByZone.storming.map(stickyHTML).join('')}
-          ${stickiesByZone.storming.length === 0 ? '<div class="empty-zone-hint">Drop or add stickies here. Brainstorm freely.</div>' : ''}
-        </div>
-      </div>
-      <div class="activity-zone refinement">
-        <div class="activity-zone-header refinement">FEATURE REFINEMENT — drop stickies into the right lane</div>
-        <div class="activity-zone-body refinement-zone">
-          <div class="refinement-lane drop-target" data-zone="description" data-group="${gid}">
-            <div class="refinement-lane-label">Feature description</div>
-            ${stickiesByZone.description.map(stickyHTML).join('')}
-            ${stickiesByZone.description.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop description stickies here</div>' : ''}
-          </div>
-          <div class="refinement-lane drop-target" data-zone="hypothesis" data-group="${gid}">
-            <div class="refinement-lane-label">Benefit hypothesis</div>
-            ${stickiesByZone.hypothesis.map(stickyHTML).join('')}
-            ${stickiesByZone.hypothesis.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop benefit hypothesis stickies here</div>' : ''}
-          </div>
-          <div class="refinement-lane drop-target" data-zone="criteria" data-group="${gid}">
-            <div class="refinement-lane-label">Acceptance criteria</div>
-            ${stickiesByZone.criteria.map(stickyHTML).join('')}
-            ${stickiesByZone.criteria.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop acceptance criteria stickies here</div>' : ''}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
+function getActivityData(gid, activityId) {
+  if (!state.groups[gid].activities[activityId]) {
+    state.groups[gid].activities[activityId] = {};
+  }
+  const a = state.groups[gid].activities[activityId];
+  if (!Array.isArray(a.stickies)) a.stickies = [];
+  return a;
 }
 
-function addSticky(gid, color) {
-  const data = state.groups[gid].activities['feature-storming'];
-  // place the new sticky in the storming zone, slightly offset based on existing count
-  const existingInZone = data.stickies.filter(s => s.zone === 'storming').length;
+function stickyHTML(s, gid, activityId) {
+  return `<div class="sticky ${s.color || 'yellow'} size-${s.size || 'm'}"
+       data-id="${s.id}" data-activity="${activityId}"
+       style="left:${s.x}px;top:${s.y}px">
+    <button class="sticky-close"  onclick="event.stopPropagation(); deleteSticky('${gid}','${activityId}','${s.id}')" title="Delete">×</button>
+    <button class="sticky-resize" onclick="event.stopPropagation(); cycleStickySize('${gid}','${activityId}','${s.id}')" title="Resize">⇲</button>
+    <textarea oninput="onStickyTextInput('${gid}','${activityId}','${s.id}', this)"
+              onblur="onStickyTextBlur('${gid}','${activityId}','${s.id}', this)"
+              placeholder="...">${escHTML(s.text || '')}</textarea>
+  </div>`;
+}
+
+function addSticky(gid, activityId, color, defaultZone) {
+  const data = getActivityData(gid, activityId);
+  const existingInZone = data.stickies.filter(s => s.zone === defaultZone).length;
   const offset = existingInZone * 12;
   data.stickies.push({
-    id: uid(),
-    text: '',
-    color,
-    zone: 'storming',
-    x: 20 + offset,
-    y: 20 + offset,
-    size: 'm'
+    id: uid(), text: '', color,
+    zone: defaultZone,
+    x: 20 + offset, y: 20 + offset, size: 'm'
   });
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
-function cycleStickySize(gid, sid) {
-  const data = state.groups[gid].activities['feature-storming'];
-  const s = data.stickies.find(x => x.id === sid);
-  if (!s) return;
-  const sizes = ['s', 'm', 'l'];
-  const cur = s.size || 'm';
-  s.size = sizes[(sizes.indexOf(cur) + 1) % sizes.length];
-  save({ type: 'group', id: gid });
-  renderActivityBody();
-}
-function addStickyAt(gid, color, zone, x, y) {
-  const data = state.groups[gid].activities['feature-storming'];
+function addStickyAt(gid, activityId, color, zone, x, y) {
+  const data = getActivityData(gid, activityId);
   const newSticky = { id: uid(), text: '', color, zone, x, y, size: 'm' };
   data.stickies.push(newSticky);
   save({ type: 'group', id: gid });
   renderActivityBody();
-  // Auto-focus so user can type right away
   setTimeout(() => {
     const view = document.getElementById('view-group-' + gid);
     if (!view) return;
@@ -1148,19 +1354,28 @@ function addStickyAt(gid, color, zone, x, y) {
     if (ta) ta.focus();
   }, 30);
 }
-function deleteSticky(gid, sid) {
-  const data = state.groups[gid].activities['feature-storming'];
+function deleteSticky(gid, activityId, sid) {
+  const data = getActivityData(gid, activityId);
   data.stickies = data.stickies.filter(s => s.id !== sid);
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
-function onStickyTextInput(gid, sid, textarea) {
-  const data = state.groups[gid].activities['feature-storming'];
+function cycleStickySize(gid, activityId, sid) {
+  const data = getActivityData(gid, activityId);
   const s = data.stickies.find(x => x.id === sid);
-  if (s) s.text = textarea.value; // local-only until blur; avoids sync flood
+  if (!s) return;
+  const sizes = ['s', 'm', 'l'];
+  s.size = sizes[(sizes.indexOf(s.size || 'm') + 1) % sizes.length];
+  save({ type: 'group', id: gid });
+  renderActivityBody();
 }
-function onStickyTextBlur(gid, sid, textarea) {
-  const data = state.groups[gid].activities['feature-storming'];
+function onStickyTextInput(gid, activityId, sid, textarea) {
+  const data = getActivityData(gid, activityId);
+  const s = data.stickies.find(x => x.id === sid);
+  if (s) s.text = textarea.value; // local-only until blur
+}
+function onStickyTextBlur(gid, activityId, sid, textarea) {
+  const data = getActivityData(gid, activityId);
   const s = data.stickies.find(x => x.id === sid);
   if (s) {
     s.text = textarea.value;
@@ -1168,45 +1383,45 @@ function onStickyTextBlur(gid, sid, textarea) {
   }
 }
 
-/* ---------- DRAG-AND-DROP for stickies ---------- */
+/* ---------- DRAG-AND-DROP for stickies (activity-aware) ---------- */
 let dragSticky = null;
 let dragOffset = { x: 0, y: 0 };
 let dragOriginalZone = null;
 let dragHoverZone = null;
 
-function attachFeatureStormingHandlers(gid) {
+function attachStickyHandlers(gid, activityId) {
   const view = document.getElementById('view-group-' + gid);
   if (!view) return;
 
-  view.querySelectorAll('.sticky').forEach(stickyEl => {
+  view.querySelectorAll('.sticky[data-activity]').forEach(stickyEl => {
     stickyEl.addEventListener('mousedown',  e => onStickyDragStart(e, stickyEl, gid));
     stickyEl.addEventListener('touchstart', e => onStickyDragStart(e, stickyEl, gid), {passive: false});
   });
 
-  // Double-click on empty zone area creates a new sticky at that position
   view.querySelectorAll('.drop-target[data-zone]').forEach(zoneEl => {
     zoneEl.addEventListener('dblclick', e => {
-      // Ignore double-clicks on existing stickies (or controls within them)
       if (e.target.closest('.sticky')) return;
+      if (e.target.closest('input, textarea, button')) return;
+      const zoneAct = zoneEl.dataset.activity || activityId;
       const zoneRect = zoneEl.getBoundingClientRect();
       const x = Math.max(0, Math.round(e.clientX - zoneRect.left - 65));
       const y = Math.max(0, Math.round(e.clientY - zoneRect.top - 45));
-      addStickyAt(gid, 'yellow', zoneEl.dataset.zone, x, y);
+      addStickyAt(gid, zoneAct, 'yellow', zoneEl.dataset.zone, x, y);
     });
   });
 }
 
 function onStickyDragStart(e, stickyEl, gid) {
-  // Don't start drag from textarea or buttons
-  if (e.target.matches('textarea, button')) return;
+  if (e.target.matches('textarea, button, input')) return;
   e.preventDefault();
-
   const sid = stickyEl.dataset.id;
-  const data = state.groups[gid].activities['feature-storming'];
+  const activityId = stickyEl.dataset.activity;
+  if (!activityId) return;
+  const data = getActivityData(gid, activityId);
   const s = data.stickies.find(x => x.id === sid);
   if (!s) return;
 
-  dragSticky = { el: stickyEl, id: sid, groupId: gid };
+  dragSticky = { el: stickyEl, id: sid, groupId: gid, activityId };
   dragOriginalZone = s.zone;
 
   const point = getPointerPos(e);
@@ -1214,7 +1429,6 @@ function onStickyDragStart(e, stickyEl, gid) {
   dragOffset.x = point.x - rect.left;
   dragOffset.y = point.y - rect.top;
 
-  // Move to body for unconstrained drag positioning
   stickyEl.classList.add('dragging');
   stickyEl.style.position = 'fixed';
   stickyEl.style.left = (point.x - dragOffset.x) + 'px';
@@ -1233,9 +1447,7 @@ function onStickyDragMove(e) {
   const point = getPointerPos(e);
   dragSticky.el.style.left = (point.x - dragOffset.x) + 'px';
   dragSticky.el.style.top  = (point.y - dragOffset.y) + 'px';
-
-  // Highlight the zone we're hovering over
-  const zone = findZoneAt(point.x, point.y, dragSticky.groupId);
+  const zone = findZoneAt(point.x, point.y, dragSticky.groupId, dragSticky.activityId);
   if (zone !== dragHoverZone) {
     if (dragHoverZone) dragHoverZone.classList.remove('dragging-over');
     dragHoverZone = zone;
@@ -1245,17 +1457,15 @@ function onStickyDragMove(e) {
 
 function onStickyDragEnd(e) {
   if (!dragSticky) return;
-
   document.removeEventListener('mousemove',  onStickyDragMove);
   document.removeEventListener('mouseup',    onStickyDragEnd);
   document.removeEventListener('touchmove',  onStickyDragMove);
   document.removeEventListener('touchend',   onStickyDragEnd);
 
   const point = e.changedTouches ? { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY } : { x: e.clientX, y: e.clientY };
-  const targetZoneEl = findZoneAt(point.x, point.y, dragSticky.groupId);
+  const targetZoneEl = findZoneAt(point.x, point.y, dragSticky.groupId, dragSticky.activityId);
   const targetZone = targetZoneEl ? targetZoneEl.dataset.zone : dragOriginalZone;
 
-  // Compute relative position within the new zone (use actual sticky dimensions for clamping)
   const stickyRect = dragSticky.el.getBoundingClientRect();
   const stickyW = stickyRect.width || 130;
   const stickyH = stickyRect.height || 90;
@@ -1266,8 +1476,7 @@ function onStickyDragEnd(e) {
     relY = Math.max(0, Math.min(zoneRect.height - stickyH, point.y - zoneRect.top  - dragOffset.y));
   }
 
-  // Update state
-  const data = state.groups[dragSticky.groupId].activities['feature-storming'];
+  const data = getActivityData(dragSticky.groupId, dragSticky.activityId);
   const s = data.stickies.find(x => x.id === dragSticky.id);
   if (s) {
     s.zone = targetZone;
@@ -1276,16 +1485,12 @@ function onStickyDragEnd(e) {
     save({ type: 'group', id: dragSticky.groupId });
   }
 
-  // CRITICAL: remove the dragged element from document.body (where drag-start moved it)
-  // Otherwise it stays as an orphan, blocking clicks on other UI and appearing across all views
   if (dragSticky.el && dragSticky.el.parentNode) {
     dragSticky.el.parentNode.removeChild(dragSticky.el);
   }
-
   if (dragHoverZone) dragHoverZone.classList.remove('dragging-over');
   dragHoverZone = null;
   dragSticky = null; dragOriginalZone = null;
-
   renderActivityBody();
 }
 
@@ -1294,16 +1499,484 @@ function getPointerPos(e) {
   if (e.changedTouches && e.changedTouches[0]) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
   return { x: e.clientX, y: e.clientY };
 }
-
-function findZoneAt(x, y, gid) {
+function findZoneAt(x, y, gid, activityId) {
   const view = document.getElementById('view-group-' + gid);
   if (!view) return null;
-  const zones = view.querySelectorAll('.drop-target[data-zone]');
+  const selector = activityId
+    ? `.drop-target[data-zone][data-activity="${activityId}"]`
+    : '.drop-target[data-zone]';
+  const zones = view.querySelectorAll(selector);
   for (const z of zones) {
     const r = z.getBoundingClientRect();
     if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return z;
   }
   return null;
+}
+
+/* ============================================================
+   ACTIVITY: Feature Storming & Refinement  (with Epic card)
+   ============================================================ */
+function renderFeatureStorming(gid) {
+  const data = state.groups[gid].activities['feature-storming'];
+  const epic = data.epic || { title: '', description: '' };
+  const stickies = data.stickies || [];
+  const byZone = {
+    storming: stickies.filter(s => s.zone === 'storming'),
+    description: stickies.filter(s => s.zone === 'description'),
+    hypothesis: stickies.filter(s => s.zone === 'hypothesis'),
+    criteria: stickies.filter(s => s.zone === 'criteria')
+  };
+  const sticky = (s) => stickyHTML(s, gid, 'feature-storming');
+
+  return `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">Add sticky:</span>
+      <button class="fs-add-btn"        onclick="addSticky('${gid}','feature-storming','yellow','storming')">+ Yellow</button>
+      <button class="fs-add-btn green"  onclick="addSticky('${gid}','feature-storming','green','storming')">+ Green</button>
+      <button class="fs-add-btn blue"   onclick="addSticky('${gid}','feature-storming','blue','storming')">+ Blue</button>
+      <button class="fs-add-btn pink"   onclick="addSticky('${gid}','feature-storming','pink','storming')">+ Pink</button>
+      <span class="fs-help-text">Drag to move • Double-click empty space to add • Hover for resize/delete</span>
+    </div>
+    <div class="fs-board">
+      <div class="activity-zone">
+        <div class="activity-zone-header">FEATURE STORMING — brainstorm features as stickies</div>
+        <div class="activity-zone-body drop-target" data-zone="storming" data-group="${gid}" data-activity="feature-storming">
+          <div class="epic-card">
+            <div class="epic-card-label">EPIC</div>
+            <input class="epic-card-title" placeholder="Epic title (e.g., Online Bookstore)" value="${escAttr(epic.title)}"
+                   onblur="updateEpic('${gid}','title',this.value)">
+            <textarea class="epic-card-desc" rows="3" placeholder="Brief description of the epic, business context, or problem statement"
+                   onblur="updateEpic('${gid}','description',this.value)">${escHTML(epic.description)}</textarea>
+          </div>
+          <div class="stickies-area">
+            ${byZone.storming.map(sticky).join('')}
+            ${byZone.storming.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:14px;text-align:center;width:auto">Add features as stickies. Drag freely.</div>' : ''}
+          </div>
+        </div>
+      </div>
+      <div class="activity-zone refinement">
+        <div class="activity-zone-header refinement">FEATURE REFINEMENT — drop stickies into the right lane</div>
+        <div class="activity-zone-body refinement-zone">
+          <div class="refinement-lane drop-target" data-zone="description" data-group="${gid}" data-activity="feature-storming">
+            <div class="refinement-lane-label">Feature description</div>
+            ${byZone.description.map(sticky).join('')}
+            ${byZone.description.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop description stickies here</div>' : ''}
+          </div>
+          <div class="refinement-lane drop-target" data-zone="hypothesis" data-group="${gid}" data-activity="feature-storming">
+            <div class="refinement-lane-label">Benefit hypothesis</div>
+            ${byZone.hypothesis.map(sticky).join('')}
+            ${byZone.hypothesis.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop benefit hypothesis stickies here</div>' : ''}
+          </div>
+          <div class="refinement-lane drop-target" data-zone="criteria" data-group="${gid}" data-activity="feature-storming">
+            <div class="refinement-lane-label">Acceptance criteria</div>
+            ${byZone.criteria.map(sticky).join('')}
+            ${byZone.criteria.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop acceptance criteria stickies here</div>' : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+function updateEpic(gid, field, value) {
+  const data = state.groups[gid].activities['feature-storming'];
+  if (!data.epic) data.epic = { title:'', description:'' };
+  data.epic[field] = value;
+  save({ type: 'group', id: gid });
+}
+
+/* ============================================================
+   ACTIVITY: WSJF Prioritization  (table grid)
+   ============================================================ */
+function renderWSJF(gid) {
+  const data = state.groups[gid].activities['wsjf'];
+  const rows = data.rows || [];
+
+  const rowHTML = (r) => {
+    const ubv = Number(r.ubv) || 0;
+    const tc  = Number(r.tc) || 0;
+    const rrOe = Number(r.rrOe) || 0;
+    const cod = ubv + tc + rrOe;
+    const js = Number(r.jobSize) || 0;
+    const wsjf = js > 0 ? (cod / js).toFixed(2) : '—';
+    return `
+      <tr data-row="${r.id}">
+        <td class="wsjf-feature-cell">
+          <textarea placeholder="Feature name / description"
+                    onblur="updateWsjfRow('${gid}','${r.id}','feature',this.value)">${escHTML(r.feature || '')}</textarea>
+        </td>
+        <td class="wsjf-input-cell">
+          <input type="number" min="0" step="1" value="${r.ubv ?? ''}"
+                 onchange="updateWsjfRow('${gid}','${r.id}','ubv',this.value)" placeholder="0">
+        </td>
+        <td class="wsjf-op">+</td>
+        <td class="wsjf-input-cell">
+          <input type="number" min="0" step="1" value="${r.tc ?? ''}"
+                 onchange="updateWsjfRow('${gid}','${r.id}','tc',this.value)" placeholder="0">
+        </td>
+        <td class="wsjf-op">+</td>
+        <td class="wsjf-input-cell">
+          <input type="number" min="0" step="1" value="${r.rrOe ?? ''}"
+                 onchange="updateWsjfRow('${gid}','${r.id}','rrOe',this.value)" placeholder="0">
+        </td>
+        <td class="wsjf-op">=</td>
+        <td class="wsjf-calc-cell">${cod}</td>
+        <td class="wsjf-op">÷</td>
+        <td class="wsjf-input-cell">
+          <input type="number" min="0" step="1" value="${r.jobSize ?? ''}"
+                 onchange="updateWsjfRow('${gid}','${r.id}','jobSize',this.value)" placeholder="0">
+        </td>
+        <td class="wsjf-op">=</td>
+        <td class="wsjf-result-cell">${wsjf}</td>
+        <td class="wsjf-actions">
+          <button class="btn small danger" onclick="deleteWsjfRow('${gid}','${r.id}')" title="Delete row">×</button>
+        </td>
+      </tr>`;
+  };
+
+  return `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">WSJF = Cost of Delay ÷ Job Size</span>
+      <span class="fs-help-text">Use a relative scale (1, 2, 3, 5, 8, 13). Cost of Delay and WSJF auto-calculate.</span>
+    </div>
+    <div class="wsjf-table-wrap">
+      <table class="wsjf-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>User-business<br>value</th>
+            <th class="wsjf-op-h"></th>
+            <th>Time<br>criticality</th>
+            <th class="wsjf-op-h"></th>
+            <th>Risk reduction<br>/ opp. enablement</th>
+            <th class="wsjf-op-h"></th>
+            <th>Cost of<br>delay</th>
+            <th class="wsjf-op-h"></th>
+            <th>Job<br>size</th>
+            <th class="wsjf-op-h"></th>
+            <th>WSJF</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.length ? rows.map(rowHTML).join('') : '<tr><td colspan="13" class="wsjf-empty">No features yet. Add a row to start prioritizing.</td></tr>'}
+        </tbody>
+      </table>
+      <button class="btn" style="margin-top:12px" onclick="addWsjfRow('${gid}')">+ Add Feature Row</button>
+    </div>`;
+}
+function addWsjfRow(gid) {
+  const data = state.groups[gid].activities['wsjf'];
+  if (!data.rows) data.rows = [];
+  data.rows.push({ id: uid(), feature: '', ubv: '', tc: '', rrOe: '', jobSize: '' });
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function updateWsjfRow(gid, rowId, field, value) {
+  const data = state.groups[gid].activities['wsjf'];
+  const r = data.rows.find(x => x.id === rowId);
+  if (!r) return;
+  r[field] = (field === 'feature') ? value : (value === '' ? '' : Number(value));
+  save({ type: 'group', id: gid });
+  // Re-render so Cost of Delay + WSJF update
+  renderActivityBody();
+}
+function deleteWsjfRow(gid, rowId) {
+  const data = state.groups[gid].activities['wsjf'];
+  data.rows = data.rows.filter(x => x.id !== rowId);
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+
+/* ============================================================
+   ACTIVITY: Feature Splitting
+   ============================================================ */
+function renderFeatureSplitting(gid) {
+  const data = state.groups[gid].activities['feature-splitting'];
+  const feature = data.feature || { title: '', description: '' };
+  const stickies = data.stickies || [];
+  const byZone = {
+    asA:    stickies.filter(s => s.zone === 'asA'),
+    iWant:  stickies.filter(s => s.zone === 'iWant'),
+    soThat: stickies.filter(s => s.zone === 'soThat'),
+    ac:     stickies.filter(s => s.zone === 'ac')
+  };
+  const sticky = (s) => stickyHTML(s, gid, 'feature-splitting');
+
+  return `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">Add sticky:</span>
+      <button class="fs-add-btn"       onclick="addSticky('${gid}','feature-splitting','yellow','asA')">+ Yellow</button>
+      <button class="fs-add-btn green" onclick="addSticky('${gid}','feature-splitting','green','asA')">+ Green</button>
+      <button class="fs-add-btn blue"  onclick="addSticky('${gid}','feature-splitting','blue','asA')">+ Blue</button>
+      <button class="fs-add-btn pink"  onclick="addSticky('${gid}','feature-splitting','pink','asA')">+ Pink</button>
+      <span class="fs-help-text">Drag stickies between lanes • Double-click empty space to add</span>
+    </div>
+    <div class="fsplit-board">
+      <div class="activity-zone">
+        <div class="activity-zone-header">SELECTED FEATURE</div>
+        <div class="activity-zone-body" style="padding:18px">
+          <div class="feature-card-large">
+            <div class="feature-card-label">FEATURE</div>
+            <input class="feature-card-title" placeholder="Feature title" value="${escAttr(feature.title)}"
+                   onblur="updateFeatureSplit('${gid}','title',this.value)">
+            <textarea class="feature-card-desc" rows="6" placeholder="Feature description, context, expected outcome..."
+                   onblur="updateFeatureSplit('${gid}','description',this.value)">${escHTML(feature.description)}</textarea>
+          </div>
+        </div>
+      </div>
+      <div class="activity-zone refinement">
+        <div class="activity-zone-header refinement">REFINE — split into stories using "As a / I want / So that"</div>
+        <div class="activity-zone-body refinement-zone">
+          <div class="refinement-lane drop-target" data-zone="asA" data-group="${gid}" data-activity="feature-splitting">
+            <div class="refinement-lane-label">As a... (user / role)</div>
+            ${byZone.asA.map(sticky).join('')}
+            ${byZone.asA.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop "user/role" stickies here</div>' : ''}
+          </div>
+          <div class="refinement-lane drop-target" data-zone="iWant" data-group="${gid}" data-activity="feature-splitting">
+            <div class="refinement-lane-label">I want... (capability)</div>
+            ${byZone.iWant.map(sticky).join('')}
+            ${byZone.iWant.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop "capability" stickies here</div>' : ''}
+          </div>
+          <div class="refinement-lane drop-target" data-zone="soThat" data-group="${gid}" data-activity="feature-splitting">
+            <div class="refinement-lane-label">So that... (benefit / outcome)</div>
+            ${byZone.soThat.map(sticky).join('')}
+            ${byZone.soThat.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop "benefit" stickies here</div>' : ''}
+          </div>
+          <div class="refinement-lane drop-target" data-zone="ac" data-group="${gid}" data-activity="feature-splitting">
+            <div class="refinement-lane-label">Acceptance criteria</div>
+            ${byZone.ac.map(sticky).join('')}
+            ${byZone.ac.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:6px">Drop AC stickies here</div>' : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+function updateFeatureSplit(gid, field, value) {
+  const data = state.groups[gid].activities['feature-splitting'];
+  if (!data.feature) data.feature = { title:'', description:'' };
+  data.feature[field] = value;
+  save({ type: 'group', id: gid });
+}
+
+/* ============================================================
+   ACTIVITY: Story Mapping
+   ============================================================ */
+function renderStoryMapping(gid) {
+  const data = state.groups[gid].activities['story-mapping'];
+  const feature = data.feature || { description:'', benefitHypothesis:'', acceptanceCriteria:'' };
+  const stickies = data.stickies || [];
+  const byZone = {
+    activities:    stickies.filter(s => s.zone === 'activities'),
+    highPriority:  stickies.filter(s => s.zone === 'highPriority'),
+    lowPriority:   stickies.filter(s => s.zone === 'lowPriority')
+  };
+  const sticky = (s) => stickyHTML(s, gid, 'story-mapping');
+
+  return `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">Add story:</span>
+      <button class="fs-add-btn"       onclick="addSticky('${gid}','story-mapping','yellow','activities')">+ Activity (Yellow)</button>
+      <button class="fs-add-btn green" onclick="addSticky('${gid}','story-mapping','green','highPriority')">+ Story (Green)</button>
+      <button class="fs-add-btn blue"  onclick="addSticky('${gid}','story-mapping','blue','highPriority')">+ Story (Blue)</button>
+      <span class="fs-help-text">Drag stories between High/Low priority • Double-click any lane to add</span>
+    </div>
+    <div class="storymap-board">
+      <div class="storymap-context">
+        <div class="storymap-context-card">
+          <div class="storymap-context-label">FEATURE CONTEXT</div>
+          <div class="storymap-context-grid">
+            <div>
+              <div class="storymap-context-sublabel">Feature description</div>
+              <textarea rows="3" placeholder="What feature are we mapping?"
+                onblur="updateStoryMapFeature('${gid}','description',this.value)">${escHTML(feature.description)}</textarea>
+            </div>
+            <div>
+              <div class="storymap-context-sublabel">Benefit hypothesis</div>
+              <textarea rows="3" placeholder="What outcome do we expect?"
+                onblur="updateStoryMapFeature('${gid}','benefitHypothesis',this.value)">${escHTML(feature.benefitHypothesis)}</textarea>
+            </div>
+            <div>
+              <div class="storymap-context-sublabel">Acceptance criteria</div>
+              <textarea rows="3" placeholder="What does done look like?"
+                onblur="updateStoryMapFeature('${gid}','acceptanceCriteria',this.value)">${escHTML(feature.acceptanceCriteria)}</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="storymap-lane-wrap">
+        <div class="storymap-lane-header activities-h">ACTIVITIES OR TASKS — left-to-right user journey</div>
+        <div class="storymap-lane drop-target" data-zone="activities" data-group="${gid}" data-activity="story-mapping" style="min-height:140px">
+          ${byZone.activities.map(sticky).join('')}
+          ${byZone.activities.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:14px;text-align:center;width:auto">Drop activities here in user-journey order</div>' : ''}
+        </div>
+
+        <div class="storymap-lane-header high-h">HIGH PRIORITY — stories for this release</div>
+        <div class="storymap-lane drop-target high-priority" data-zone="highPriority" data-group="${gid}" data-activity="story-mapping" style="min-height:170px">
+          ${byZone.highPriority.map(sticky).join('')}
+          ${byZone.highPriority.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:14px;text-align:center;width:auto">Drop the must-have stories here</div>' : ''}
+        </div>
+
+        <div class="storymap-lane-header low-h">LOW PRIORITY — stories for future releases</div>
+        <div class="storymap-lane drop-target low-priority" data-zone="lowPriority" data-group="${gid}" data-activity="story-mapping" style="min-height:170px">
+          ${byZone.lowPriority.map(sticky).join('')}
+          ${byZone.lowPriority.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:14px;text-align:center;width:auto">Drop the nice-to-have stories here</div>' : ''}
+        </div>
+      </div>
+    </div>`;
+}
+function updateStoryMapFeature(gid, field, value) {
+  const data = state.groups[gid].activities['story-mapping'];
+  if (!data.feature) data.feature = { description:'', benefitHypothesis:'', acceptanceCriteria:'' };
+  data.feature[field] = value;
+  save({ type: 'group', id: gid });
+}
+
+/* ============================================================
+   TIMER  (game-level, trainer controls, all see)
+   ============================================================ */
+let timerTickHandle = null;
+function startTimerTick() {
+  if (timerTickHandle) return;
+  timerTickHandle = setInterval(() => {
+    if (!state || !state.timer) return;
+    const view = document.querySelector('.view.active');
+    if (!view) return;
+    const remEl = view.querySelector('.timer-remaining');
+    if (remEl) {
+      const remaining = currentRemainingMs();
+      remEl.textContent = formatRemaining(remaining);
+      // Auto-flip to "finished" state when running timer hits 0
+      const bar = remEl.closest('.timer-bar');
+      if (bar && bar.classList.contains('status-running') && remaining <= 0) {
+        bar.classList.remove('status-running');
+        bar.classList.add('status-finished');
+        const badge = bar.querySelector('.timer-badge');
+        if (badge) { badge.textContent = "Time's up!"; badge.className = 'timer-badge finished'; }
+      }
+    }
+  }, 1000);
+}
+function currentRemainingMs() {
+  if (!state || !state.timer) return 0;
+  const t = state.timer;
+  if (t.endsAtMs) return Math.max(0, t.endsAtMs - Date.now());
+  if (typeof t.pausedRemainingMs === 'number') return Math.max(0, t.pausedRemainingMs);
+  return 0;
+}
+function formatRemaining(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0');
+}
+function timerStatus() {
+  if (!state || !state.timer) return 'idle';
+  if (state.timer.endsAtMs && Date.now() < state.timer.endsAtMs) return 'running';
+  if (state.timer.endsAtMs && Date.now() >= state.timer.endsAtMs) return 'finished';
+  if (typeof state.timer.pausedRemainingMs === 'number' && state.timer.pausedRemainingMs > 0) return 'paused';
+  return 'idle';
+}
+function renderTimerBar() {
+  const isAdmin = currentGame && currentGame.isAdmin;
+  const status = timerStatus();
+  const remaining = currentRemainingMs();
+  const display = formatRemaining(remaining);
+  const lastDur = (state.timer && state.timer.lastDurationMs) || 600000;
+  const lastDurMin = Math.round(lastDur / 60000);
+
+  const statusBadge = ({
+    'idle':     '<span class="timer-badge idle">Not set</span>',
+    'running':  '<span class="timer-badge running">Running</span>',
+    'paused':   '<span class="timer-badge paused">Paused</span>',
+    'finished': '<span class="timer-badge finished">Time\'s up!</span>'
+  })[status];
+
+  let controls = '';
+  if (isAdmin) {
+    controls = `
+      <div class="timer-controls">
+        ${status === 'idle' || status === 'finished' ? `
+          <select id="timerDurationSel" onchange="onDurationChange(this.value)">
+            <option value="2"  ${lastDurMin===2 ?'selected':''}>2 min</option>
+            <option value="5"  ${lastDurMin===5 ?'selected':''}>5 min</option>
+            <option value="10" ${lastDurMin===10?'selected':''}>10 min</option>
+            <option value="15" ${lastDurMin===15?'selected':''}>15 min</option>
+            <option value="20" ${lastDurMin===20?'selected':''}>20 min</option>
+            <option value="30" ${lastDurMin===30?'selected':''}>30 min</option>
+            <option value="45" ${lastDurMin===45?'selected':''}>45 min</option>
+            <option value="60" ${lastDurMin===60?'selected':''}>60 min</option>
+          </select>
+          <button class="btn small" onclick="startTimer()">▶ Start</button>
+        ` : ''}
+        ${status === 'running' ? `
+          <button class="btn small secondary" onclick="pauseTimer()">⏸ Pause</button>
+          <button class="btn small danger"    onclick="resetTimer()">⟲ Reset</button>
+        ` : ''}
+        ${status === 'paused' ? `
+          <button class="btn small" onclick="resumeTimer()">▶ Resume</button>
+          <button class="btn small danger" onclick="resetTimer()">⟲ Reset</button>
+        ` : ''}
+      </div>`;
+  }
+
+  return `
+    <div class="timer-bar status-${status}">
+      <span class="timer-icon">⏱</span>
+      <span class="timer-remaining">${display}</span>
+      ${statusBadge}
+      ${controls}
+    </div>`;
+}
+function onDurationChange(minStr) {
+  const min = Number(minStr) || 10;
+  if (!state.timer) state.timer = {};
+  state.timer.lastDurationMs = min * 60000;
+  // Don't save yet — only persist when Start is clicked
+}
+function startTimer() {
+  if (!currentGame || !currentGame.isAdmin) return;
+  const sel = document.getElementById('timerDurationSel');
+  const min = sel ? Number(sel.value) : 10;
+  const dur = min * 60000;
+  state.timer = {
+    endsAtMs: Date.now() + dur,
+    pausedRemainingMs: null,
+    lastDurationMs: dur
+  };
+  save({ type: 'timer' });
+  renderActivityBody();
+}
+function pauseTimer() {
+  if (!currentGame || !currentGame.isAdmin) return;
+  const remaining = currentRemainingMs();
+  state.timer = {
+    endsAtMs: null,
+    pausedRemainingMs: remaining,
+    lastDurationMs: state.timer.lastDurationMs || 600000
+  };
+  save({ type: 'timer' });
+  renderActivityBody();
+}
+function resumeTimer() {
+  if (!currentGame || !currentGame.isAdmin) return;
+  const rem = state.timer.pausedRemainingMs || 0;
+  state.timer = {
+    endsAtMs: Date.now() + rem,
+    pausedRemainingMs: null,
+    lastDurationMs: state.timer.lastDurationMs || 600000
+  };
+  save({ type: 'timer' });
+  renderActivityBody();
+}
+function resetTimer() {
+  if (!currentGame || !currentGame.isAdmin) return;
+  state.timer = {
+    endsAtMs: null,
+    pausedRemainingMs: null,
+    lastDurationMs: state.timer.lastDurationMs || 600000
+  };
+  save({ type: 'timer' });
+  renderActivityBody();
 }
 
 /* ============================================================
@@ -1321,6 +1994,7 @@ function save(scope) {
       course: currentGame.course,
       groups: state.groups,
       enabledGroupCount: state.enabledGroupCount,
+      timer: state.timer,
       updatedAt: Date.now()
     };
     gameDocRef.set(payload, { merge: true }).catch(err => { console.error(err); setConnectionStatus('error'); });
@@ -1328,6 +2002,7 @@ function save(scope) {
   }
   if (scope.type === 'group') update['groups.' + scope.id] = state.groups[scope.id];
   else if (scope.type === 'count') update.enabledGroupCount = state.enabledGroupCount;
+  else if (scope.type === 'timer') update.timer = state.timer;
 
   gameDocRef.update(update).catch(err => {
     if (err && (err.code === 'not-found' || /No document/.test(err.message || ''))) {
@@ -1416,6 +2091,7 @@ function copyAdminUrl() {
 function escHTML(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
+function escAttr(s) { return escHTML(s); }
 function showToast(msg, success) {
   const t = document.createElement('div');
   t.className = 'toast' + (success ? ' success' : '');
@@ -1428,6 +2104,7 @@ function showToast(msg, success) {
    INIT
    ============================================================ */
 const fbReady = initFirebase();
+startTimerTick();
 if (fbReady) {
   const params = getURLParams();
   if (params.game) {
