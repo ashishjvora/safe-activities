@@ -429,30 +429,32 @@
   /* ---------- EPIC CARD (Feature Storming) ---------- */
   .epic-card {
     background: linear-gradient(135deg, #1f5fa8, #154378);
-    color: white; padding: 12px 14px;
+    color: white; padding: 14px 16px;
     border-radius: 4px; margin-bottom: 14px;
     box-shadow: 0 3px 8px rgba(0,0,0,0.18);
-    width: 220px; min-height: 120px;
+    width: 360px; min-height: 220px;
     display: inline-block; vertical-align: top;
     position: relative; z-index: 2;
   }
   .epic-card-label {
-    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
-    opacity: 0.85; margin-bottom: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    opacity: 0.85; margin-bottom: 8px;
   }
   .epic-card-title {
-    width: 100%; background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3); color: white;
-    padding: 5px 8px; border-radius: 3px; font-size: 13px; font-weight: 600;
-    margin-bottom: 6px; font-family: inherit;
+    width: 100%; background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35); color: white;
+    padding: 6px 10px; border-radius: 3px; font-size: 14px; font-weight: 600;
+    margin-bottom: 8px; font-family: inherit;
   }
   .epic-card-title::placeholder { color: rgba(255,255,255,0.7); }
-  .epic-card-title:focus { outline: none; background: rgba(255,255,255,0.25); }
+  .epic-card-title:focus { outline: none; background: rgba(255,255,255,0.28); }
   .epic-card-desc {
     width: 100%; background: rgba(255,255,255,0.12);
     border: 1px solid rgba(255,255,255,0.25); color: white;
-    padding: 5px 8px; border-radius: 3px; font-size: 11px;
-    resize: vertical; font-family: inherit; line-height: 1.4;
+    padding: 8px 10px; border-radius: 3px; font-size: 12px;
+    resize: vertical; font-family: inherit; line-height: 1.5;
+    min-height: 140px;
+    overflow-y: auto;
   }
   .epic-card-desc::placeholder { color: rgba(255,255,255,0.65); }
   .epic-card-desc:focus { outline: none; background: rgba(255,255,255,0.22); }
@@ -616,7 +618,7 @@
     background: #b8d8f0; border: 2px solid #6ea5d0;
     border-radius: 6px; padding: 12px 14px;
     margin-bottom: 14px;
-    display: grid; grid-template-columns: auto 1fr 2fr; gap: 12px; align-items: start;
+    display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   }
   @media (max-width: 800px) { .fsplit-feature-bar { grid-template-columns: 1fr; } }
@@ -631,12 +633,6 @@
     font-family: inherit;
   }
   .fsplit-feature-title:focus { outline: none; border-color: #1f5fa8; }
-  .fsplit-feature-desc {
-    border: 1px solid #87aacb; background: white;
-    padding: 7px 10px; border-radius: 4px; font-size: 13px;
-    resize: vertical; font-family: inherit; line-height: 1.45;
-  }
-  .fsplit-feature-desc:focus { outline: none; border-color: #1f5fa8; }
   /* Storming wider than refine */
   .fsplit-board {
     display: grid; grid-template-columns: 1.85fr 1fr; gap: 12px;
@@ -980,11 +976,13 @@ let isActivelyEditing = false;
 let pendingRemoteUpdate = false;
 
 function defaultGroupActivityState() {
+  const TTC_EPIC = 'Develop a solution to allow TTC customers to purchase supplemental insurance for packages';
+  const SM_AC = '• Access insurance catalog from account profile\n• Display available insurance options\n• Integrate with shopping cart\n• Process payment';
   return {
     'feature-storming': {
       epic: {
-        title: 'Online Bookstore',
-        description: 'An online site to enable consumers to browse, search, and purchase books with credit card. Provides a personalised experience with recommendations, ratings, and reviews.'
+        title: 'Supplemental Package Insurance',
+        description: TTC_EPIC
       },
       stickies: []
     },
@@ -993,24 +991,17 @@ function defaultGroupActivityState() {
       rows: []
     },
     'feature-splitting': {
-      feature: {
-        title: 'Purchase by credit card',
-        description: 'Customer can pay for an order using a saved or new credit card during checkout, with secure handling of card details.'
-      },
+      // Title-only; trainees fill from previous exercise or their context
+      feature: { title: '' },
       stickies: []
     },
     'story-mapping': {
       feature: {
-        description: 'Online order placement for books',
-        benefitHypothesis: 'Reduce time to purchase by 50% and increase checkout conversion.',
-        acceptanceCriteria: 'User can complete checkout in under 3 minutes; payment is processed securely.'
+        description: 'Delivery Order insurance',
+        benefitHypothesis: 'Allow user to purchase extra insurance for an existing delivery order',
+        acceptanceCriteria: SM_AC
       },
-      activities: [
-        { id: 'a1', title: 'Browse catalog' },
-        { id: 'a2', title: 'Select book' },
-        { id: 'a3', title: 'Checkout' },
-        { id: 'a4', title: 'Receive order' }
-      ],
+      activities: [],
       stories: []
     }
   };
@@ -1770,9 +1761,9 @@ function renderFeatureStorming(gid) {
         <div class="activity-zone-body drop-target" data-zone="storming" data-group="${gid}" data-activity="feature-storming">
           <div class="epic-card">
             <div class="epic-card-label">EPIC</div>
-            <input class="epic-card-title" placeholder="Epic title (e.g., Online Bookstore)" value="${escAttr(epic.title)}"
+            <input class="epic-card-title" placeholder="Epic title" value="${escAttr(epic.title)}"
                    onblur="updateEpic('${gid}','title',this.value)">
-            <textarea class="epic-card-desc" rows="3" placeholder="Brief description of the epic, business context, or problem statement"
+            <textarea class="epic-card-desc" rows="7" placeholder="Brief description of the epic, business context, or problem statement"
                    onblur="updateEpic('${gid}','description',this.value)">${escHTML(epic.description)}</textarea>
           </div>
           <div class="stickies-area">
@@ -1974,10 +1965,8 @@ function renderFeatureSplitting(gid) {
     <!-- Compact feature card spanning the top -->
     <div class="fsplit-feature-bar">
       <div class="fsplit-feature-label">SELECTED FEATURE</div>
-      <input class="fsplit-feature-title" placeholder="Feature title" value="${escAttr(feature.title)}"
+      <input class="fsplit-feature-title" placeholder="Feature title (from Feature Storming output or your own context)" value="${escAttr(feature.title)}"
              onblur="updateFeatureSplit('${gid}','title',this.value)">
-      <textarea class="fsplit-feature-desc" rows="2" placeholder="Brief description / context..."
-             onblur="updateFeatureSplit('${gid}','description',this.value)">${escHTML(feature.description)}</textarea>
     </div>
 
     <div class="fsplit-board">
@@ -2066,17 +2055,17 @@ function renderStoryMapping(gid) {
     <div class="sm-context-row">
       <div class="sm-ctx-block">
         <div class="sm-ctx-label">Feature description</div>
-        <textarea rows="2" placeholder="What feature are we mapping?"
+        <textarea rows="5" placeholder="What feature are we mapping?"
           onblur="updateStoryMapFeature('${gid}','description',this.value)">${escHTML(feature.description)}</textarea>
       </div>
       <div class="sm-ctx-block">
         <div class="sm-ctx-label">Benefit hypothesis</div>
-        <textarea rows="2" placeholder="What outcome do we expect?"
+        <textarea rows="5" placeholder="What outcome do we expect?"
           onblur="updateStoryMapFeature('${gid}','benefitHypothesis',this.value)">${escHTML(feature.benefitHypothesis)}</textarea>
       </div>
       <div class="sm-ctx-block">
         <div class="sm-ctx-label">Acceptance criteria</div>
-        <textarea rows="2" placeholder="What does done look like?"
+        <textarea rows="5" placeholder="What does done look like?"
           onblur="updateStoryMapFeature('${gid}','acceptanceCriteria',this.value)">${escHTML(feature.acceptanceCriteria)}</textarea>
       </div>
     </div>
