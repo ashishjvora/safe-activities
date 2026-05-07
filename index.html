@@ -338,8 +338,12 @@
     box-shadow: 2px 3px 6px rgba(0,0,0,0.18);
     cursor: grab; font-size: 12px;
     transform: rotate(-0.5deg);
-    transition: box-shadow 0.1s;
+    transition: box-shadow 0.1s, width 0.15s, min-height 0.15s;
   }
+  /* Size variants — override defaults */
+  .sticky.size-s { width: 100px; min-height: 65px; padding: 7px 6px 4px; font-size: 11px; }
+  .sticky.size-m { width: 130px; min-height: 90px; padding: 10px 8px 6px; font-size: 12px; }
+  .sticky.size-l { width: 180px; min-height: 130px; padding: 12px 10px 8px; font-size: 14px; }
   .sticky.dragging { opacity: 0.85; cursor: grabbing; z-index: 1000; box-shadow: 5px 7px 14px rgba(0,0,0,0.3); transform: rotate(0); }
   .sticky.yellow { background: #fff8a8; }
   .sticky.green { background: #c4e8b8; }
@@ -364,6 +368,17 @@
   }
   .sticky:hover .sticky-close { opacity: 1; }
   .sticky-close:hover { background: rgba(192,57,43,0.85); color: white; }
+  .sticky-resize {
+    position: absolute; top: 3px; right: 22px;
+    background: rgba(0,0,0,0.08); border: none; color: #555;
+    cursor: pointer; font-size: 10px; line-height: 1;
+    width: 16px; height: 16px; border-radius: 50%;
+    opacity: 0; transition: opacity 0.1s;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+  }
+  .sticky:hover .sticky-resize { opacity: 1; }
+  .sticky-resize:hover { background: rgba(31,95,168,0.85); color: white; }
 
   .empty-zone-hint {
     color: #95a5a6; font-size: 12px; font-style: italic;
@@ -998,7 +1013,7 @@ function renderGroupView(gid) {
                 onclick="setActiveActivity('${a.id}')">${a.label}${a.built?'':' (Coming soon)'}</button>
       `).join('')}
     </div>
-    <div class="activity-body" id="activityBody"></div>
+    <div class="activity-body"></div>
   `;
   renderActivityBody();
 }
@@ -1008,7 +1023,10 @@ function setActiveActivity(activityId) {
   if (activeGroupId) renderGroupView(activeGroupId);
 }
 function renderActivityBody() {
-  const body = document.getElementById('activityBody');
+  if (!activeGroupId) return;
+  const view = document.getElementById('view-group-' + activeGroupId);
+  if (!view) return;
+  const body = view.querySelector('.activity-body');
   if (!body) return;
   const course = COURSES[state.course] || COURSES.POPM;
   const activity = course.activities.find(a => a.id === activeActivityId);
@@ -1042,8 +1060,9 @@ function renderFeatureStorming(gid) {
   };
 
   const stickyHTML = (s) => `
-    <div class="sticky ${s.color}" data-id="${s.id}" style="left:${s.x}px;top:${s.y}px">
+    <div class="sticky ${s.color} size-${s.size || 'm'}" data-id="${s.id}" style="left:${s.x}px;top:${s.y}px">
       <button class="sticky-close" onclick="event.stopPropagation(); deleteSticky('${gid}','${s.id}')" title="Delete">×</button>
+      <button class="sticky-resize" onclick="event.stopPropagation(); cycleStickySize('${gid}','${s.id}')" title="Resize (cycle small/medium/large)">⇲</button>
       <textarea oninput="onStickyTextInput('${gid}','${s.id}', this)" onblur="onStickyTextBlur('${gid}','${s.id}', this)" placeholder="...">${escHTML(s.text || '')}</textarea>
     </div>`;
 
@@ -1054,7 +1073,7 @@ function renderFeatureStorming(gid) {
       <button class="fs-add-btn green"  onclick="addSticky('${gid}','green')">+ Green</button>
       <button class="fs-add-btn blue"   onclick="addSticky('${gid}','blue')">+ Blue</button>
       <button class="fs-add-btn pink"   onclick="addSticky('${gid}','pink')">+ Pink</button>
-      <span class="fs-help-text">Drag stickies between zones. Click text to edit. Hover to delete.</span>
+      <span class="fs-help-text">Drag to move • Double-click empty space to add • Hover for resize/delete</span>
     </div>
     <div class="fs-board">
       <div class="activity-zone">
@@ -1099,10 +1118,35 @@ function addSticky(gid, color) {
     color,
     zone: 'storming',
     x: 20 + offset,
-    y: 20 + offset
+    y: 20 + offset,
+    size: 'm'
   });
   save({ type: 'group', id: gid });
   renderActivityBody();
+}
+function cycleStickySize(gid, sid) {
+  const data = state.groups[gid].activities['feature-storming'];
+  const s = data.stickies.find(x => x.id === sid);
+  if (!s) return;
+  const sizes = ['s', 'm', 'l'];
+  const cur = s.size || 'm';
+  s.size = sizes[(sizes.indexOf(cur) + 1) % sizes.length];
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function addStickyAt(gid, color, zone, x, y) {
+  const data = state.groups[gid].activities['feature-storming'];
+  const newSticky = { id: uid(), text: '', color, zone, x, y, size: 'm' };
+  data.stickies.push(newSticky);
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+  // Auto-focus so user can type right away
+  setTimeout(() => {
+    const view = document.getElementById('view-group-' + gid);
+    if (!view) return;
+    const ta = view.querySelector(`.sticky[data-id="${newSticky.id}"] textarea`);
+    if (ta) ta.focus();
+  }, 30);
 }
 function deleteSticky(gid, sid) {
   const data = state.groups[gid].activities['feature-storming'];
@@ -1137,6 +1181,18 @@ function attachFeatureStormingHandlers(gid) {
   view.querySelectorAll('.sticky').forEach(stickyEl => {
     stickyEl.addEventListener('mousedown',  e => onStickyDragStart(e, stickyEl, gid));
     stickyEl.addEventListener('touchstart', e => onStickyDragStart(e, stickyEl, gid), {passive: false});
+  });
+
+  // Double-click on empty zone area creates a new sticky at that position
+  view.querySelectorAll('.drop-target[data-zone]').forEach(zoneEl => {
+    zoneEl.addEventListener('dblclick', e => {
+      // Ignore double-clicks on existing stickies (or controls within them)
+      if (e.target.closest('.sticky')) return;
+      const zoneRect = zoneEl.getBoundingClientRect();
+      const x = Math.max(0, Math.round(e.clientX - zoneRect.left - 65));
+      const y = Math.max(0, Math.round(e.clientY - zoneRect.top - 45));
+      addStickyAt(gid, 'yellow', zoneEl.dataset.zone, x, y);
+    });
   });
 }
 
@@ -1199,12 +1255,15 @@ function onStickyDragEnd(e) {
   const targetZoneEl = findZoneAt(point.x, point.y, dragSticky.groupId);
   const targetZone = targetZoneEl ? targetZoneEl.dataset.zone : dragOriginalZone;
 
-  // Compute relative position within the new zone
+  // Compute relative position within the new zone (use actual sticky dimensions for clamping)
+  const stickyRect = dragSticky.el.getBoundingClientRect();
+  const stickyW = stickyRect.width || 130;
+  const stickyH = stickyRect.height || 90;
   let relX = 10, relY = 10;
   if (targetZoneEl) {
     const zoneRect = targetZoneEl.getBoundingClientRect();
-    relX = Math.max(0, Math.min(zoneRect.width  - 130, point.x - zoneRect.left - dragOffset.x));
-    relY = Math.max(0, Math.min(zoneRect.height -  90, point.y - zoneRect.top  - dragOffset.y));
+    relX = Math.max(0, Math.min(zoneRect.width  - stickyW, point.x - zoneRect.left - dragOffset.x));
+    relY = Math.max(0, Math.min(zoneRect.height - stickyH, point.y - zoneRect.top  - dragOffset.y));
   }
 
   // Update state
@@ -1217,10 +1276,14 @@ function onStickyDragEnd(e) {
     save({ type: 'group', id: dragSticky.groupId });
   }
 
+  // CRITICAL: remove the dragged element from document.body (where drag-start moved it)
+  // Otherwise it stays as an orphan, blocking clicks on other UI and appearing across all views
+  if (dragSticky.el && dragSticky.el.parentNode) {
+    dragSticky.el.parentNode.removeChild(dragSticky.el);
+  }
+
   if (dragHoverZone) dragHoverZone.classList.remove('dragging-over');
   dragHoverZone = null;
-  dragSticky.el.classList.remove('dragging');
-  dragSticky.el.style.position = '';
   dragSticky = null; dragOriginalZone = null;
 
   renderActivityBody();
