@@ -329,56 +329,62 @@
     text-transform: uppercase;
   }
 
-  /* ---------- STICKY ---------- */
+  /* ---------- STICKY (handle on top, textarea auto-grows) ---------- */
   .sticky {
     position: absolute;
-    width: 130px; min-height: 90px;
-    padding: 10px 8px 6px;
+    width: 160px;
+    background: #fff8a8;
     border-radius: 1px;
     box-shadow: 2px 3px 6px rgba(0,0,0,0.18);
-    cursor: grab; font-size: 12px;
-    transform: rotate(-0.5deg);
-    transition: box-shadow 0.1s, width 0.15s, min-height 0.15s;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    resize: horizontal;
+    min-width: 110px;
+    max-width: 360px;
+    transition: box-shadow 0.1s;
   }
-  /* Size variants — override defaults */
-  .sticky.size-s { width: 100px; min-height: 65px; padding: 7px 6px 4px; font-size: 11px; }
-  .sticky.size-m { width: 130px; min-height: 90px; padding: 10px 8px 6px; font-size: 12px; }
-  .sticky.size-l { width: 180px; min-height: 130px; padding: 12px 10px 8px; font-size: 14px; }
-  .sticky.dragging { opacity: 0.85; cursor: grabbing; z-index: 1000; box-shadow: 5px 7px 14px rgba(0,0,0,0.3); transform: rotate(0); }
+  .sticky.dragging { opacity: 0.92; z-index: 1000; box-shadow: 5px 7px 14px rgba(0,0,0,0.3); }
   .sticky.yellow { background: #fff8a8; }
-  .sticky.green { background: #c4e8b8; }
-  .sticky.blue { background: #b8d8f0; }
-  .sticky.pink { background: #f4c0d4; }
-  .sticky:nth-child(odd) { transform: rotate(0.7deg); }
-  .sticky:nth-child(3n) { transform: rotate(-1.2deg); }
-  .sticky.dragging { transform: rotate(0) !important; }
-  .sticky textarea {
-    width: 100%; min-height: 60px;
-    background: transparent; border: none; resize: none;
-    font-family: inherit; font-size: 12px; color: #1a2a3a;
-    outline: none; line-height: 1.35;
+  .sticky.green  { background: #c4e8b8; }
+  .sticky.blue   { background: #b8d8f0; }
+  .sticky.pink   { background: #f4c0d4; }
+
+  .sticky-handle {
+    height: 18px; flex-shrink: 0;
+    background: rgba(0,0,0,0.09);
+    cursor: grab;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 4px;
+    user-select: none;
   }
+  .sticky-handle::before {
+    content: '⋮⋮';
+    color: rgba(0,0,0,0.4);
+    font-size: 11px; font-weight: 700; letter-spacing: -2px;
+    margin-left: 2px;
+  }
+  .sticky-handle:active { cursor: grabbing; }
+  .sticky.dragging .sticky-handle { cursor: grabbing; }
+
   .sticky-close {
-    position: absolute; top: 3px; right: 3px;
-    background: rgba(0,0,0,0.08); border: none; color: #555;
+    background: rgba(0,0,0,0.12); border: none; color: #444;
     cursor: pointer; font-size: 11px; line-height: 1;
-    width: 16px; height: 16px; border-radius: 50%;
-    opacity: 0; transition: opacity 0.1s;
+    width: 14px; height: 14px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.1s;
   }
   .sticky:hover .sticky-close { opacity: 1; }
   .sticky-close:hover { background: rgba(192,57,43,0.85); color: white; }
-  .sticky-resize {
-    position: absolute; top: 3px; right: 22px;
-    background: rgba(0,0,0,0.08); border: none; color: #555;
-    cursor: pointer; font-size: 10px; line-height: 1;
-    width: 16px; height: 16px; border-radius: 50%;
-    opacity: 0; transition: opacity 0.1s;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700;
+
+  .sticky-text {
+    flex: 1 1 auto;
+    width: 100%; min-height: 60px;
+    background: transparent; border: none; resize: none;
+    padding: 6px 8px;
+    font-family: inherit; font-size: 12px; color: #1a2a3a;
+    line-height: 1.4; outline: none;
+    overflow: hidden; /* JS auto-grow handles height — no inner scrollbar */
   }
-  .sticky:hover .sticky-resize { opacity: 1; }
-  .sticky-resize:hover { background: rgba(31,95,168,0.85); color: white; }
 
   .empty-zone-hint {
     color: #95a5a6; font-size: 12px; font-style: italic;
@@ -425,43 +431,48 @@
     padding: 5px 8px; border: 1px solid #ccd5dd; border-radius: 4px;
     font-size: 13px; background: white; cursor: pointer;
   }
+  .timer-num-input {
+    width: 64px; padding: 5px 8px;
+    border: 1px solid #ccd5dd; border-radius: 4px;
+    font-size: 14px; font-weight: 600; text-align: center;
+    font-family: 'Courier New', monospace;
+  }
+  .timer-num-input:focus { outline: none; border-color: #1f5fa8; box-shadow: 0 0 0 2px rgba(31,95,168,0.15); }
+  .timer-num-suffix { font-size: 12px; color: #6c7a89; margin-right: 4px; }
 
-  /* ---------- EPIC CARD (Feature Storming) ---------- */
-  .epic-card {
+  /* ---------- EPIC BAR (Feature Storming top) ---------- */
+  .fs-epic-bar {
     background: linear-gradient(135deg, #1f5fa8, #154378);
-    color: white; padding: 14px 16px;
-    border-radius: 4px; margin-bottom: 14px;
+    color: white; padding: 12px 14px;
+    border-radius: 6px; margin-bottom: 14px;
+    display: grid; grid-template-columns: auto 1fr 2.2fr; gap: 12px; align-items: start;
     box-shadow: 0 3px 8px rgba(0,0,0,0.18);
-    width: 360px; min-height: 220px;
-    display: inline-block; vertical-align: top;
-    position: relative; z-index: 2;
   }
-  .epic-card-label {
+  @media (max-width: 800px) { .fs-epic-bar { grid-template-columns: 1fr; } }
+  .fs-epic-label {
     font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
-    opacity: 0.85; margin-bottom: 8px;
+    padding-top: 8px; white-space: nowrap;
   }
-  .epic-card-title {
-    width: 100%; background: rgba(255,255,255,0.18);
-    border: 1px solid rgba(255,255,255,0.35); color: white;
-    padding: 6px 10px; border-radius: 3px; font-size: 14px; font-weight: 600;
-    margin-bottom: 8px; font-family: inherit;
+  .fs-epic-title {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 7px 10px; border-radius: 3px;
+    font-size: 14px; font-weight: 600; font-family: inherit;
   }
-  .epic-card-title::placeholder { color: rgba(255,255,255,0.7); }
-  .epic-card-title:focus { outline: none; background: rgba(255,255,255,0.28); }
-  .epic-card-desc {
-    width: 100%; background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.25); color: white;
-    padding: 8px 10px; border-radius: 3px; font-size: 12px;
-    resize: vertical; font-family: inherit; line-height: 1.5;
-    min-height: 140px;
-    overflow-y: auto;
+  .fs-epic-title:focus { outline: none; background: rgba(255,255,255,0.28); }
+  .fs-epic-title::placeholder { color: rgba(255,255,255,0.7); }
+  .fs-epic-desc {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: white;
+    padding: 7px 10px; border-radius: 3px;
+    font-size: 12px; font-family: inherit;
+    line-height: 1.5; resize: vertical;
+    min-height: 70px;
   }
-  .epic-card-desc::placeholder { color: rgba(255,255,255,0.65); }
-  .epic-card-desc:focus { outline: none; background: rgba(255,255,255,0.22); }
-  .stickies-area {
-    position: relative; min-height: 360px;
-    margin-top: 6px;
-  }
+  .fs-epic-desc:focus { outline: none; background: rgba(255,255,255,0.22); }
+  .fs-epic-desc::placeholder { color: rgba(255,255,255,0.65); }
 
   /* ---------- FEATURE CARD (Feature Splitting left side) ---------- */
   .feature-card-large {
@@ -762,31 +773,37 @@
     border-radius: 3px; padding: 6px 24px 6px 8px;
     box-shadow: 1px 2px 3px rgba(0,0,0,0.1);
     position: relative; min-height: 40px;
+    cursor: grab;
   }
+  .sm-story-card.dragging { opacity: 0.55; cursor: grabbing; }
   .sm-story-card.green  { background: #c4e8b8; border-color: #82b974; }
   .sm-story-card.blue   { background: #b8d8f0; border-color: #6ea5d0; }
   .sm-story-card.yellow { background: #fff8a8; border-color: #d4c668; }
   .sm-story-card.pink   { background: #f4c0d4; border-color: #c4849c; }
   .sm-story-card textarea {
     width: 100%; background: transparent; border: none;
-    font-family: inherit; font-size: 12px; resize: vertical;
+    font-family: inherit; font-size: 12px; resize: none;
     min-height: 30px; outline: none; line-height: 1.35;
-    padding: 0;
+    padding: 0; overflow: hidden;
+    cursor: text;
   }
-  .sm-card-close, .sm-card-toggle {
-    position: absolute; top: 3px; background: rgba(0,0,0,0.08);
+  .sm-card-close {
+    position: absolute; top: 3px; right: 3px;
+    background: rgba(0,0,0,0.08);
     border: none; color: #555; cursor: pointer;
-    font-size: 10px; line-height: 1;
+    font-size: 11px; line-height: 1;
     width: 16px; height: 16px; border-radius: 50%;
     opacity: 0; transition: opacity 0.1s;
     display: flex; align-items: center; justify-content: center;
   }
-  .sm-card-close  { right: 3px; }
-  .sm-card-toggle { right: 22px; font-size: 9px; font-weight: 700; }
-  .sm-story-card:hover .sm-card-close,
-  .sm-story-card:hover .sm-card-toggle { opacity: 1; }
+  .sm-story-card:hover .sm-card-close { opacity: 1; }
   .sm-card-close:hover  { background: rgba(192,57,43,0.85); color: white; }
-  .sm-card-toggle:hover { background: rgba(31,95,168,0.85); color: white; }
+
+  .sm-drop.drag-over {
+    background: #d4e8f7;
+    outline: 2px dashed #1f5fa8; outline-offset: -3px;
+    border-radius: 4px;
+  }
 
   .sm-add-card-btn {
     background: white; border: 1.5px dashed #82b974;
@@ -797,6 +814,121 @@
   .sm-add-card-btn.low { border-color: #aab5c0; color: #6c7a89; }
   .sm-add-card-btn:hover { background: #f1f8f4; }
   .sm-add-card-btn.low:hover { background: #f4f5f7; }
+
+  /* ---------- COMMON WORKSPACE (Kanban + Parking Lot + Working Agreement) ---------- */
+  .group-card.common-card {
+    background: linear-gradient(135deg, #1f5fa8, #154378);
+    color: white;
+    grid-column: 1 / -1;  /* span full row */
+    margin-bottom: 4px;
+  }
+  .group-card.common-card h3 { color: white; }
+  .group-card.common-card p { color: rgba(255,255,255,0.85); }
+  .group-card.common-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(31,95,168,0.4); }
+  .common-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(255,255,255,0.22); color: white;
+    padding: 3px 10px; font-size: 10px; font-weight: 700;
+    letter-spacing: 1px; border-radius: 12px;
+  }
+  .cm-toolbar {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    background: white; border: 1px solid #e1e6ec;
+    border-radius: 6px; padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+  .cm-tb-label { font-weight: 700; color: #1f5fa8; font-size: 14px; }
+  .cm-help { color: #6c7a89; font-size: 12px; }
+
+  /* Kanban */
+  .cm-kanban-board {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    align-items: start;
+  }
+  @media (max-width: 800px) { .cm-kanban-board { grid-template-columns: 1fr; } }
+  .cm-kanban-col {
+    background: #f9fbfd; border: 1px solid #ccd5dd;
+    border-radius: 6px; overflow: hidden;
+    display: flex; flex-direction: column;
+    min-height: 360px;
+  }
+  .cm-kanban-header {
+    color: white; padding: 10px 14px;
+    font-weight: 700; font-size: 13px; letter-spacing: 0.8px;
+    text-transform: uppercase;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .cm-kanban-header.todo-h     { background: #6c7a89; }
+  .cm-kanban-header.progress-h { background: #1f5fa8; }
+  .cm-kanban-header.done-h     { background: #229954; }
+  .cm-count {
+    background: rgba(255,255,255,0.25);
+    padding: 2px 8px; border-radius: 10px;
+    font-size: 11px;
+  }
+
+  /* Card list (used by kanban columns and single lanes) */
+  .cm-card-list, .cm-single-lane {
+    padding: 12px; display: flex; flex-direction: column; gap: 8px;
+    flex: 1; min-height: 100px;
+  }
+  .cm-single-lane {
+    background: #f9fbfd; border: 1px solid #ccd5dd;
+    border-radius: 6px;
+    min-height: 360px;
+  }
+  .cm-card-list.drag-over,
+  .cm-single-lane.drag-over {
+    background: #d4e8f7;
+    outline: 2px dashed #1f5fa8; outline-offset: -3px;
+  }
+  .cm-empty {
+    color: #95a5a6; font-style: italic; font-size: 12px;
+    text-align: center; padding: 30px 10px;
+  }
+
+  /* Card */
+  .cm-card {
+    background: #fff8a8; border: 1px solid #d4c668;
+    border-radius: 4px;
+    padding: 8px 28px 8px 10px;
+    box-shadow: 1px 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+    cursor: grab;
+    transition: box-shadow 0.1s;
+  }
+  .cm-card:hover { box-shadow: 2px 3px 6px rgba(0,0,0,0.15); }
+  .cm-card.dragging { opacity: 0.55; cursor: grabbing; }
+  .cm-card.yellow { background: #fff8a8; border-color: #d4c668; }
+  .cm-card.green  { background: #c4e8b8; border-color: #82b974; }
+  .cm-card.blue   { background: #b8d8f0; border-color: #6ea5d0; }
+  .cm-card.pink   { background: #f4c0d4; border-color: #c4849c; }
+  .cm-card textarea {
+    width: 100%; background: transparent; border: none;
+    font-family: inherit; font-size: 13px; resize: none;
+    min-height: 36px; outline: none; line-height: 1.4;
+    padding: 0; overflow: hidden; cursor: text;
+    color: #1a2a3a;
+  }
+  .cm-card-close {
+    position: absolute; top: 5px; right: 5px;
+    background: rgba(0,0,0,0.1); border: none; color: #444;
+    cursor: pointer; font-size: 12px; line-height: 1;
+    width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.1s;
+  }
+  .cm-card:hover .cm-card-close { opacity: 1; }
+  .cm-card-close:hover { background: rgba(192,57,43,0.85); color: white; }
+
+  .cm-add-btn {
+    background: white; border: 1.5px dashed #87aacb;
+    color: #1f5fa8; border-radius: 4px;
+    cursor: pointer; padding: 8px;
+    font-size: 12px; font-weight: 600;
+    margin-top: auto;
+  }
+  .cm-add-btn:hover { background: #eef4fa; border-color: #1f5fa8; }
 </style>
 </head>
 <body>
@@ -1014,10 +1146,18 @@ function defaultGameState(courseId) {
     course: courseId,
     groups: {},
     enabledGroupCount: 5,
-    timer: { endsAtMs: null, pausedRemainingMs: null, lastDurationMs: 600000 } // 10 min default
+    timer: { endsAtMs: null, pausedRemainingMs: null, lastDurationMs: 600000 }, // 10 min default
+    common: defaultCommonState()
   };
   GROUPS.forEach(g => { s.groups[g.id] = defaultGroupState(); });
   return s;
+}
+function defaultCommonState() {
+  return {
+    kanban: { todo: [], inProgress: [], done: [] },
+    parkingLot: [],
+    workingAgreement: []
+  };
 }
 function uid() { return 'x' + Math.random().toString(36).slice(2,9); }
 
@@ -1026,6 +1166,13 @@ function ensureStateStructure() {
   if (typeof state.enabledGroupCount !== 'number') state.enabledGroupCount = 5;
   if (!state.groups) state.groups = {};
   if (!state.timer) state.timer = { endsAtMs: null, pausedRemainingMs: null, lastDurationMs: 600000 };
+  if (!state.common) state.common = defaultCommonState();
+  if (!state.common.kanban) state.common.kanban = { todo: [], inProgress: [], done: [] };
+  if (!Array.isArray(state.common.kanban.todo)) state.common.kanban.todo = [];
+  if (!Array.isArray(state.common.kanban.inProgress)) state.common.kanban.inProgress = [];
+  if (!Array.isArray(state.common.kanban.done)) state.common.kanban.done = [];
+  if (!Array.isArray(state.common.parkingLot)) state.common.parkingLot = [];
+  if (!Array.isArray(state.common.workingAgreement)) state.common.workingAgreement = [];
   GROUPS.forEach(g => {
     if (!state.groups[g.id]) state.groups[g.id] = defaultGroupState();
     if (!state.groups[g.id].activities) state.groups[g.id].activities = defaultGroupActivityState();
@@ -1317,6 +1464,10 @@ async function joinGame(code, urlAdminSecret) {
       state.timer = remote.timer;
       changed = true;
     }
+    if (remote.common && JSON.stringify(remote.common) !== JSON.stringify(state.common)) {
+      state.common = remote.common;
+      changed = true;
+    }
     if (changed) {
       ensureStateStructure();
       if (isActivelyEditing) { pendingRemoteUpdate = true; }
@@ -1390,7 +1541,10 @@ function renderGameInfoBar() {
 function buildNav() {
   const nav = document.getElementById('navLinks');
   nav.innerHTML = '';
-  const items = [{ id:'game-menu', label:'Group Menu', enabled: true }]
+  const items = [
+      { id:'game-menu', label:'Group Menu', enabled: true },
+      { id:'common',    label:'Common',     enabled: true }
+    ]
     .concat(GROUPS.map((g, idx) => ({ id:'group-'+g.id, label:g.shortName, enabled: idx < state.enabledGroupCount })));
   items.forEach(it => {
     const b = document.createElement('button');
@@ -1404,6 +1558,7 @@ function buildNav() {
 }
 function navigateTo(id) {
   if (id === 'game-menu') showGameMenu();
+  else if (id === 'common') showCommon();
   else if (id.startsWith('group-')) {
     const gid = id.replace('group-','');
     if (!isGroupEnabled(gid)) { showGameMenu(); return; }
@@ -1427,6 +1582,16 @@ function setEnabledGroupCount(n) {
 function renderGroupGrid() {
   const grid = document.getElementById('groupGrid');
   grid.innerHTML = '';
+  // Common workspace card (always visible, not a group)
+  const commonCard = document.createElement('div');
+  commonCard.className = 'group-card common-card';
+  commonCard.innerHTML = `
+    <span class="common-badge">Shared</span>
+    <h3>🟦 Common Workspace</h3>
+    <p>Course Kanban, Parking Lot &amp; Working Agreement — visible to all groups.</p>`;
+  commonCard.onclick = () => showCommon();
+  grid.appendChild(commonCard);
+
   GROUPS.forEach((g, idx) => {
     const enabled = idx < state.enabledGroupCount;
     const card = document.createElement('div');
@@ -1493,6 +1658,228 @@ function setActiveActivity(activityId) {
   // Re-render the tabs+body within the current group view
   if (activeGroupId) renderGroupView(activeGroupId);
 }
+
+/* ============================================================
+   COMMON WORKSPACE  (shared across all groups; not a group)
+   Three tabs: Course Kanban, Parking Lot, Working Agreement
+   Stack-based card UI with HTML5 drag-and-drop (smooth).
+   ============================================================ */
+let activeCommonTab = 'kanban';
+
+function showCommon() {
+  let view = document.getElementById('view-common');
+  if (!view) {
+    view = document.createElement('div');
+    view.id = 'view-common';
+    view.className = 'view';
+    document.getElementById('dynamicViews').appendChild(view);
+  }
+  renderCommonView();
+  showOnlyView('view-common');
+}
+
+function setActiveCommonTab(tab) {
+  activeCommonTab = tab;
+  renderCommonView();
+}
+
+function renderCommonView() {
+  const view = document.getElementById('view-common');
+  if (!view) return;
+  const tabs = [
+    { id: 'kanban',  label: 'Course Kanban' },
+    { id: 'parking', label: 'Parking Lot' },
+    { id: 'agreement', label: 'Working Agreement' }
+  ];
+  let bodyHTML = '';
+  if (activeCommonTab === 'kanban')        bodyHTML = renderCourseKanban();
+  else if (activeCommonTab === 'parking')  bodyHTML = renderParkingLot();
+  else if (activeCommonTab === 'agreement')bodyHTML = renderWorkingAgreement();
+
+  view.innerHTML = `
+    <div class="group-header">
+      <h2>🟦 Common Workspace</h2>
+      <div class="actions">
+        <button class="btn secondary" onclick="showGameMenu()">← Back to Group Menu</button>
+      </div>
+    </div>
+    <div class="activity-tabs">
+      ${tabs.map(t => `
+        <button class="activity-tab ${activeCommonTab === t.id ? 'active' : ''}"
+                onclick="setActiveCommonTab('${t.id}')">${t.label}</button>
+      `).join('')}
+    </div>
+    <div class="activity-body">${renderTimerBar()}${bodyHTML}</div>
+  `;
+  attachCommonHandlers();
+}
+
+/* ---------- COMMON CARD primitives (stack-based, no free positioning) ---------- */
+function commonCardHTML(card, listKey) {
+  return `
+    <div class="cm-card ${card.color || 'yellow'}" data-id="${card.id}" data-list="${listKey}" draggable="true">
+      <button class="cm-card-close" onclick="event.stopPropagation(); deleteCommonCard('${listKey}','${card.id}')" title="Delete">×</button>
+      <textarea draggable="false"
+                oninput="onCommonCardInput('${listKey}','${card.id}', this)"
+                onblur="onCommonCardBlur('${listKey}','${card.id}', this)"
+                placeholder="Type here...">${escHTML(card.text || '')}</textarea>
+    </div>`;
+}
+function getCommonList(listKey) {
+  const c = state.common;
+  if (listKey === 'kanban-todo')       return c.kanban.todo;
+  if (listKey === 'kanban-inProgress') return c.kanban.inProgress;
+  if (listKey === 'kanban-done')       return c.kanban.done;
+  if (listKey === 'parkingLot')        return c.parkingLot;
+  if (listKey === 'workingAgreement')  return c.workingAgreement;
+  return null;
+}
+function findCommonCard(cardId) {
+  // Search all lists
+  const lists = ['kanban-todo', 'kanban-inProgress', 'kanban-done', 'parkingLot', 'workingAgreement'];
+  for (const k of lists) {
+    const list = getCommonList(k);
+    const idx = list.findIndex(x => x.id === cardId);
+    if (idx >= 0) return { listKey: k, list, idx, card: list[idx] };
+  }
+  return null;
+}
+function addCommonCard(listKey, color) {
+  const list = getCommonList(listKey);
+  if (!list) return;
+  const newCard = { id: uid(), text: '', color: color || 'yellow' };
+  list.push(newCard);
+  save({ type: 'common' });
+  renderCommonView();
+  setTimeout(() => {
+    const view = document.getElementById('view-common');
+    if (!view) return;
+    const ta = view.querySelector(`.cm-card[data-id="${newCard.id}"] textarea`);
+    if (ta) ta.focus();
+  }, 30);
+}
+function deleteCommonCard(listKey, cardId) {
+  const list = getCommonList(listKey);
+  if (!list) return;
+  const idx = list.findIndex(x => x.id === cardId);
+  if (idx >= 0) list.splice(idx, 1);
+  save({ type: 'common' });
+  renderCommonView();
+}
+function onCommonCardInput(listKey, cardId, ta) {
+  const found = findCommonCard(cardId);
+  if (found) found.card.text = ta.value;
+  autoGrowTextarea(ta);
+}
+function onCommonCardBlur(listKey, cardId, ta) {
+  const found = findCommonCard(cardId);
+  if (found) {
+    found.card.text = ta.value;
+    save({ type: 'common' });
+  }
+}
+function moveCommonCard(cardId, targetListKey) {
+  const found = findCommonCard(cardId);
+  if (!found) return;
+  if (found.listKey === targetListKey) return;
+  const target = getCommonList(targetListKey);
+  if (!target) return;
+  // Remove from source
+  found.list.splice(found.idx, 1);
+  // Append to target
+  target.push(found.card);
+  save({ type: 'common' });
+  renderCommonView();
+}
+function attachCommonHandlers() {
+  const view = document.getElementById('view-common');
+  if (!view) return;
+  // Auto-grow textareas
+  view.querySelectorAll('.cm-card textarea').forEach(autoGrowTextarea);
+  // Drag-and-drop cards
+  view.querySelectorAll('.cm-card').forEach(card => {
+    card.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', card.dataset.id);
+      e.dataTransfer.effectAllowed = 'move';
+      card.classList.add('dragging');
+    });
+    card.addEventListener('dragend', () => card.classList.remove('dragging'));
+  });
+  view.querySelectorAll('.cm-drop').forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      zone.classList.add('drag-over');
+    });
+    zone.addEventListener('dragleave', e => {
+      if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over');
+    });
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const cardId = e.dataTransfer.getData('text/plain');
+      if (!cardId) return;
+      moveCommonCard(cardId, zone.dataset.list);
+    });
+  });
+}
+
+/* ---------- COURSE KANBAN ---------- */
+function renderCourseKanban() {
+  const k = state.common.kanban;
+  const col = (label, listKey, headerClass, cards) => `
+    <div class="cm-kanban-col">
+      <div class="cm-kanban-header ${headerClass}">
+        <span>${label}</span>
+        <span class="cm-count">${cards.length}</span>
+      </div>
+      <div class="cm-card-list cm-drop" data-list="${listKey}">
+        ${cards.map(c => commonCardHTML(c, listKey)).join('')}
+        <button class="cm-add-btn" onclick="addCommonCard('${listKey}','yellow')">+ Add lesson card</button>
+      </div>
+    </div>`;
+  return `
+    <div class="cm-toolbar">
+      <span class="cm-tb-label">Course Kanban</span>
+      <span class="cm-help">Drag any card across the columns • Click + to add a lesson</span>
+    </div>
+    <div class="cm-kanban-board">
+      ${col('To Do',       'kanban-todo',       'todo-h',     k.todo)}
+      ${col('In Progress', 'kanban-inProgress', 'progress-h', k.inProgress)}
+      ${col('Done',        'kanban-done',       'done-h',     k.done)}
+    </div>`;
+}
+
+/* ---------- PARKING LOT ---------- */
+function renderParkingLot() {
+  const list = state.common.parkingLot;
+  return `
+    <div class="cm-toolbar">
+      <span class="cm-tb-label">Parking Lot</span>
+      <span class="cm-help">Capture topics to revisit later • Drag to reorder is not needed (vertical stack)</span>
+      <button class="btn small" style="margin-left:auto" onclick="addCommonCard('parkingLot','pink')">+ Add Item</button>
+    </div>
+    <div class="cm-single-lane cm-drop" data-list="parkingLot">
+      ${list.map(c => commonCardHTML(c, 'parkingLot')).join('')}
+      ${list.length === 0 ? '<div class="cm-empty">No parking-lot items yet. Click + Add Item.</div>' : ''}
+    </div>`;
+}
+
+/* ---------- WORKING AGREEMENT ---------- */
+function renderWorkingAgreement() {
+  const list = state.common.workingAgreement;
+  return `
+    <div class="cm-toolbar">
+      <span class="cm-tb-label">Working Agreement</span>
+      <span class="cm-help">Co-create the rules of engagement for the session</span>
+      <button class="btn small" style="margin-left:auto" onclick="addCommonCard('workingAgreement','green')">+ Add Agreement</button>
+    </div>
+    <div class="cm-single-lane cm-drop" data-list="workingAgreement">
+      ${list.map(c => commonCardHTML(c, 'workingAgreement')).join('')}
+      ${list.length === 0 ? '<div class="cm-empty">No agreements yet. Click + Add Agreement.</div>' : ''}
+    </div>`;
+}
+
 function renderActivityBody() {
   if (!activeGroupId) return;
   const view = document.getElementById('view-group-' + activeGroupId);
@@ -1520,7 +1907,11 @@ function renderActivityBody() {
   else if (activity.id === 'story-mapping')    activityHTML = renderStoryMapping(activeGroupId);
 
   body.innerHTML = timerHTML + activityHTML;
-  attachStickyHandlers(activeGroupId, activity.id);
+  if (activity.id === 'story-mapping') {
+    attachStoryMapHandlers(activeGroupId);
+  } else {
+    attachStickyHandlers(activeGroupId, activity.id);
+  }
 }
 
 /* ============================================================
@@ -1536,15 +1927,25 @@ function getActivityData(gid, activityId) {
 }
 
 function stickyHTML(s, gid, activityId) {
-  return `<div class="sticky ${s.color || 'yellow'} size-${s.size || 'm'}"
+  const widthStyle = s.w ? `;width:${s.w}px` : '';
+  return `<div class="sticky ${s.color || 'yellow'}"
        data-id="${s.id}" data-activity="${activityId}"
-       style="left:${s.x}px;top:${s.y}px">
-    <button class="sticky-close"  onclick="event.stopPropagation(); deleteSticky('${gid}','${activityId}','${s.id}')" title="Delete">×</button>
-    <button class="sticky-resize" onclick="event.stopPropagation(); cycleStickySize('${gid}','${activityId}','${s.id}')" title="Resize">⇲</button>
-    <textarea oninput="onStickyTextInput('${gid}','${activityId}','${s.id}', this)"
+       style="left:${s.x}px;top:${s.y}px${widthStyle}">
+    <div class="sticky-handle">
+      <button class="sticky-close" onclick="event.stopPropagation(); deleteSticky('${gid}','${activityId}','${s.id}')" title="Delete">×</button>
+    </div>
+    <textarea class="sticky-text"
+              draggable="false"
+              oninput="onStickyTextInput('${gid}','${activityId}','${s.id}', this)"
               onblur="onStickyTextBlur('${gid}','${activityId}','${s.id}', this)"
               placeholder="...">${escHTML(s.text || '')}</textarea>
   </div>`;
+}
+
+function autoGrowTextarea(ta) {
+  if (!ta) return;
+  ta.style.height = 'auto';
+  ta.style.height = Math.max(60, ta.scrollHeight) + 'px';
 }
 
 function addSticky(gid, activityId, color, defaultZone) {
@@ -1554,14 +1955,14 @@ function addSticky(gid, activityId, color, defaultZone) {
   data.stickies.push({
     id: uid(), text: '', color,
     zone: defaultZone,
-    x: 20 + offset, y: 20 + offset, size: 'm'
+    x: 20 + offset, y: 20 + offset
   });
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
 function addStickyAt(gid, activityId, color, zone, x, y) {
   const data = getActivityData(gid, activityId);
-  const newSticky = { id: uid(), text: '', color, zone, x, y, size: 'm' };
+  const newSticky = { id: uid(), text: '', color, zone, x, y };
   data.stickies.push(newSticky);
   save({ type: 'group', id: gid });
   renderActivityBody();
@@ -1578,19 +1979,14 @@ function deleteSticky(gid, activityId, sid) {
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
-function cycleStickySize(gid, activityId, sid) {
-  const data = getActivityData(gid, activityId);
-  const s = data.stickies.find(x => x.id === sid);
-  if (!s) return;
-  const sizes = ['s', 'm', 'l'];
-  s.size = sizes[(sizes.indexOf(s.size || 'm') + 1) % sizes.length];
-  save({ type: 'group', id: gid });
-  renderActivityBody();
-}
 function onStickyTextInput(gid, activityId, sid, textarea) {
   const data = getActivityData(gid, activityId);
   const s = data.stickies.find(x => x.id === sid);
   if (s) s.text = textarea.value; // local-only until blur
+  autoGrowTextarea(textarea);
+  // After grow, possibly extend the lane height (Feature Splitting / Storming refinement lanes)
+  const view = document.getElementById('view-group-' + gid);
+  if (view) adjustRefinementLanes(view);
 }
 function onStickyTextBlur(gid, activityId, sid, textarea) {
   const data = getActivityData(gid, activityId);
@@ -1599,6 +1995,32 @@ function onStickyTextBlur(gid, activityId, sid, textarea) {
     s.text = textarea.value;
     save({ type: 'group', id: gid });
   }
+}
+
+function adjustRefinementLanes(view) {
+  if (!view) return;
+  view.querySelectorAll('.refinement-lane').forEach(lane => {
+    let maxBottom = 110; // default lane min height
+    lane.querySelectorAll('.sticky').forEach(stickyEl => {
+      const top = parseFloat(stickyEl.style.top || '0');
+      const height = stickyEl.offsetHeight || 90;
+      const bottom = top + height + 24;
+      if (bottom > maxBottom) maxBottom = bottom;
+    });
+    lane.style.minHeight = maxBottom + 'px';
+  });
+  // Also auto-adjust the storming-zone-body when stickies grow
+  view.querySelectorAll('.activity-zone-body.drop-target').forEach(zone => {
+    if (zone.classList.contains('refinement-zone')) return;
+    let maxBottom = 360;
+    zone.querySelectorAll('.sticky').forEach(stickyEl => {
+      const top = parseFloat(stickyEl.style.top || '0');
+      const height = stickyEl.offsetHeight || 90;
+      const bottom = top + height + 24;
+      if (bottom > maxBottom) maxBottom = bottom;
+    });
+    zone.style.minHeight = maxBottom + 'px';
+  });
 }
 
 /* ---------- DRAG-AND-DROP for stickies (activity-aware) ---------- */
@@ -1614,6 +2036,9 @@ function attachStickyHandlers(gid, activityId) {
   view.querySelectorAll('.sticky[data-activity]').forEach(stickyEl => {
     stickyEl.addEventListener('mousedown',  e => onStickyDragStart(e, stickyEl, gid));
     stickyEl.addEventListener('touchstart', e => onStickyDragStart(e, stickyEl, gid), {passive: false});
+    // Apply auto-grow to each sticky's textarea
+    const ta = stickyEl.querySelector('.sticky-text');
+    if (ta) autoGrowTextarea(ta);
   });
 
   view.querySelectorAll('.drop-target[data-zone]').forEach(zoneEl => {
@@ -1622,15 +2047,22 @@ function attachStickyHandlers(gid, activityId) {
       if (e.target.closest('input, textarea, button')) return;
       const zoneAct = zoneEl.dataset.activity || activityId;
       const zoneRect = zoneEl.getBoundingClientRect();
-      const x = Math.max(0, Math.round(e.clientX - zoneRect.left - 65));
-      const y = Math.max(0, Math.round(e.clientY - zoneRect.top - 45));
+      const x = Math.max(0, Math.round(e.clientX - zoneRect.left - 80));
+      const y = Math.max(0, Math.round(e.clientY - zoneRect.top - 40));
       addStickyAt(gid, zoneAct, 'yellow', zoneEl.dataset.zone, x, y);
     });
   });
+
+  // Adjust refinement lanes once stickies are rendered with auto-grown text
+  adjustRefinementLanes(view);
 }
 
 function onStickyDragStart(e, stickyEl, gid) {
   if (e.target.matches('textarea, button, input')) return;
+  // Skip if user clicked the right-edge resize handle (bottom-right ~14px corner)
+  const rect = stickyEl.getBoundingClientRect();
+  const point = getPointerPos(e);
+  if ((rect.right - point.x < 14) && (rect.bottom - point.y < 14)) return;
   e.preventDefault();
   const sid = stickyEl.dataset.id;
   const activityId = stickyEl.dataset.activity;
@@ -1642,8 +2074,6 @@ function onStickyDragStart(e, stickyEl, gid) {
   dragSticky = { el: stickyEl, id: sid, groupId: gid, activityId };
   dragOriginalZone = s.zone;
 
-  const point = getPointerPos(e);
-  const rect = stickyEl.getBoundingClientRect();
   dragOffset.x = point.x - rect.left;
   dragOffset.y = point.y - rect.top;
 
@@ -1753,23 +2183,24 @@ function renderFeatureStorming(gid) {
       <button class="fs-add-btn green"  onclick="addSticky('${gid}','feature-storming','green','storming')">+ Green</button>
       <button class="fs-add-btn blue"   onclick="addSticky('${gid}','feature-storming','blue','storming')">+ Blue</button>
       <button class="fs-add-btn pink"   onclick="addSticky('${gid}','feature-storming','pink','storming')">+ Pink</button>
-      <span class="fs-help-text">Drag to move • Double-click empty space to add • Hover for resize/delete</span>
+      <span class="fs-help-text">Drag from sticky's top handle to move • Type to grow • Double-click empty space to add</span>
     </div>
+
+    <!-- Top horizontal Epic bar -->
+    <div class="fs-epic-bar">
+      <div class="fs-epic-label">EPIC</div>
+      <input class="fs-epic-title" placeholder="Epic title" value="${escAttr(epic.title)}"
+             onblur="updateEpic('${gid}','title',this.value)">
+      <textarea class="fs-epic-desc" rows="3" placeholder="Brief description / business context / problem statement"
+             onblur="updateEpic('${gid}','description',this.value)">${escHTML(epic.description)}</textarea>
+    </div>
+
     <div class="fs-board">
       <div class="activity-zone">
         <div class="activity-zone-header">FEATURE STORMING — brainstorm features as stickies</div>
         <div class="activity-zone-body drop-target" data-zone="storming" data-group="${gid}" data-activity="feature-storming">
-          <div class="epic-card">
-            <div class="epic-card-label">EPIC</div>
-            <input class="epic-card-title" placeholder="Epic title" value="${escAttr(epic.title)}"
-                   onblur="updateEpic('${gid}','title',this.value)">
-            <textarea class="epic-card-desc" rows="7" placeholder="Brief description of the epic, business context, or problem statement"
-                   onblur="updateEpic('${gid}','description',this.value)">${escHTML(epic.description)}</textarea>
-          </div>
-          <div class="stickies-area">
-            ${byZone.storming.map(sticky).join('')}
-            ${byZone.storming.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:14px;text-align:center;width:auto">Add features as stickies. Drag freely.</div>' : ''}
-          </div>
+          ${byZone.storming.map(sticky).join('')}
+          ${byZone.storming.length === 0 ? '<div class="empty-zone-hint" style="position:relative;top:auto;left:auto;transform:none;padding:14px;text-align:center;width:auto">Add features as stickies. Drag the top handle to move; drag the right edge to widen.</div>' : ''}
         </div>
       </div>
       <div class="activity-zone refinement">
@@ -2021,10 +2452,12 @@ function renderStoryMapping(gid) {
   const stories    = data.stories || [];
 
   const cardHTML = (s) => `
-    <div class="sm-story-card ${s.color || 'green'}" data-id="${s.id}">
+    <div class="sm-story-card ${s.color || 'green'}" data-id="${s.id}" draggable="true">
       <button class="sm-card-close" onclick="event.stopPropagation(); deleteStoryMapStory('${gid}','${s.id}')" title="Delete">×</button>
-      <button class="sm-card-toggle" onclick="event.stopPropagation(); toggleStoryMapPriority('${gid}','${s.id}')" title="Move to ${s.priority === 'high' ? 'Low' : 'High'} priority">↕</button>
-      <textarea oninput="onSmStoryInput('${gid}','${s.id}', this)" onblur="onSmStoryBlur('${gid}','${s.id}', this)" placeholder="Story...">${escHTML(s.text || '')}</textarea>
+      <textarea draggable="false"
+                oninput="onSmStoryInput('${gid}','${s.id}', this)"
+                onblur="onSmStoryBlur('${gid}','${s.id}', this)"
+                placeholder="Story...">${escHTML(s.text || '')}</textarea>
     </div>`;
 
   const columnHTML = (act) => {
@@ -2037,12 +2470,12 @@ function renderStoryMapping(gid) {
                  onblur="updateSmActivity('${gid}','${act.id}',this.value)">
           <button class="sm-activity-del" onclick="deleteSmActivity('${gid}','${act.id}')" title="Delete activity (and its stories)">×</button>
         </div>
-        <div class="sm-stories-section">
+        <div class="sm-stories-section sm-drop" data-priority="high" data-activity-id="${act.id}">
           <div class="sm-stories-header high">High priority</div>
           ${high.map(cardHTML).join('')}
           <button class="sm-add-card-btn" onclick="addSmStory('${gid}','${act.id}','high')">+ Add story</button>
         </div>
-        <div class="sm-stories-section">
+        <div class="sm-stories-section sm-drop" data-priority="low" data-activity-id="${act.id}">
           <div class="sm-stories-header low">Low priority</div>
           ${low.map(cardHTML).join('')}
           <button class="sm-add-card-btn low" onclick="addSmStory('${gid}','${act.id}','low')">+ Add story</button>
@@ -2135,19 +2568,54 @@ function deleteStoryMapStory(gid, storyId) {
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
-function toggleStoryMapPriority(gid, storyId) {
+function moveSmStory(gid, storyId, newActivityId, newPriority) {
   const data = state.groups[gid].activities['story-mapping'];
   const s = data.stories.find(x => x.id === storyId);
   if (!s) return;
-  s.priority = s.priority === 'high' ? 'low' : 'high';
-  s.color = s.priority === 'high' ? 'green' : 'blue';
+  if (s.activityId === newActivityId && s.priority === newPriority) return;
+  s.activityId = newActivityId;
+  s.priority = newPriority;
+  s.color = newPriority === 'high' ? 'green' : 'blue';
   save({ type: 'group', id: gid });
   renderActivityBody();
+}
+function attachStoryMapHandlers(gid) {
+  const view = document.getElementById('view-group-' + gid);
+  if (!view) return;
+  // Auto-grow story textareas
+  view.querySelectorAll('.sm-story-card .sm-text, .sm-story-card textarea').forEach(autoGrowTextarea);
+  // Drag-and-drop story cards between sections
+  view.querySelectorAll('.sm-story-card').forEach(card => {
+    card.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', card.dataset.id);
+      e.dataTransfer.effectAllowed = 'move';
+      card.classList.add('dragging');
+    });
+    card.addEventListener('dragend', () => card.classList.remove('dragging'));
+  });
+  view.querySelectorAll('.sm-drop').forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      zone.classList.add('drag-over');
+    });
+    zone.addEventListener('dragleave', e => {
+      if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over');
+    });
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const storyId = e.dataTransfer.getData('text/plain');
+      if (!storyId) return;
+      moveSmStory(gid, storyId, zone.dataset.activityId, zone.dataset.priority);
+    });
+  });
 }
 function onSmStoryInput(gid, sid, ta) {
   const data = state.groups[gid].activities['story-mapping'];
   const s = data.stories.find(x => x.id === sid);
   if (s) s.text = ta.value;
+  autoGrowTextarea(ta);
 }
 function onSmStoryBlur(gid, sid, ta) {
   const data = state.groups[gid].activities['story-mapping'];
@@ -2159,6 +2627,7 @@ function onSmStoryBlur(gid, sid, ta) {
    TIMER  (game-level, trainer controls, all see)
    ============================================================ */
 let timerTickHandle = null;
+let lastTimerStatusForAlarm = null;
 function startTimerTick() {
   if (timerTickHandle) return;
   timerTickHandle = setInterval(() => {
@@ -2169,17 +2638,44 @@ function startTimerTick() {
     if (remEl) {
       const remaining = currentRemainingMs();
       remEl.textContent = formatRemaining(remaining);
-      // Auto-flip to "finished" state when running timer hits 0
       const bar = remEl.closest('.timer-bar');
-      if (bar && bar.classList.contains('status-running') && remaining <= 0) {
+      const status = timerStatus();
+      if (bar && status === 'finished' && bar.classList.contains('status-running')) {
         bar.classList.remove('status-running');
         bar.classList.add('status-finished');
         const badge = bar.querySelector('.timer-badge');
         if (badge) { badge.textContent = "Time's up!"; badge.className = 'timer-badge finished'; }
       }
+      // Play alarm exactly once when transitioning running -> finished
+      if (lastTimerStatusForAlarm === 'running' && status === 'finished') {
+        playAlarm();
+      }
+      lastTimerStatusForAlarm = status;
     }
   }, 1000);
 }
+
+function playAlarm() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const beep = (start) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine'; osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.001, ctx.currentTime + start);
+      gain.gain.exponentialRampToValueAtTime(0.35, ctx.currentTime + start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + 0.30);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + start + 0.32);
+    };
+    beep(0); beep(0.4); beep(0.8);
+    setTimeout(() => ctx.close().catch(()=>{}), 1500);
+  } catch (e) { /* silent fail */ }
+}
+
 function currentRemainingMs() {
   if (!state || !state.timer) return 0;
   const t = state.timer;
@@ -2206,7 +2702,7 @@ function renderTimerBar() {
   const remaining = currentRemainingMs();
   const display = formatRemaining(remaining);
   const lastDur = (state.timer && state.timer.lastDurationMs) || 600000;
-  const lastDurMin = Math.round(lastDur / 60000);
+  const lastDurMin = Math.max(1, Math.round(lastDur / 60000));
 
   const statusBadge = ({
     'idle':     '<span class="timer-badge idle">Not set</span>',
@@ -2220,16 +2716,9 @@ function renderTimerBar() {
     controls = `
       <div class="timer-controls">
         ${status === 'idle' || status === 'finished' ? `
-          <select id="timerDurationSel" onchange="onDurationChange(this.value)">
-            <option value="2"  ${lastDurMin===2 ?'selected':''}>2 min</option>
-            <option value="5"  ${lastDurMin===5 ?'selected':''}>5 min</option>
-            <option value="10" ${lastDurMin===10?'selected':''}>10 min</option>
-            <option value="15" ${lastDurMin===15?'selected':''}>15 min</option>
-            <option value="20" ${lastDurMin===20?'selected':''}>20 min</option>
-            <option value="30" ${lastDurMin===30?'selected':''}>30 min</option>
-            <option value="45" ${lastDurMin===45?'selected':''}>45 min</option>
-            <option value="60" ${lastDurMin===60?'selected':''}>60 min</option>
-          </select>
+          <input type="number" id="timerDurationInput" min="1" max="240" step="1"
+                 value="${lastDurMin}" onchange="onDurationChange(this.value)" class="timer-num-input">
+          <span class="timer-num-suffix">min</span>
           <button class="btn small" onclick="startTimer()">▶ Start</button>
         ` : ''}
         ${status === 'running' ? `
@@ -2252,21 +2741,21 @@ function renderTimerBar() {
     </div>`;
 }
 function onDurationChange(minStr) {
-  const min = Number(minStr) || 10;
+  const min = Math.max(1, Math.min(240, Number(minStr) || 10));
   if (!state.timer) state.timer = {};
   state.timer.lastDurationMs = min * 60000;
-  // Don't save yet — only persist when Start is clicked
 }
 function startTimer() {
   if (!currentGame || !currentGame.isAdmin) return;
-  const sel = document.getElementById('timerDurationSel');
-  const min = sel ? Number(sel.value) : 10;
+  const inp = document.getElementById('timerDurationInput');
+  const min = inp ? Math.max(1, Math.min(240, Number(inp.value) || 10)) : 10;
   const dur = min * 60000;
   state.timer = {
     endsAtMs: Date.now() + dur,
     pausedRemainingMs: null,
     lastDurationMs: dur
   };
+  lastTimerStatusForAlarm = 'running';  // will trigger alarm on later transition
   save({ type: 'timer' });
   renderActivityBody();
 }
@@ -2319,6 +2808,7 @@ function save(scope) {
       groups: state.groups,
       enabledGroupCount: state.enabledGroupCount,
       timer: state.timer,
+      common: state.common,
       updatedAt: Date.now()
     };
     gameDocRef.set(payload, { merge: true }).catch(err => { console.error(err); setConnectionStatus('error'); });
@@ -2327,6 +2817,7 @@ function save(scope) {
   if (scope.type === 'group') update['groups.' + scope.id] = state.groups[scope.id];
   else if (scope.type === 'count') update.enabledGroupCount = state.enabledGroupCount;
   else if (scope.type === 'timer') update.timer = state.timer;
+  else if (scope.type === 'common') update.common = state.common;
 
   gameDocRef.update(update).catch(err => {
     if (err && (err.code === 'not-found' || /No document/.test(err.message || ''))) {
@@ -2380,6 +2871,12 @@ function rerenderActiveView() {
     const gid = activeGroupView.id.replace('view-group-', '');
     if (!isGroupEnabled(gid)) { showGameMenu(); return; }
     renderGroupView(gid);
+    return;
+  }
+  // If in the common view, re-render it
+  const commonView = document.getElementById('view-common');
+  if (commonView && commonView.classList.contains('active')) {
+    renderCommonView();
     return;
   }
   // Otherwise re-render the game menu
