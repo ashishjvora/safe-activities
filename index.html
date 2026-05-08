@@ -929,6 +929,22 @@
     margin-top: auto;
   }
   .cm-add-btn:hover { background: #eef4fa; border-color: #1f5fa8; }
+
+  /* Free-positioned sticky zone (Parking Lot / Working Agreement) */
+  .cm-sticky-zone {
+    position: relative;
+    background: #f9fbfd; border: 1px solid #ccd5dd;
+    border-radius: 6px;
+    min-height: 460px;
+    padding: 14px;
+    overflow: visible;
+  }
+  .cm-sticky-zone.dragging-over { background: #d4e8f7; outline: 2px dashed #1f5fa8; outline-offset: -3px; }
+  .cm-empty-floating {
+    color: #95a5a6; font-style: italic; font-size: 13px;
+    text-align: center; padding: 60px 20px;
+    pointer-events: none;
+  }
 </style>
 </head>
 <body>
@@ -1316,15 +1332,11 @@ function buildCourseGrid() {
   Object.values(COURSES).forEach(course => {
     const card = document.createElement('div');
     card.className = 'course-card' + (course.enabled ? '' : ' disabled');
-    const activitiesList = course.activities.length
-      ? '<ul>' + course.activities.map(a => `<li>${a.label}${a.built ? '' : ' <em style="color:#95a5a6">(coming soon)</em>'}</li>`).join('') + '</ul>'
-      : '';
     card.innerHTML = `
       ${course.enabled ? '' : '<span class="coming-soon-badge">Coming soon</span>'}
       <span class="course-tag">${course.fullName}</span>
       <h3>${course.name}</h3>
-      <p>${course.description}</p>
-      ${activitiesList}`;
+      <p>${course.description}</p>`;
     if (course.enabled) card.onclick = () => courseClicked(course.id);
     grid.appendChild(card);
   });
@@ -1709,7 +1721,7 @@ function renderCommonView() {
                 onclick="setActiveCommonTab('${t.id}')">${t.label}</button>
       `).join('')}
     </div>
-    <div class="activity-body">${renderTimerBar()}${bodyHTML}</div>
+    <div class="activity-body">${bodyHTML}</div>
   `;
   attachCommonHandlers();
 }
@@ -1791,12 +1803,19 @@ function moveCommonCard(cardId, targetListKey) {
   save({ type: 'common' });
   renderCommonView();
 }
+function getPointerPos(e) {
+  if (e.touches && e.touches[0])      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  if (e.changedTouches && e.changedTouches[0]) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+  return { x: e.clientX, y: e.clientY };
+}
+
 function attachCommonHandlers() {
   const view = document.getElementById('view-common');
   if (!view) return;
-  // Auto-grow textareas
-  view.querySelectorAll('.cm-card textarea').forEach(autoGrowTextarea);
-  // Drag-and-drop cards
+  // Auto-grow textareas (works for both kanban cards and common stickies)
+  view.querySelectorAll('textarea').forEach(autoGrowTextarea);
+
+  // KANBAN — HTML5 drag-and-drop for stack-based cards
   view.querySelectorAll('.cm-card').forEach(card => {
     card.addEventListener('dragstart', e => {
       e.dataTransfer.setData('text/plain', card.dataset.id);
@@ -1822,6 +1841,78 @@ function attachCommonHandlers() {
       moveCommonCard(cardId, zone.dataset.list);
     });
   });
+
+  // PARKING LOT / WORKING AGREEMENT — mouse drag for free-positioned stickies
+  view.querySelectorAll('.sticky[data-common-list]').forEach(stickyEl => {
+    stickyEl.addEventListener('mousedown',  e => onStickyDragStart(e, stickyEl, null));
+    stickyEl.addEventListener('touchstart', e => onStickyDragStart(e, stickyEl, null), {passive: false});
+  });
+  view.querySelectorAll('.cm-sticky-zone[data-zone]').forEach(zoneEl => {
+    zoneEl.addEventListener('dblclick', e => {
+      if (e.target.closest('.sticky')) return;
+      if (e.target.closest('input, textarea, button')) return;
+      const listKey = zoneEl.dataset.commonList;
+      const rect = zoneEl.getBoundingClientRect();
+      const x = Math.max(0, Math.round(e.clientX - rect.left - 80));
+      const y = Math.max(0, Math.round(e.clientY - rect.top - 40));
+      const color = listKey === 'parkingLot' ? 'pink' : 'green';
+      addCommonSticky(listKey, color, x, y);
+    });
+  });
+}
+
+/* ---------- COMMON STICKY (free-positioned, used by Parking Lot + Working Agreement) ---------- */
+function commonStickyHTML(s, listKey) {
+  const widthStyle = s.w ? `;width:${s.w}px` : '';
+  return `<div class="sticky ${s.color || 'pink'}"
+       data-id="${s.id}" data-common-list="${listKey}"
+       style="left:${s.x || 20}px;top:${s.y || 20}px${widthStyle}">
+    <div class="sticky-handle">
+      <button class="sticky-close" onclick="event.stopPropagation(); deleteCommonSticky('${listKey}','${s.id}')" title="Delete">×</button>
+    </div>
+    <textarea class="sticky-text" draggable="false"
+              oninput="onCommonStickyInput('${listKey}','${s.id}', this)"
+              onblur="onCommonStickyBlur('${listKey}','${s.id}', this)"
+              placeholder="...">${escHTML(s.text || '')}</textarea>
+  </div>`;
+}
+function addCommonSticky(listKey, color, x, y) {
+  const list = getCommonList(listKey);
+  if (!list) return;
+  const offset = (list.length * 14) % 200;
+  const newSticky = {
+    id: uid(), text: '', color: color || 'pink',
+    x: x !== undefined ? x : 20 + offset,
+    y: y !== undefined ? y : 20 + offset
+  };
+  list.push(newSticky);
+  save({ type: 'common' });
+  renderCommonView();
+  setTimeout(() => {
+    const view = document.getElementById('view-common');
+    if (!view) return;
+    const ta = view.querySelector(`.sticky[data-id="${newSticky.id}"] textarea`);
+    if (ta) ta.focus();
+  }, 30);
+}
+function deleteCommonSticky(listKey, sid) {
+  const list = getCommonList(listKey);
+  if (!list) return;
+  const idx = list.findIndex(s => s.id === sid);
+  if (idx >= 0) list.splice(idx, 1);
+  save({ type: 'common' });
+  renderCommonView();
+}
+function onCommonStickyInput(listKey, sid, ta) {
+  const list = getCommonList(listKey);
+  const s = list ? list.find(x => x.id === sid) : null;
+  if (s) s.text = ta.value;
+  autoGrowTextarea(ta);
+}
+function onCommonStickyBlur(listKey, sid, ta) {
+  const list = getCommonList(listKey);
+  const s = list ? list.find(x => x.id === sid) : null;
+  if (s) { s.text = ta.value; save({ type: 'common' }); }
 }
 
 /* ---------- COURSE KANBAN ---------- */
@@ -1835,13 +1926,13 @@ function renderCourseKanban() {
       </div>
       <div class="cm-card-list cm-drop" data-list="${listKey}">
         ${cards.map(c => commonCardHTML(c, listKey)).join('')}
-        <button class="cm-add-btn" onclick="addCommonCard('${listKey}','yellow')">+ Add lesson card</button>
       </div>
     </div>`;
   return `
     <div class="cm-toolbar">
       <span class="cm-tb-label">Course Kanban</span>
-      <span class="cm-help">Drag any card across the columns • Click + to add a lesson</span>
+      <span class="cm-help">Drag any card across the columns to update status</span>
+      <button class="btn small" style="margin-left:auto" onclick="addCommonCard('kanban-todo','blue')">+ Add Lesson Card</button>
     </div>
     <div class="cm-kanban-board">
       ${col('To Do',       'kanban-todo',       'todo-h',     k.todo)}
@@ -1850,33 +1941,33 @@ function renderCourseKanban() {
     </div>`;
 }
 
-/* ---------- PARKING LOT ---------- */
+/* ---------- PARKING LOT (free-positioned stickies) ---------- */
 function renderParkingLot() {
   const list = state.common.parkingLot;
   return `
     <div class="cm-toolbar">
       <span class="cm-tb-label">Parking Lot</span>
-      <span class="cm-help">Capture topics to revisit later • Drag to reorder is not needed (vertical stack)</span>
-      <button class="btn small" style="margin-left:auto" onclick="addCommonCard('parkingLot','pink')">+ Add Item</button>
+      <span class="cm-help">Capture topics to revisit • Drag from the top handle • Double-click empty space to add</span>
+      <button class="btn small" style="margin-left:auto" onclick="addCommonSticky('parkingLot','pink')">+ Add Sticky</button>
     </div>
-    <div class="cm-single-lane cm-drop" data-list="parkingLot">
-      ${list.map(c => commonCardHTML(c, 'parkingLot')).join('')}
-      ${list.length === 0 ? '<div class="cm-empty">No parking-lot items yet. Click + Add Item.</div>' : ''}
+    <div class="cm-sticky-zone drop-target" data-zone="parkingLot" data-common-list="parkingLot">
+      ${list.map(s => commonStickyHTML(s, 'parkingLot')).join('')}
+      ${list.length === 0 ? '<div class="cm-empty-floating">No items yet. Click + Add Sticky or double-click any empty space.</div>' : ''}
     </div>`;
 }
 
-/* ---------- WORKING AGREEMENT ---------- */
+/* ---------- WORKING AGREEMENT (free-positioned stickies) ---------- */
 function renderWorkingAgreement() {
   const list = state.common.workingAgreement;
   return `
     <div class="cm-toolbar">
       <span class="cm-tb-label">Working Agreement</span>
-      <span class="cm-help">Co-create the rules of engagement for the session</span>
-      <button class="btn small" style="margin-left:auto" onclick="addCommonCard('workingAgreement','green')">+ Add Agreement</button>
+      <span class="cm-help">Co-create the rules of engagement • Drag from the top handle • Double-click empty space to add</span>
+      <button class="btn small" style="margin-left:auto" onclick="addCommonSticky('workingAgreement','green')">+ Add Sticky</button>
     </div>
-    <div class="cm-single-lane cm-drop" data-list="workingAgreement">
-      ${list.map(c => commonCardHTML(c, 'workingAgreement')).join('')}
-      ${list.length === 0 ? '<div class="cm-empty">No agreements yet. Click + Add Agreement.</div>' : ''}
+    <div class="cm-sticky-zone drop-target" data-zone="workingAgreement" data-common-list="workingAgreement">
+      ${list.map(s => commonStickyHTML(s, 'workingAgreement')).join('')}
+      ${list.length === 0 ? '<div class="cm-empty-floating">No agreements yet. Click + Add Sticky or double-click any empty space.</div>' : ''}
     </div>`;
 }
 
@@ -2059,19 +2150,24 @@ function attachStickyHandlers(gid, activityId) {
 
 function onStickyDragStart(e, stickyEl, gid) {
   if (e.target.matches('textarea, button, input')) return;
-  // Skip if user clicked the right-edge resize handle (bottom-right ~14px corner)
   const rect = stickyEl.getBoundingClientRect();
   const point = getPointerPos(e);
   if ((rect.right - point.x < 14) && (rect.bottom - point.y < 14)) return;
   e.preventDefault();
   const sid = stickyEl.dataset.id;
   const activityId = stickyEl.dataset.activity;
-  if (!activityId) return;
-  const data = getActivityData(gid, activityId);
-  const s = data.stickies.find(x => x.id === sid);
+  const commonListKey = stickyEl.dataset.commonList;
+  let s = null;
+  if (activityId) {
+    const data = getActivityData(gid, activityId);
+    s = data.stickies.find(x => x.id === sid);
+  } else if (commonListKey) {
+    const list = getCommonList(commonListKey);
+    s = list ? list.find(x => x.id === sid) : null;
+  }
   if (!s) return;
 
-  dragSticky = { el: stickyEl, id: sid, groupId: gid, activityId };
+  dragSticky = { el: stickyEl, id: sid, groupId: gid, activityId, commonListKey };
   dragOriginalZone = s.zone;
 
   dragOffset.x = point.x - rect.left;
@@ -2095,7 +2191,7 @@ function onStickyDragMove(e) {
   const point = getPointerPos(e);
   dragSticky.el.style.left = (point.x - dragOffset.x) + 'px';
   dragSticky.el.style.top  = (point.y - dragOffset.y) + 'px';
-  const zone = findZoneAt(point.x, point.y, dragSticky.groupId, dragSticky.activityId);
+  const zone = findZoneAt(point.x, point.y, dragSticky);
   if (zone !== dragHoverZone) {
     if (dragHoverZone) dragHoverZone.classList.remove('dragging-over');
     dragHoverZone = zone;
@@ -2111,26 +2207,44 @@ function onStickyDragEnd(e) {
   document.removeEventListener('touchend',   onStickyDragEnd);
 
   const point = e.changedTouches ? { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY } : { x: e.clientX, y: e.clientY };
-  const targetZoneEl = findZoneAt(point.x, point.y, dragSticky.groupId, dragSticky.activityId);
+  const targetZoneEl = findZoneAt(point.x, point.y, dragSticky);
   const targetZone = targetZoneEl ? targetZoneEl.dataset.zone : dragOriginalZone;
 
   const stickyRect = dragSticky.el.getBoundingClientRect();
   const stickyW = stickyRect.width || 130;
-  const stickyH = stickyRect.height || 90;
   let relX = 10, relY = 10;
   if (targetZoneEl) {
     const zoneRect = targetZoneEl.getBoundingClientRect();
     relX = Math.max(0, Math.min(zoneRect.width  - stickyW, point.x - zoneRect.left - dragOffset.x));
-    relY = Math.max(0, Math.min(zoneRect.height - stickyH, point.y - zoneRect.top  - dragOffset.y));
+    relY = Math.max(0, point.y - zoneRect.top  - dragOffset.y);  // No upper clamp — zone auto-grows vertically
   }
 
-  const data = getActivityData(dragSticky.groupId, dragSticky.activityId);
-  const s = data.stickies.find(x => x.id === dragSticky.id);
-  if (s) {
-    s.zone = targetZone;
-    s.x = Math.round(relX);
-    s.y = Math.round(relY);
-    save({ type: 'group', id: dragSticky.groupId });
+  // Update state — branch by sticky type (activity vs common)
+  if (dragSticky.activityId) {
+    const data = getActivityData(dragSticky.groupId, dragSticky.activityId);
+    const s = data.stickies.find(x => x.id === dragSticky.id);
+    if (s) {
+      s.zone = targetZone;
+      s.x = Math.round(relX);
+      s.y = Math.round(relY);
+      save({ type: 'group', id: dragSticky.groupId });
+    }
+  } else if (dragSticky.commonListKey) {
+    const targetListKey = (targetZoneEl && targetZoneEl.dataset.commonList) || dragSticky.commonListKey;
+    const sourceList = getCommonList(dragSticky.commonListKey);
+    const idx = sourceList ? sourceList.findIndex(x => x.id === dragSticky.id) : -1;
+    if (idx >= 0) {
+      const s = sourceList[idx];
+      s.x = Math.round(relX);
+      s.y = Math.round(relY);
+      if (targetListKey !== dragSticky.commonListKey) {
+        // Move sticky between common lists (e.g., parking-lot → working-agreement)
+        sourceList.splice(idx, 1);
+        const targetList = getCommonList(targetListKey);
+        if (targetList) targetList.push(s);
+      }
+      save({ type: 'common' });
+    }
   }
 
   if (dragSticky.el && dragSticky.el.parentNode) {
@@ -2139,21 +2253,24 @@ function onStickyDragEnd(e) {
   if (dragHoverZone) dragHoverZone.classList.remove('dragging-over');
   dragHoverZone = null;
   dragSticky = null; dragOriginalZone = null;
-  renderActivityBody();
+
+  // Re-render the right view
+  if (document.getElementById('view-common') && document.getElementById('view-common').classList.contains('active')) {
+    renderCommonView();
+  } else {
+    renderActivityBody();
+  }
 }
 
-function getPointerPos(e) {
-  if (e.touches && e.touches[0])      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  if (e.changedTouches && e.changedTouches[0]) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
-  return { x: e.clientX, y: e.clientY };
-}
-function findZoneAt(x, y, gid, activityId) {
-  const view = document.getElementById('view-group-' + gid);
-  if (!view) return null;
-  const selector = activityId
-    ? `.drop-target[data-zone][data-activity="${activityId}"]`
-    : '.drop-target[data-zone]';
-  const zones = view.querySelectorAll(selector);
+function findZoneAt(x, y, ds) {
+  let zones = [];
+  if (ds && ds.activityId) {
+    const view = document.getElementById('view-group-' + ds.groupId);
+    if (view) zones = view.querySelectorAll(`.drop-target[data-zone][data-activity="${ds.activityId}"]`);
+  } else if (ds && ds.commonListKey) {
+    const view = document.getElementById('view-common');
+    if (view) zones = view.querySelectorAll('.drop-target[data-zone][data-common-list]');
+  }
   for (const z of zones) {
     const r = z.getBoundingClientRect();
     if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return z;
@@ -2717,9 +2834,10 @@ function renderTimerBar() {
       <div class="timer-controls">
         ${status === 'idle' || status === 'finished' ? `
           <input type="number" id="timerDurationInput" min="1" max="240" step="1"
-                 value="${lastDurMin}" onchange="onDurationChange(this.value)" class="timer-num-input">
+                 value="${lastDurMin}" oninput="onDurationLocal(this.value)" onchange="onDurationCommit(this.value)" class="timer-num-input">
           <span class="timer-num-suffix">min</span>
           <button class="btn small" onclick="startTimer()">▶ Start</button>
+          <button class="btn small secondary" onclick="playAlarm()" title="Test the end-of-timer alarm sound">🔔 Test</button>
         ` : ''}
         ${status === 'running' ? `
           <button class="btn small secondary" onclick="pauseTimer()">⏸ Pause</button>
@@ -2740,22 +2858,28 @@ function renderTimerBar() {
       ${controls}
     </div>`;
 }
-function onDurationChange(minStr) {
+function onDurationLocal(minStr) {
+  // Update local state on every keystroke so re-renders preserve the typed value.
   const min = Math.max(1, Math.min(240, Number(minStr) || 10));
   if (!state.timer) state.timer = {};
   state.timer.lastDurationMs = min * 60000;
 }
+function onDurationCommit(minStr) {
+  // Persist on blur/Enter so other clients pick up the trainer's chosen default.
+  onDurationLocal(minStr);
+  save({ type: 'timer' });
+}
 function startTimer() {
   if (!currentGame || !currentGame.isAdmin) return;
   const inp = document.getElementById('timerDurationInput');
-  const min = inp ? Math.max(1, Math.min(240, Number(inp.value) || 10)) : 10;
-  const dur = min * 60000;
+  if (inp) onDurationLocal(inp.value);  // Lock in whatever's currently typed
+  const dur = (state.timer && state.timer.lastDurationMs) || 600000;
   state.timer = {
     endsAtMs: Date.now() + dur,
     pausedRemainingMs: null,
     lastDurationMs: dur
   };
-  lastTimerStatusForAlarm = 'running';  // will trigger alarm on later transition
+  lastTimerStatusForAlarm = 'running';
   save({ type: 'timer' });
   renderActivityBody();
 }
