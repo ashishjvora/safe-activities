@@ -41,7 +41,12 @@
     padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 13px;
   }
   .nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.15); }
-  .nav-btn.active { background: white; color: #1f5fa8; font-weight: 600; }
+  .nav-btn.active {
+    background: white; color: #1f5fa8; font-weight: 700;
+    border-color: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    transform: translateY(-1px);
+  }
   .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; border-style: dashed; }
 
   .view { display: none; padding: 24px; }
@@ -338,7 +343,7 @@
     box-shadow: 2px 3px 6px rgba(0,0,0,0.18);
     display: flex; flex-direction: column;
     overflow: hidden;
-    resize: horizontal;
+    resize: both;
     min-width: 110px;
     max-width: 360px;
     transition: box-shadow 0.1s;
@@ -667,6 +672,7 @@
     box-shadow: 0 4px 16px rgba(0,0,0,0.2);
     padding: 12px; width: 240px;
   }
+  #sizingPicker { width: 300px; }
   .wsjf-picker.hidden { display: none; }
   .wsjf-picker-title { font-size: 13px; font-weight: 700; color: #1f5fa8; margin-bottom: 2px; text-align: center; }
   .wsjf-picker-sub { font-size: 11px; color: #777; margin-bottom: 8px; text-align: center; }
@@ -945,6 +951,118 @@
     text-align: center; padding: 60px 20px;
     pointer-events: none;
   }
+
+  /* ---------- BATCH SIZES (Leading SAFe) ---------- */
+  .bs-toolbar {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    background: white; border: 1px solid #e1e6ec;
+    border-radius: 6px; padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+  .bs-tb-label { font-weight: 700; color: #1f5fa8; font-size: 14px; }
+  .bs-help { color: #6c7a89; font-size: 12px; max-width: 700px; }
+  .bs-board { display: flex; flex-direction: column; gap: 12px; }
+  .bs-zone-header {
+    color: white; padding: 10px 14px;
+    font-weight: 700; font-size: 13px; letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 6px 6px 0 0;
+    text-align: center;
+  }
+  .bs-zone-header.backlog-h { background: #1f7a8c; }
+  .bs-zone-header.station-h { background: #1f7a8c; }
+  .bs-zone-body {
+    background: white;
+    border: 1px solid #ccd5dd;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    padding: 14px;
+    min-height: 110px;
+    display: flex; flex-wrap: wrap; gap: 10px;
+    align-content: flex-start;
+    transition: background 0.1s, outline 0.1s;
+  }
+  .bs-backlog .bs-zone-body { min-height: 70px; }
+  .bs-zone-body.drag-over {
+    background: #d4e8f7;
+    outline: 2px dashed #1f5fa8; outline-offset: -3px;
+  }
+  .bs-empty {
+    color: #b5c0cc; font-size: 12px; font-style: italic;
+    width: 100%; text-align: center; padding: 6px 0;
+    pointer-events: none;
+  }
+  .bs-stations-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  @media (max-width: 800px) { .bs-stations-grid { grid-template-columns: 1fr; } }
+  .bs-station { display: flex; flex-direction: column; }
+  .bs-item {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: #ffd966; border: 2px solid #c9a833;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; color: #5a4500;
+    cursor: grab;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    transition: transform 0.08s, box-shadow 0.08s;
+    user-select: none;
+  }
+  .bs-item:hover { transform: translateY(-1px); box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
+  .bs-item.dragging { opacity: 0.55; cursor: grabbing; transform: scale(0.95); }
+  .bs-times-bar {
+    background: #d3e7e5; border: 1px solid #99c2bf;
+    border-radius: 6px; padding: 14px 18px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+  }
+  @media (max-width: 800px) { .bs-times-bar { grid-template-columns: 1fr; } }
+  .bs-time-block { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .bs-time-label {
+    color: #154d4d; font-weight: 700; font-size: 13px;
+    flex: 1; white-space: nowrap;
+  }
+  .bs-time-input {
+    background: #fff8a8; border: 1px solid #d4c668;
+    padding: 8px 10px; border-radius: 3px;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    text-align: center; min-width: 100px;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.1);
+  }
+  .bs-time-input:focus { outline: none; background: #fffbc8; border-color: #b5a541; }
+
+  /* ---------- RELATIVE SIZING (Leading SAFe) ---------- */
+  .rs-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 14px;
+  }
+  .rs-card {
+    background: white; border: 1px solid #d1d8e0;
+    border-radius: 8px; padding: 16px 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+  }
+  .rs-emoji { font-size: 56px; line-height: 1; }
+  .rs-name {
+    font-size: 16px; font-weight: 700; color: #1a3a52;
+    letter-spacing: 0.3px;
+  }
+  .rs-value-btn {
+    width: 78px; height: 56px;
+    background: #1f5fa8; color: white;
+    border: none; border-radius: 6px;
+    font-size: 22px; font-weight: 700;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .rs-value-btn:hover { background: #154378; }
+  .rs-value-btn.unset { background: #f4d8d6; color: #c0392b; }
+  .rs-value-btn.unset:hover { background: #e8b9b6; }
+
+  /* Sizing picker uses same .wsjf-picker base + larger button grid */
+  .sizing-picker-buttons {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
+    margin-bottom: 8px;
+  }
 </style>
 </head>
 <body>
@@ -1047,6 +1165,25 @@
   <button class="wsjf-picker-clear" onclick="setWsjfValue(null)">Clear value</button>
 </div>
 
+<!-- Relative-sizing modified-Fibonacci picker popover -->
+<div id="sizingPicker" class="wsjf-picker hidden">
+  <div class="wsjf-picker-title">Pick a size</div>
+  <div class="wsjf-picker-sub">Modified Fibonacci scale</div>
+  <div class="sizing-picker-buttons">
+    <button class="sizing-picker-btn wsjf-picker-btn" data-val="1"   onclick="setSizingValue(1)">1</button>
+    <button class="sizing-picker-btn wsjf-picker-btn" data-val="2"   onclick="setSizingValue(2)">2</button>
+    <button class="sizing-picker-btn wsjf-picker-btn" data-val="3"   onclick="setSizingValue(3)">3</button>
+    <button class="sizing-picker-btn wsjf-picker-btn" data-val="5"   onclick="setSizingValue(5)">5</button>
+    <button class="sizing-picker-btn wsjf-picker-btn" data-val="8"   onclick="setSizingValue(8)">8</button>
+    <button class="sizing-picker-btn wsjf-picker-btn" data-val="13"  onclick="setSizingValue(13)">13</button>
+    <button class="sizing-picker-btn wsjf-picker-btn" data-val="20"  onclick="setSizingValue(20)">20</button>
+    <button class="sizing-picker-btn wsjf-picker-btn" data-val="40"  onclick="setSizingValue(40)">40</button>
+    <button class="sizing-picker-btn wsjf-picker-btn" data-val="60"  onclick="setSizingValue(60)">60</button>
+    <button class="sizing-picker-btn wsjf-picker-btn" data-val="100" onclick="setSizingValue(100)">100</button>
+  </div>
+  <button class="wsjf-picker-clear" onclick="setSizingValue(null)">Clear value</button>
+</div>
+
 <script>
 /* ============================================================
    FIREBASE CONFIG  ← PASTE YOUR CONFIG HERE
@@ -1076,7 +1213,7 @@ const COURSES = {
     id: 'POPM',
     name: 'POPM Activities',
     fullName: 'Product Owner / Product Manager',
-    description: 'Hands-on activities for Product Owner and Product Manager training: feature storming, prioritization, story splitting, and story mapping.',
+    description: 'Hands-on collaborative activities for Product Owner and Product Manager training.',
     activities: [
       { id: 'feature-storming', label: 'Feature Storming & Refinement',  built: true  },
       { id: 'wsjf',             label: 'WSJF Prioritization',            built: true  },
@@ -1089,9 +1226,14 @@ const COURSES = {
     id: 'LEADING_SAFE',
     name: 'Leading SAFe Activities',
     fullName: 'Leading SAFe',
-    description: 'Foundational SAFe activities for the Leading SAFe course. Activities to be added in a future build.',
-    activities: [],
-    enabled: false
+    description: 'Foundational collaborative activities for the Leading SAFe course.',
+    activities: [
+      { id: 'batch-sizes',     label: 'Experience Batch Sizes',  built: true },
+      { id: 'feature-storming',label: 'Feature Storming',        built: true },
+      { id: 'relative-sizing', label: 'Relative Size Estimating',built: true },
+      { id: 'wsjf',            label: 'WSJF Prioritization',     built: true }
+    ],
+    enabled: true
   }
 };
 
@@ -1123,26 +1265,51 @@ let unsubscribeListener = null;
 let isActivelyEditing = false;
 let pendingRemoteUpdate = false;
 
-function defaultGroupActivityState() {
+function makeBatchSizesItems() {
+  const items = [];
+  for (let i = 1; i <= 10; i++) {
+    items.push({ id: 'item-' + i, location: 'backlog' });
+  }
+  return items;
+}
+function defaultBatchSizesState() {
+  return { items: makeBatchSizesItems(), largeBatchTime: '', smallBatchTime: '' };
+}
+const RELATIVE_SIZING_ANIMALS = [
+  { id: 'chicken',  name: 'Chicken',   emoji: '🐔' },
+  { id: 'horse',    name: 'Horse',     emoji: '🐎' },
+  { id: 'crocodile',name: 'Crocodile', emoji: '🐊' },
+  { id: 'gorilla',  name: 'Gorilla',   emoji: '🦍' },
+  { id: 'elephant', name: 'Elephant',  emoji: '🐘' },
+  { id: 'hyena',    name: 'Hyena',     emoji: '🐺' },
+  { id: 'giraffe',  name: 'Giraffe',   emoji: '🦒' }
+];
+const RELATIVE_SIZING_VALUES = [1, 2, 3, 5, 8, 13, 20, 40, 60, 100];
+function defaultRelativeSizingState() {
+  const estimates = {};
+  RELATIVE_SIZING_ANIMALS.forEach(a => { estimates[a.id] = null; });
+  return { estimates };
+}
+
+function defaultGroupActivityState(courseId) {
+  if (courseId === 'LEADING_SAFE') {
+    return {
+      'batch-sizes':      defaultBatchSizesState(),
+      'feature-storming': { epic: { title: '', description: '' }, stickies: [] },
+      'relative-sizing':  defaultRelativeSizingState(),
+      'wsjf':             { rows: [] }
+    };
+  }
+  // POPM (default)
   const TTC_EPIC = 'Develop a solution to allow TTC customers to purchase supplemental insurance for packages';
   const SM_AC = '• Access insurance catalog from account profile\n• Display available insurance options\n• Integrate with shopping cart\n• Process payment';
   return {
     'feature-storming': {
-      epic: {
-        title: 'Supplemental Package Insurance',
-        description: TTC_EPIC
-      },
+      epic: { title: 'Supplemental Package Insurance', description: TTC_EPIC },
       stickies: []
     },
-    'wsjf': {
-      // table: rows are features, each row has { id, feature, ubv, tc, rrOe, jobSize }
-      rows: []
-    },
-    'feature-splitting': {
-      // Title-only; trainees fill from previous exercise or their context
-      feature: { title: '' },
-      stickies: []
-    },
+    'wsjf': { rows: [] },
+    'feature-splitting': { feature: { title: '' }, stickies: [] },
     'story-mapping': {
       feature: {
         description: 'Delivery Order insurance',
@@ -1154,18 +1321,18 @@ function defaultGroupActivityState() {
     }
   };
 }
-function defaultGroupState() {
-  return { activities: defaultGroupActivityState() };
+function defaultGroupState(courseId) {
+  return { activities: defaultGroupActivityState(courseId) };
 }
 function defaultGameState(courseId) {
   const s = {
     course: courseId,
     groups: {},
     enabledGroupCount: 5,
-    timer: { endsAtMs: null, pausedRemainingMs: null, lastDurationMs: 600000 }, // 10 min default
+    timer: { endsAtMs: null, pausedRemainingMs: null, lastDurationMs: 600000 },
     common: defaultCommonState()
   };
-  GROUPS.forEach(g => { s.groups[g.id] = defaultGroupState(); });
+  GROUPS.forEach(g => { s.groups[g.id] = defaultGroupState(courseId); });
   return s;
 }
 function defaultCommonState() {
@@ -1189,11 +1356,36 @@ function ensureStateStructure() {
   if (!Array.isArray(state.common.kanban.done)) state.common.kanban.done = [];
   if (!Array.isArray(state.common.parkingLot)) state.common.parkingLot = [];
   if (!Array.isArray(state.common.workingAgreement)) state.common.workingAgreement = [];
+
   GROUPS.forEach(g => {
-    if (!state.groups[g.id]) state.groups[g.id] = defaultGroupState();
-    if (!state.groups[g.id].activities) state.groups[g.id].activities = defaultGroupActivityState();
+    if (!state.groups[g.id]) state.groups[g.id] = defaultGroupState(state.course);
+    if (!state.groups[g.id].activities) state.groups[g.id].activities = defaultGroupActivityState(state.course);
     const acts = state.groups[g.id].activities;
 
+    if (state.course === 'LEADING_SAFE') {
+      if (!acts['batch-sizes']) acts['batch-sizes'] = defaultBatchSizesState();
+      if (!Array.isArray(acts['batch-sizes'].items) || acts['batch-sizes'].items.length === 0) {
+        acts['batch-sizes'].items = makeBatchSizesItems();
+      }
+      if (typeof acts['batch-sizes'].largeBatchTime !== 'string') acts['batch-sizes'].largeBatchTime = '';
+      if (typeof acts['batch-sizes'].smallBatchTime !== 'string') acts['batch-sizes'].smallBatchTime = '';
+
+      if (!acts['feature-storming']) acts['feature-storming'] = { epic: { title:'', description:'' }, stickies: [] };
+      if (!acts['feature-storming'].epic) acts['feature-storming'].epic = { title:'', description:'' };
+      if (!Array.isArray(acts['feature-storming'].stickies)) acts['feature-storming'].stickies = [];
+
+      if (!acts['relative-sizing']) acts['relative-sizing'] = defaultRelativeSizingState();
+      if (!acts['relative-sizing'].estimates) acts['relative-sizing'].estimates = {};
+      RELATIVE_SIZING_ANIMALS.forEach(a => {
+        if (!(a.id in acts['relative-sizing'].estimates)) acts['relative-sizing'].estimates[a.id] = null;
+      });
+
+      if (!acts['wsjf']) acts['wsjf'] = { rows: [] };
+      if (!Array.isArray(acts['wsjf'].rows)) acts['wsjf'].rows = [];
+      return;
+    }
+
+    // POPM (default)
     if (!acts['feature-storming']) acts['feature-storming'] = { epic: { title:'', description:'' }, stickies: [] };
     if (!acts['feature-storming'].epic) acts['feature-storming'].epic = { title:'', description:'' };
     if (!Array.isArray(acts['feature-storming'].stickies)) acts['feature-storming'].stickies = [];
@@ -1298,6 +1490,9 @@ function buildShareableURL(includeAdmin) {
    ============================================================ */
 function showOnlyView(viewId) {
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === viewId));
+  // Sync nav button highlight: viewId 'view-game-menu' → navId 'game-menu', etc.
+  const navId = viewId.replace(/^view-/, '');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === navId));
   window.scrollTo(0, 0);
 }
 function setTopbarBadge(code) {
@@ -1863,10 +2058,11 @@ function attachCommonHandlers() {
 
 /* ---------- COMMON STICKY (free-positioned, used by Parking Lot + Working Agreement) ---------- */
 function commonStickyHTML(s, listKey) {
-  const widthStyle = s.w ? `;width:${s.w}px` : '';
+  const widthStyle  = s.w ? `;width:${s.w}px`  : '';
+  const heightStyle = s.h ? `;height:${s.h}px` : '';
   return `<div class="sticky ${s.color || 'pink'}"
        data-id="${s.id}" data-common-list="${listKey}"
-       style="left:${s.x || 20}px;top:${s.y || 20}px${widthStyle}">
+       style="left:${s.x || 20}px;top:${s.y || 20}px${widthStyle}${heightStyle}">
     <div class="sticky-handle">
       <button class="sticky-close" onclick="event.stopPropagation(); deleteCommonSticky('${listKey}','${s.id}')" title="Delete">×</button>
     </div>
@@ -1971,12 +2167,21 @@ function renderWorkingAgreement() {
     </div>`;
 }
 
+function ensureValidActiveActivity() {
+  const course = COURSES[state.course] || COURSES.POPM;
+  const valid = course.activities.some(a => a.id === activeActivityId);
+  if (!valid && course.activities.length > 0) {
+    activeActivityId = course.activities[0].id;
+  }
+}
+
 function renderActivityBody() {
   if (!activeGroupId) return;
   const view = document.getElementById('view-group-' + activeGroupId);
   if (!view) return;
   const body = view.querySelector('.activity-body');
   if (!body) return;
+  ensureValidActiveActivity();
   const course = COURSES[state.course] || COURSES.POPM;
   const activity = course.activities.find(a => a.id === activeActivityId);
   if (!activity || !activity.built) {
@@ -1989,17 +2194,22 @@ function renderActivityBody() {
     return;
   }
 
-  // Timer bar appears at top of every activity
   const timerHTML = renderTimerBar();
   let activityHTML = '';
   if (activity.id === 'feature-storming')      activityHTML = renderFeatureStorming(activeGroupId);
   else if (activity.id === 'wsjf')             activityHTML = renderWSJF(activeGroupId);
   else if (activity.id === 'feature-splitting')activityHTML = renderFeatureSplitting(activeGroupId);
   else if (activity.id === 'story-mapping')    activityHTML = renderStoryMapping(activeGroupId);
+  else if (activity.id === 'batch-sizes')      activityHTML = renderBatchSizes(activeGroupId);
+  else if (activity.id === 'relative-sizing')  activityHTML = renderRelativeSizing(activeGroupId);
 
   body.innerHTML = timerHTML + activityHTML;
   if (activity.id === 'story-mapping') {
     attachStoryMapHandlers(activeGroupId);
+  } else if (activity.id === 'batch-sizes') {
+    attachBatchSizesHandlers(activeGroupId);
+  } else if (activity.id === 'relative-sizing') {
+    // Relative sizing is click-only (no drag); nothing to attach
   } else {
     attachStickyHandlers(activeGroupId, activity.id);
   }
@@ -2018,10 +2228,11 @@ function getActivityData(gid, activityId) {
 }
 
 function stickyHTML(s, gid, activityId) {
-  const widthStyle = s.w ? `;width:${s.w}px` : '';
+  const widthStyle  = s.w ? `;width:${s.w}px`  : '';
+  const heightStyle = s.h ? `;height:${s.h}px` : '';
   return `<div class="sticky ${s.color || 'yellow'}"
        data-id="${s.id}" data-activity="${activityId}"
-       style="left:${s.x}px;top:${s.y}px${widthStyle}">
+       style="left:${s.x}px;top:${s.y}px${widthStyle}${heightStyle}">
     <div class="sticky-handle">
       <button class="sticky-close" onclick="event.stopPropagation(); deleteSticky('${gid}','${activityId}','${s.id}')" title="Delete">×</button>
     </div>
@@ -2035,8 +2246,17 @@ function stickyHTML(s, gid, activityId) {
 
 function autoGrowTextarea(ta) {
   if (!ta) return;
+  const sticky = ta.closest('.sticky');
+  // If the sticky has been manually resized (explicit height), skip auto-grow —
+  // let flex layout fill the available space and allow internal scroll for overflow.
+  if (sticky && sticky.style.height) {
+    ta.style.height = '';
+    ta.style.overflow = 'auto';
+    return;
+  }
   ta.style.height = 'auto';
   ta.style.height = Math.max(60, ta.scrollHeight) + 'px';
+  ta.style.overflow = 'hidden';
 }
 
 function addSticky(gid, activityId, color, defaultZone) {
@@ -2152,7 +2372,18 @@ function onStickyDragStart(e, stickyEl, gid) {
   if (e.target.matches('textarea, button, input')) return;
   const rect = stickyEl.getBoundingClientRect();
   const point = getPointerPos(e);
-  if ((rect.right - point.x < 14) && (rect.bottom - point.y < 14)) return;
+  if ((rect.right - point.x < 16) && (rect.bottom - point.y < 16)) {
+    // User is resizing via bottom-right corner — let CSS resize handle it,
+    // and attach a one-time listener to save the new dimensions on release
+    const onResizeEnd = () => {
+      document.removeEventListener('mouseup', onResizeEnd);
+      document.removeEventListener('touchend', onResizeEnd);
+      setTimeout(() => saveStickyDimensions(stickyEl), 30);
+    };
+    document.addEventListener('mouseup', onResizeEnd);
+    document.addEventListener('touchend', onResizeEnd);
+    return;
+  }
   e.preventDefault();
   const sid = stickyEl.dataset.id;
   const activityId = stickyEl.dataset.activity;
@@ -2183,6 +2414,28 @@ function onStickyDragStart(e, stickyEl, gid) {
   document.addEventListener('mouseup',    onStickyDragEnd);
   document.addEventListener('touchmove',  onStickyDragMove, {passive: false});
   document.addEventListener('touchend',   onStickyDragEnd);
+}
+
+function saveStickyDimensions(stickyEl) {
+  if (!stickyEl || !stickyEl.dataset.id) return;
+  const w = Math.round(stickyEl.offsetWidth);
+  const h = Math.round(stickyEl.offsetHeight);
+  const sid = stickyEl.dataset.id;
+  if (stickyEl.dataset.activity && activeGroupId) {
+    const data = getActivityData(activeGroupId, stickyEl.dataset.activity);
+    const s = data.stickies.find(x => x.id === sid);
+    if (s) {
+      s.w = w; s.h = h;
+      save({ type: 'group', id: activeGroupId });
+    }
+  } else if (stickyEl.dataset.commonList) {
+    const list = getCommonList(stickyEl.dataset.commonList);
+    const s = list ? list.find(x => x.id === sid) : null;
+    if (s) {
+      s.w = w; s.h = h;
+      save({ type: 'common' });
+    }
+  }
 }
 
 function onStickyDragMove(e) {
@@ -2739,6 +2992,181 @@ function onSmStoryBlur(gid, sid, ta) {
   const s = data.stories.find(x => x.id === sid);
   if (s) { s.text = ta.value; save({ type: 'group', id: gid }); }
 }
+
+/* ============================================================
+   ACTIVITY: Experience Batch Sizes  (Leading SAFe)
+   Backlog → 4 stations; drag dots through; track total times.
+   ============================================================ */
+function renderBatchSizes(gid) {
+  const data = state.groups[gid].activities['batch-sizes'];
+  const items = data.items || [];
+  const itemsIn = (loc) => items.filter(i => i.location === loc);
+
+  const itemHTML = (i) => {
+    const num = i.id.replace('item-', '');
+    return `<div class="bs-item" data-id="${i.id}" draggable="true" title="Item ${num}"><span>${num}</span></div>`;
+  };
+
+  const stationZone = (label, locKey, list) => `
+    <div class="bs-station">
+      <div class="bs-zone-header station-h">${label}</div>
+      <div class="bs-zone-body bs-drop" data-zone-id="${locKey}">
+        ${list.map(itemHTML).join('')}
+        ${list.length === 0 ? '<div class="bs-empty">drop items here</div>' : ''}
+      </div>
+    </div>`;
+
+  return `
+    <div class="bs-toolbar">
+      <span class="bs-tb-label">Experience Batch Sizes</span>
+      <span class="bs-help">Drag dots through Backlog → Station 1 → Station 2 → Station 3 → Station 4. Run once for large batches, once for small batches; record both times below.</span>
+      <button class="btn small secondary" style="margin-left:auto" onclick="resetBatchSizes('${gid}')" title="Send all items back to backlog">⟲ Reset items</button>
+    </div>
+
+    <div class="bs-board">
+      <div class="bs-backlog">
+        <div class="bs-zone-header backlog-h">Backlog (start)</div>
+        <div class="bs-zone-body bs-drop" data-zone-id="backlog">
+          ${itemsIn('backlog').map(itemHTML).join('')}
+          ${itemsIn('backlog').length === 0 ? '<div class="bs-empty">backlog empty</div>' : ''}
+        </div>
+      </div>
+      <div class="bs-stations-grid">
+        ${stationZone('Station 1', 'station1', itemsIn('station1'))}
+        ${stationZone('Station 2', 'station2', itemsIn('station2'))}
+        ${stationZone('Station 3', 'station3', itemsIn('station3'))}
+        ${stationZone('Station 4', 'station4', itemsIn('station4'))}
+      </div>
+      <div class="bs-times-bar">
+        <div class="bs-time-block">
+          <div class="bs-time-label">Large batch total time:</div>
+          <input class="bs-time-input" value="${escAttr(data.largeBatchTime || '')}"
+                 placeholder="e.g. 2:30"
+                 onblur="updateBatchSizesTime('${gid}','largeBatchTime',this.value)">
+        </div>
+        <div class="bs-time-block">
+          <div class="bs-time-label">Small batch total time:</div>
+          <input class="bs-time-input" value="${escAttr(data.smallBatchTime || '')}"
+                 placeholder="e.g. 0:45"
+                 onblur="updateBatchSizesTime('${gid}','smallBatchTime',this.value)">
+        </div>
+      </div>
+    </div>`;
+}
+function moveBatchSizesItem(gid, itemId, newLocation) {
+  const data = state.groups[gid].activities['batch-sizes'];
+  const item = data.items.find(i => i.id === itemId);
+  if (!item || item.location === newLocation) return;
+  item.location = newLocation;
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function updateBatchSizesTime(gid, field, value) {
+  const data = state.groups[gid].activities['batch-sizes'];
+  data[field] = value;
+  save({ type: 'group', id: gid });
+}
+function resetBatchSizes(gid) {
+  if (!confirm('Send all items back to the Backlog?')) return;
+  const data = state.groups[gid].activities['batch-sizes'];
+  data.items.forEach(i => { i.location = 'backlog'; });
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function attachBatchSizesHandlers(gid) {
+  const view = document.getElementById('view-group-' + gid);
+  if (!view) return;
+  view.querySelectorAll('.bs-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', item.dataset.id);
+      e.dataTransfer.effectAllowed = 'move';
+      item.classList.add('dragging');
+    });
+    item.addEventListener('dragend', () => item.classList.remove('dragging'));
+  });
+  view.querySelectorAll('.bs-drop').forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      zone.classList.add('drag-over');
+    });
+    zone.addEventListener('dragleave', e => {
+      if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over');
+    });
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const itemId = e.dataTransfer.getData('text/plain');
+      if (!itemId) return;
+      moveBatchSizesItem(gid, itemId, zone.dataset.zoneId);
+    });
+  });
+}
+
+/* ============================================================
+   ACTIVITY: Relative Size Estimating  (Leading SAFe)
+   7 animals; pick a modified-Fibonacci value for each.
+   ============================================================ */
+let sizingPickerCtx = null;
+function renderRelativeSizing(gid) {
+  const data = state.groups[gid].activities['relative-sizing'];
+  const estimates = data.estimates || {};
+  const cardHTML = (a) => {
+    const v = estimates[a.id];
+    const display = (v === null || v === undefined) ? '?' : v;
+    const cls = (v === null || v === undefined) ? 'unset' : '';
+    return `
+      <div class="rs-card">
+        <div class="rs-emoji">${a.emoji}</div>
+        <div class="rs-name">${a.name}</div>
+        <button class="rs-value-btn ${cls}" onclick="showSizingPicker('${gid}','${a.id}',event)">${display}</button>
+      </div>`;
+  };
+  return `
+    <div class="bs-toolbar">
+      <span class="bs-tb-label">Relative Size Estimating</span>
+      <span class="bs-help">Click each card to assign a Fibonacci size value. Compare team estimates afterwards.</span>
+    </div>
+    <div class="rs-grid">
+      ${RELATIVE_SIZING_ANIMALS.map(cardHTML).join('')}
+    </div>`;
+}
+function showSizingPicker(gid, animalId, ev) {
+  ev.stopPropagation();
+  sizingPickerCtx = { gid, animalId };
+  const popover = document.getElementById('sizingPicker');
+  popover.classList.remove('hidden');
+  const x = Math.min(ev.clientX + 6, window.innerWidth - 320);
+  const y = Math.min(ev.clientY + 6, window.innerHeight - 280);
+  popover.style.left = Math.max(8, x) + 'px';
+  popover.style.top  = Math.max(8, y) + 'px';
+  const data = state.groups[gid].activities['relative-sizing'];
+  const current = data.estimates[animalId];
+  popover.querySelectorAll('.sizing-picker-btn').forEach(b => {
+    b.classList.toggle('current', current !== null && current !== undefined && Number(b.dataset.val) === Number(current));
+  });
+}
+function setSizingValue(val) {
+  if (!sizingPickerCtx) return;
+  const { gid, animalId } = sizingPickerCtx;
+  const data = state.groups[gid].activities['relative-sizing'];
+  data.estimates[animalId] = (val === null) ? null : Number(val);
+  save({ type: 'group', id: gid });
+  hideSizingPicker();
+  renderActivityBody();
+}
+function hideSizingPicker() {
+  const p = document.getElementById('sizingPicker');
+  if (p) p.classList.add('hidden');
+  sizingPickerCtx = null;
+}
+document.addEventListener('click', (e) => {
+  const popover = document.getElementById('sizingPicker');
+  if (!popover || popover.classList.contains('hidden')) return;
+  if (popover.contains(e.target)) return;
+  if (e.target.classList && e.target.classList.contains('rs-value-btn')) return;
+  hideSizingPicker();
+});
 
 /* ============================================================
    TIMER  (game-level, trainer controls, all see)
