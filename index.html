@@ -4054,7 +4054,7 @@ function renderFlowMetrics(gid) {
     </div>
     <div class="rte-pill-row">
       ${RTE_FLOW_METRICS.map(m => `
-        <button class="rte-pill ${selected.includes(m)?'active':''}" onclick="toggleFlowMetric('${gid}',${JSON.stringify(m)})">
+        <button class="rte-pill ${selected.includes(m)?'active':''}" data-metric="${escAttr(m)}" onclick="toggleFlowMetric('${gid}', this.dataset.metric)">
           ${selected.includes(m) ? '✓ ' : ''}${m}
         </button>
       `).join('')}
