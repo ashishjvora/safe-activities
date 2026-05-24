@@ -962,6 +962,39 @@
   .bs-tb-label { font-weight: 700; color: #1f5fa8; font-size: 14px; }
   .bs-help { color: #6c7a89; font-size: 12px; max-width: 700px; }
   .bs-board { display: flex; flex-direction: column; gap: 12px; }
+
+  /* Mode toggle (Large / Small) */
+  .bs-mode-toggle {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 700px) { .bs-mode-toggle { grid-template-columns: 1fr; } }
+  .bs-mode-btn {
+    background: white; border: 2px solid #ccd5dd;
+    border-radius: 8px; padding: 12px 16px;
+    cursor: pointer; text-align: left;
+    display: grid; grid-template-columns: auto 1fr; gap: 4px 12px;
+    transition: border-color 0.1s, background 0.1s, transform 0.05s;
+  }
+  .bs-mode-btn:hover { border-color: #1f5fa8; }
+  .bs-mode-btn:active { transform: translateY(1px); }
+  .bs-mode-btn.large.active {
+    border-color: #c0392b; background: #fdedec;
+    box-shadow: 0 2px 6px rgba(192,57,43,0.18);
+  }
+  .bs-mode-btn.small.active {
+    border-color: #229954; background: #f1f8f4;
+    box-shadow: 0 2px 6px rgba(34,153,84,0.18);
+  }
+  .bs-mode-icon { font-size: 28px; grid-row: 1 / 3; align-self: center; }
+  .bs-mode-label { font-size: 15px; font-weight: 700; color: #1a2a3a; }
+  .bs-mode-btn.large.active .bs-mode-label { color: #c0392b; }
+  .bs-mode-btn.small.active .bs-mode-label { color: #229954; }
+  .bs-mode-sub { font-size: 11px; color: #6c7a89; }
+
+  /* Inactive time block (greyed when not in that mode) */
+  .bs-time-block.inactive { opacity: 0.4; }
+  .bs-time-block.inactive .bs-time-input { background: #ecf0f1; cursor: not-allowed; }
   .bs-zone-header {
     color: white; padding: 10px 14px;
     font-weight: 700; font-size: 13px; letter-spacing: 1px;
@@ -1062,6 +1095,195 @@
   .sizing-picker-buttons {
     display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
     margin-bottom: 8px;
+  }
+
+  /* ---------- VERTICAL TABS (used when activities > 5, e.g., SAFe RTE) ---------- */
+  .group-vertical-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 800px) {
+    .group-vertical-layout { grid-template-columns: 1fr; }
+  }
+  .activity-tabs.vertical {
+    display: flex; flex-direction: column;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e1e6ec;
+    padding: 6px;
+    gap: 2px;
+    position: sticky; top: 12px;
+  }
+  .activity-tabs.vertical .activity-tab {
+    text-align: left;
+    border: none; border-radius: 5px;
+    padding: 9px 12px;
+    background: transparent;
+    color: #2c3e50;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .activity-tabs.vertical .activity-tab:hover { background: #f4f7fb; }
+  .activity-tabs.vertical .activity-tab.active {
+    background: #1f5fa8; color: white; font-weight: 600;
+    box-shadow: 0 2px 4px rgba(31,95,168,0.25);
+  }
+
+  /* ---------- RTE generic ---------- */
+  .rte-zone {
+    position: relative;
+    background: #f9fbfd; border: 1px solid #ccd5dd;
+    border-radius: 6px;
+    min-height: 480px;
+    padding: 16px;
+  }
+  .rte-zone.dragging-over { background: #d4e8f7; outline: 2px dashed #1f5fa8; outline-offset: -3px; }
+  .rte-empty { color: #95a5a6; font-style: italic; font-size: 13px; text-align: center; padding: 60px 20px; pointer-events: none; }
+  .rte-empty-small { color: #95a5a6; font-style: italic; font-size: 11px; padding: 8px 6px; pointer-events: none; }
+
+  .rte-grid { display: grid; gap: 10px; align-items: stretch; }
+  .rte-grid.columns-2 { grid-template-columns: 1fr 1fr; }
+  .rte-grid.columns-3 { grid-template-columns: repeat(3, 1fr); }
+  .rte-grid.columns-4 { grid-template-columns: repeat(4, 1fr); }
+  .rte-grid.columns-6 { grid-template-columns: repeat(3, 1fr); } /* 6 zones → 3 across, 2 down */
+  @media (max-width: 850px) {
+    .rte-grid.columns-3, .rte-grid.columns-4, .rte-grid.columns-6 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 550px) {
+    .rte-grid.columns-2, .rte-grid.columns-3, .rte-grid.columns-4, .rte-grid.columns-6 { grid-template-columns: 1fr; }
+  }
+  .rte-lane {
+    display: flex; flex-direction: column;
+    border: 1px solid #ccd5dd; border-radius: 6px;
+    overflow: hidden;
+    background: white;
+    min-height: 240px;
+  }
+  .rte-lane-header {
+    background: #1f5fa8; color: white;
+    padding: 8px 12px; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .rte-lane-body {
+    position: relative; flex: 1;
+    padding: 12px;
+    min-height: 180px;
+    background: #f9fbfd;
+    transition: background 0.1s, outline 0.1s;
+  }
+  .rte-lane-body.dragging-over { background: #d4e8f7; outline: 2px dashed #1f5fa8; outline-offset: -3px; }
+
+  /* ---------- ROAM Risks (Activity 4) ---------- */
+  .roam-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;
+  }
+  .roam-card {
+    background: white; border: 1px solid #d1d8e0; border-radius: 8px;
+    padding: 12px; position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+  }
+  .roam-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+  .roam-row:last-child { margin-bottom: 0; }
+  .roam-cat-block { display: flex; align-items: center; gap: 8px; }
+  .roam-label {
+    font-size: 10px; font-weight: 700; color: #1f5fa8;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .roam-select {
+    padding: 5px 8px; border: 1px solid #ccd5dd; border-radius: 4px;
+    font-size: 13px; background: white; cursor: pointer; font-family: inherit;
+  }
+  .roam-badge {
+    margin-left: auto; padding: 4px 10px; border-radius: 12px;
+    color: white; font-size: 11px; font-weight: 700; letter-spacing: 0.4px;
+  }
+  .roam-text {
+    width: 100%; border: 1px solid #ccd5dd;
+    padding: 8px 10px; border-radius: 4px;
+    font-family: inherit; font-size: 13px; resize: none;
+    min-height: 60px; line-height: 1.45; outline: none;
+    overflow: hidden;
+  }
+  .roam-text:focus { border-color: #1f5fa8; }
+  .roam-close {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.08); border: none; color: #555;
+    cursor: pointer; font-size: 12px; line-height: 1;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.1s;
+  }
+  .roam-card:hover .roam-close { opacity: 1; }
+  .roam-close:hover { background: rgba(192,57,43,0.85); color: white; }
+
+  /* ---------- Pill row (event/metric pickers) ---------- */
+  .rte-event-select { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #6c7a89; }
+  .rte-event-select select {
+    padding: 5px 8px; border: 1px solid #ccd5dd; border-radius: 4px;
+    font-size: 13px; background: white; cursor: pointer; font-family: inherit;
+  }
+  .rte-pill-row {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .rte-pill {
+    background: white; border: 2px solid #ccd5dd;
+    color: #2c3e50;
+    padding: 8px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: border-color 0.1s, background 0.1s, color 0.1s;
+  }
+  .rte-pill:hover { border-color: #1f5fa8; }
+  .rte-pill.active { background: #1f5fa8; color: white; border-color: #1f5fa8; }
+
+  /* ---------- Flow Accelerators table (Activity 7) ---------- */
+  .acc-table-wrap { overflow-x: auto; }
+  .acc-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    background: white; border: 1px solid #ccd5dd; border-radius: 8px;
+    overflow: hidden;
+  }
+  .acc-table thead th {
+    background: #1f5fa8; color: white;
+    padding: 12px 14px; text-align: left;
+    font-size: 12px; letter-spacing: 0.5px;
+  }
+  .acc-table tbody td {
+    padding: 14px; border-top: 1px solid #e1e6ec;
+    font-size: 13px; vertical-align: top;
+  }
+  .acc-table tbody tr:nth-child(even) { background: #f9fbfd; }
+  .acc-problem-num { font-weight: 700; color: #1f5fa8; margin-right: 4px; }
+  .acc-options { display: flex; flex-wrap: wrap; gap: 6px; }
+  .acc-opt {
+    background: white; border: 1.5px solid #ccd5dd;
+    padding: 6px 12px; border-radius: 16px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    color: #2c3e50;
+    transition: border-color 0.1s, background 0.1s, color 0.1s;
+  }
+  .acc-opt:hover { border-color: #1f5fa8; }
+  .acc-opt.selected { background: #229954; color: white; border-color: #229954; }
+
+  /* ---------- Sticky voting (Activity 8) ---------- */
+  .sticky-vote {
+    position: absolute; bottom: 4px; right: 4px;
+    display: flex; align-items: center; gap: 2px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 12px;
+    padding: 1px 3px;
+  }
+  .sticky-vote-btn {
+    background: rgba(0,0,0,0.05); border: none; cursor: pointer;
+    width: 22px; height: 22px; border-radius: 50%;
+    font-size: 13px; display: flex; align-items: center; justify-content: center;
+    padding: 0;
+  }
+  .sticky-vote-btn:hover { background: rgba(31,95,168,0.85); color: white; }
+  .sticky-vote-count {
+    font-weight: 700; font-size: 12px; padding: 0 4px;
+    color: #1f5fa8; min-width: 16px; text-align: center;
   }
 </style>
 </head>
@@ -1234,6 +1456,24 @@ const COURSES = {
       { id: 'wsjf',            label: 'WSJF Prioritization',     built: true }
     ],
     enabled: true
+  },
+  RTE: {
+    id: 'RTE',
+    name: 'SAFe RTE Activities',
+    fullName: 'Release Train Engineer',
+    description: 'Collaborative activities for Release Train Engineer training.',
+    activities: [
+      { id: 'rte-responsibilities', label: 'RTE Responsibilities',        built: true },
+      { id: 'art-collaborations',   label: 'Key ART Collaborations',       built: true },
+      { id: 'planning-board',       label: 'Reading ART Planning Board',   built: true },
+      { id: 'roam-risks',           label: 'ROAM ART PI Risks',            built: true },
+      { id: 'flow-events',          label: 'Mapping Flow of Events',       built: true },
+      { id: 'flow-metrics',         label: 'Measuring Flow of Value',      built: true },
+      { id: 'flow-accelerators',    label: 'Flow Accelerators',            built: true },
+      { id: 'problem-solving',      label: 'Problem Solving Workshop',     built: true },
+      { id: 'group-dynamics',       label: 'RTE & ART Group Dynamics',     built: true }
+    ],
+    enabled: true
   }
 };
 
@@ -1273,7 +1513,7 @@ function makeBatchSizesItems() {
   return items;
 }
 function defaultBatchSizesState() {
-  return { items: makeBatchSizesItems(), largeBatchTime: '', smallBatchTime: '' };
+  return { items: makeBatchSizesItems(), largeBatchTime: '', smallBatchTime: '', mode: null };
 }
 const RELATIVE_SIZING_ANIMALS = [
   { id: 'chicken',  name: 'Chicken',   emoji: '🐔' },
@@ -1285,6 +1525,48 @@ const RELATIVE_SIZING_ANIMALS = [
   { id: 'giraffe',  name: 'Giraffe',   emoji: '🦒' }
 ];
 const RELATIVE_SIZING_VALUES = [1, 2, 3, 5, 8, 13, 20, 40, 60, 100];
+
+const RTE_FLOW_METRICS = ['Flow Distribution', 'Flow Velocity', 'Flow Time', 'Flow Load', 'Flow Efficiency', 'Flow Predictability'];
+const RTE_ART_EVENTS = ['Coach Sync', 'PO Sync', 'System Demo'];
+const RTE_FLOW_ACCELERATORS = [
+  { id: 'visualize-wip',         label: 'Visualize and limit WIP' },
+  { id: 'address-bottlenecks',   label: 'Address bottlenecks' },
+  { id: 'minimize-handoffs',     label: 'Minimize handoffs and dependencies' },
+  { id: 'faster-feedback',       label: 'Get faster feedback' },
+  { id: 'smaller-batches',       label: 'Work in smaller batches' },
+  { id: 'reduce-queue-length',   label: 'Reduce queue length' },
+  { id: 'time-in-the-zone',      label: 'Optimize "time in the zone"' },
+  { id: 'remediate-legacy',      label: 'Remediate legacy policies and practices' }
+];
+const RTE_PROBLEMS = [
+  'Teams consistently deprioritize enablers and tech debt because Business Owners push for more features each PI. The ART\'s ability to integrate and release reliably is degrading.',
+  'Team and ART velocity varies wildly PI to PI. The RTE suspects hidden dependencies and uneven workload distribution across teams.',
+  'Features spend months in development before they\'re validated with customers. System Demos reveal integration surprises late in the PI.',
+  'The ART Kanban is cluttered — work enters faster than it exits. Teams feel busy, but nothing is getting done.',
+  'Shared services and test environments create long waits between development and integration. The same blockers reappear every PI.',
+  'Business Owners are frustrated that planned PI Objectives are rarely achieved even though teams feel productive. The RTE sees mismatched cadence and inconsistent sync practices.'
+];
+const ROAM_CATEGORIES = [
+  { id: 'resolved',  label: 'Resolved',  color: '#27ae60' },
+  { id: 'owned',     label: 'Owned',     color: '#2980b9' },
+  { id: 'mitigated', label: 'Mitigated', color: '#f39c12' },
+  { id: 'accepted',  label: 'Accepted',  color: '#7f8c8d' }
+];
+
+function defaultRteActivityState() {
+  return {
+    'rte-responsibilities': { stickies: [] },
+    'art-collaborations':   { stickies: [] },
+    'planning-board':       { stickies: [] },
+    'roam-risks':           { risks: [] },
+    'flow-events':          { event: '', stickies: [] },
+    'flow-metrics':         { metric: '', stickies: [] },
+    'flow-accelerators':    { selections: {} },
+    'problem-solving':      { stickies: [] },
+    'group-dynamics':       { stickies: [] }
+  };
+}
+
 function defaultRelativeSizingState() {
   const estimates = {};
   RELATIVE_SIZING_ANIMALS.forEach(a => { estimates[a.id] = null; });
@@ -1299,6 +1581,9 @@ function defaultGroupActivityState(courseId) {
       'relative-sizing':  defaultRelativeSizingState(),
       'wsjf':             { rows: [] }
     };
+  }
+  if (courseId === 'RTE') {
+    return defaultRteActivityState();
   }
   // POPM (default)
   const TTC_EPIC = 'Develop a solution to allow TTC customers to purchase supplemental insurance for packages';
@@ -1369,6 +1654,7 @@ function ensureStateStructure() {
       }
       if (typeof acts['batch-sizes'].largeBatchTime !== 'string') acts['batch-sizes'].largeBatchTime = '';
       if (typeof acts['batch-sizes'].smallBatchTime !== 'string') acts['batch-sizes'].smallBatchTime = '';
+      if (acts['batch-sizes'].mode !== 'large' && acts['batch-sizes'].mode !== 'small') acts['batch-sizes'].mode = null;
 
       if (!acts['feature-storming']) acts['feature-storming'] = { epic: { title:'', description:'' }, stickies: [] };
       if (!acts['feature-storming'].epic) acts['feature-storming'].epic = { title:'', description:'' };
@@ -1382,6 +1668,26 @@ function ensureStateStructure() {
 
       if (!acts['wsjf']) acts['wsjf'] = { rows: [] };
       if (!Array.isArray(acts['wsjf'].rows)) acts['wsjf'].rows = [];
+      return;
+    }
+
+    if (state.course === 'RTE') {
+      ['rte-responsibilities','art-collaborations','planning-board','problem-solving','group-dynamics'].forEach(k => {
+        if (!acts[k]) acts[k] = { stickies: [] };
+        if (!Array.isArray(acts[k].stickies)) acts[k].stickies = [];
+      });
+      if (!acts['roam-risks']) acts['roam-risks'] = { risks: [] };
+      if (!Array.isArray(acts['roam-risks'].risks)) acts['roam-risks'].risks = [];
+      if (!acts['flow-events']) acts['flow-events'] = { event: '', stickies: [] };
+      if (typeof acts['flow-events'].event !== 'string') acts['flow-events'].event = '';
+      if (!Array.isArray(acts['flow-events'].stickies)) acts['flow-events'].stickies = [];
+      if (!acts['flow-metrics']) acts['flow-metrics'] = { metric: '', stickies: [] };
+      if (typeof acts['flow-metrics'].metric !== 'string') acts['flow-metrics'].metric = '';
+      if (!Array.isArray(acts['flow-metrics'].stickies)) acts['flow-metrics'].stickies = [];
+      if (!acts['flow-accelerators']) acts['flow-accelerators'] = { selections: {} };
+      if (!acts['flow-accelerators'].selections || typeof acts['flow-accelerators'].selections !== 'object') {
+        acts['flow-accelerators'].selections = {};
+      }
       return;
     }
 
@@ -1842,6 +2148,15 @@ function renderGroupView(gid) {
   const g = GROUPS.find(x => x.id === gid);
   const view = document.getElementById('view-group-' + gid);
   const course = COURSES[state.course] || COURSES.POPM;
+  const useVertical = course.activities.length > 5;
+
+  const tabsHTML = `
+    <div class="activity-tabs ${useVertical ? 'vertical' : ''}">
+      ${course.activities.map(a => `
+        <button class="activity-tab ${activeActivityId===a.id?'active':''} ${a.built?'':'placeholder'}"
+                onclick="setActiveActivity('${a.id}')">${a.label}${a.built?'':' (Coming soon)'}</button>
+      `).join('')}
+    </div>`;
 
   view.innerHTML = `
     <div class="group-header">
@@ -1850,13 +2165,15 @@ function renderGroupView(gid) {
         <button class="btn secondary" onclick="showGameMenu()">← Back to Group Menu</button>
       </div>
     </div>
-    <div class="activity-tabs">
-      ${course.activities.map(a => `
-        <button class="activity-tab ${activeActivityId===a.id?'active':''} ${a.built?'':'placeholder'}"
-                onclick="setActiveActivity('${a.id}')">${a.label}${a.built?'':' (Coming soon)'}</button>
-      `).join('')}
-    </div>
-    <div class="activity-body"></div>
+    ${useVertical ? `
+      <div class="group-vertical-layout">
+        ${tabsHTML}
+        <div class="activity-body"></div>
+      </div>
+    ` : `
+      ${tabsHTML}
+      <div class="activity-body"></div>
+    `}
   `;
   renderActivityBody();
 }
@@ -2202,14 +2519,25 @@ function renderActivityBody() {
   else if (activity.id === 'story-mapping')    activityHTML = renderStoryMapping(activeGroupId);
   else if (activity.id === 'batch-sizes')      activityHTML = renderBatchSizes(activeGroupId);
   else if (activity.id === 'relative-sizing')  activityHTML = renderRelativeSizing(activeGroupId);
+  else if (activity.id === 'rte-responsibilities') activityHTML = renderRteResponsibilities(activeGroupId);
+  else if (activity.id === 'art-collaborations')   activityHTML = renderArtCollaborations(activeGroupId);
+  else if (activity.id === 'planning-board')       activityHTML = renderPlanningBoard(activeGroupId);
+  else if (activity.id === 'roam-risks')           activityHTML = renderRoamRisks(activeGroupId);
+  else if (activity.id === 'flow-events')          activityHTML = renderFlowEvents(activeGroupId);
+  else if (activity.id === 'flow-metrics')         activityHTML = renderFlowMetrics(activeGroupId);
+  else if (activity.id === 'flow-accelerators')    activityHTML = renderFlowAccelerators(activeGroupId);
+  else if (activity.id === 'problem-solving')      activityHTML = renderProblemSolving(activeGroupId);
+  else if (activity.id === 'group-dynamics')       activityHTML = renderGroupDynamics(activeGroupId);
 
   body.innerHTML = timerHTML + activityHTML;
   if (activity.id === 'story-mapping') {
     attachStoryMapHandlers(activeGroupId);
   } else if (activity.id === 'batch-sizes') {
     attachBatchSizesHandlers(activeGroupId);
-  } else if (activity.id === 'relative-sizing') {
-    // Relative sizing is click-only (no drag); nothing to attach
+  } else if (activity.id === 'relative-sizing' || activity.id === 'flow-accelerators') {
+    // No stickies — just inputs/buttons
+  } else if (activity.id === 'roam-risks') {
+    attachRoamHandlers(activeGroupId);
   } else {
     attachStickyHandlers(activeGroupId, activity.id);
   }
@@ -3000,6 +3328,7 @@ function onSmStoryBlur(gid, sid, ta) {
 function renderBatchSizes(gid) {
   const data = state.groups[gid].activities['batch-sizes'];
   const items = data.items || [];
+  const mode = data.mode || null;
   const itemsIn = (loc) => items.filter(i => i.location === loc);
 
   const itemHTML = (i) => {
@@ -3016,11 +3345,32 @@ function renderBatchSizes(gid) {
       </div>
     </div>`;
 
+  const modeHint = mode === 'large'
+    ? '<strong>Large Batch mode:</strong> all 10 items must be present at a station before any item can move to the next station.'
+    : mode === 'small'
+    ? '<strong>Small Batch mode:</strong> move items freely, one at a time, through the stations.'
+    : 'Pick a batch mode before running the simulation. Switch modes between runs (click Reset items in between).';
+
   return `
     <div class="bs-toolbar">
       <span class="bs-tb-label">Experience Batch Sizes</span>
-      <span class="bs-help">Drag dots through Backlog → Station 1 → Station 2 → Station 3 → Station 4. Run once for large batches, once for small batches; record both times below.</span>
+      <span class="bs-help">${modeHint}</span>
       <button class="btn small secondary" style="margin-left:auto" onclick="resetBatchSizes('${gid}')" title="Send all items back to backlog">⟲ Reset items</button>
+    </div>
+
+    <div class="bs-mode-toggle">
+      <button class="bs-mode-btn large ${mode === 'large' ? 'active' : ''}"
+              onclick="setBatchMode('${gid}','large')">
+        <span class="bs-mode-icon">📦</span>
+        <span class="bs-mode-label">Large Batch</span>
+        <span class="bs-mode-sub">all 10 must collect at each station before moving on</span>
+      </button>
+      <button class="bs-mode-btn small ${mode === 'small' ? 'active' : ''}"
+              onclick="setBatchMode('${gid}','small')">
+        <span class="bs-mode-icon">📥</span>
+        <span class="bs-mode-label">Small Batch</span>
+        <span class="bs-mode-sub">move items freely through stations</span>
+      </button>
     </div>
 
     <div class="bs-board">
@@ -3038,25 +3388,63 @@ function renderBatchSizes(gid) {
         ${stationZone('Station 4', 'station4', itemsIn('station4'))}
       </div>
       <div class="bs-times-bar">
-        <div class="bs-time-block">
+        <div class="bs-time-block ${mode === 'small' ? 'inactive' : ''}">
           <div class="bs-time-label">Large batch total time:</div>
           <input class="bs-time-input" value="${escAttr(data.largeBatchTime || '')}"
                  placeholder="e.g. 2:30"
+                 ${mode === 'small' ? 'disabled' : ''}
                  onblur="updateBatchSizesTime('${gid}','largeBatchTime',this.value)">
         </div>
-        <div class="bs-time-block">
+        <div class="bs-time-block ${mode === 'large' ? 'inactive' : ''}">
           <div class="bs-time-label">Small batch total time:</div>
           <input class="bs-time-input" value="${escAttr(data.smallBatchTime || '')}"
                  placeholder="e.g. 0:45"
+                 ${mode === 'large' ? 'disabled' : ''}
                  onblur="updateBatchSizesTime('${gid}','smallBatchTime',this.value)">
         </div>
       </div>
     </div>`;
 }
+function setBatchMode(gid, mode) {
+  const data = state.groups[gid].activities['batch-sizes'];
+  data.mode = (mode === 'large' || mode === 'small') ? mode : null;
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function canMoveBatchSizesItem(data, sourceLocation, destLocation) {
+  // Small batch (or no mode): no constraint
+  if (data.mode !== 'large') return { ok: true };
+  // Same station or backward move: always allowed (corrections, reset-like undo)
+  const order = ['backlog', 'station1', 'station2', 'station3', 'station4'];
+  const srcIdx = order.indexOf(sourceLocation);
+  const dstIdx = order.indexOf(destLocation);
+  if (srcIdx < 0 || dstIdx < 0) return { ok: true };
+  if (dstIdx <= srcIdx) return { ok: true };
+  // Skip-ahead (e.g., station1 → station3) always blocked in large-batch mode
+  if (dstIdx > srcIdx + 1) {
+    return { ok: false, reason: `In Large Batch mode you can only move one station forward at a time.` };
+  }
+  // Forward move by one step. Allowed if:
+  //   - destination already has items (the batch transfer has started), OR
+  //   - source station currently holds all 10 items (batch is ready to transfer)
+  const destCount = data.items.filter(i => i.location === destLocation).length;
+  if (destCount > 0) return { ok: true };
+  const srcCount = data.items.filter(i => i.location === sourceLocation).length;
+  if (srcCount === 10) return { ok: true };
+  return { ok: false, reason: `Large Batch mode: all 10 items must be in ${labelFor(sourceLocation)} before moving to ${labelFor(destLocation)}. Currently ${srcCount} of 10.` };
+}
+function labelFor(loc) {
+  return ({ backlog: 'Backlog', station1: 'Station 1', station2: 'Station 2', station3: 'Station 3', station4: 'Station 4' })[loc] || loc;
+}
 function moveBatchSizesItem(gid, itemId, newLocation) {
   const data = state.groups[gid].activities['batch-sizes'];
   const item = data.items.find(i => i.id === itemId);
   if (!item || item.location === newLocation) return;
+  const check = canMoveBatchSizesItem(data, item.location, newLocation);
+  if (!check.ok) {
+    showToast(check.reason, false);
+    return;
+  }
   item.location = newLocation;
   save({ type: 'group', id: gid });
   renderActivityBody();
@@ -3167,6 +3555,365 @@ document.addEventListener('click', (e) => {
   if (e.target.classList && e.target.classList.contains('rs-value-btn')) return;
   hideSizingPicker();
 });
+
+/* ============================================================
+   SAFE RTE — generic "single-zone stickies" helper
+   ============================================================ */
+function renderRteStickyZone(gid, activityId, opts) {
+  const data = state.groups[gid].activities[activityId];
+  const stickies = (data.stickies || []);
+  const inZone = (z) => stickies.filter(s => s.zone === z);
+  const sticky = (s) => stickyHTML(s, gid, activityId);
+
+  const toolbar = `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">${opts.title}</span>
+      <button class="fs-add-btn"        onclick="addSticky('${gid}','${activityId}','yellow','${opts.zones[0].id}')">+ Yellow</button>
+      <button class="fs-add-btn green"  onclick="addSticky('${gid}','${activityId}','green','${opts.zones[0].id}')">+ Green</button>
+      <button class="fs-add-btn blue"   onclick="addSticky('${gid}','${activityId}','blue','${opts.zones[0].id}')">+ Blue</button>
+      <button class="fs-add-btn pink"   onclick="addSticky('${gid}','${activityId}','pink','${opts.zones[0].id}')">+ Pink</button>
+      <span class="fs-help-text">${opts.help || ''}</span>
+    </div>`;
+
+  if (opts.singleZone) {
+    return toolbar + `
+      <div class="rte-zone drop-target" data-zone="${opts.zones[0].id}" data-group="${gid}" data-activity="${activityId}">
+        ${inZone(opts.zones[0].id).map(sticky).join('')}
+        ${inZone(opts.zones[0].id).length === 0 ? '<div class="rte-empty">Add stickies (use buttons above or double-click here). Drag freely.</div>' : ''}
+      </div>`;
+  }
+
+  // Multi-zone (columns or rows)
+  const gridClass = opts.layout === 'columns' ? 'rte-grid columns-' + opts.zones.length : 'rte-grid rows';
+  const zoneHTML = (z) => `
+    <div class="rte-lane">
+      <div class="rte-lane-header" ${z.color ? `style="background:${z.color}"` : ''}>${z.label}</div>
+      <div class="rte-lane-body drop-target" data-zone="${z.id}" data-group="${gid}" data-activity="${activityId}">
+        ${inZone(z.id).map(sticky).join('')}
+        ${inZone(z.id).length === 0 ? `<div class="rte-empty-small">drop here</div>` : ''}
+      </div>
+    </div>`;
+  return toolbar + `<div class="${gridClass}">${opts.zones.map(zoneHTML).join('')}</div>`;
+}
+
+/* ---------- Activity 1: RTE Responsibilities (single zone, free stickies) ---------- */
+function renderRteResponsibilities(gid) {
+  return renderRteStickyZone(gid, 'rte-responsibilities', {
+    title: 'Explore RTE Responsibilities',
+    help: 'Brainstorm what the RTE does. Drag stickies freely; double-click to add.',
+    singleZone: true,
+    zones: [{ id: 'main' }]
+  });
+}
+
+/* ---------- Activity 2: Key ART Collaborations (2 columns) ---------- */
+function renderArtCollaborations(gid) {
+  return renderRteStickyZone(gid, 'art-collaborations', {
+    title: 'Key ART Collaborations',
+    help: 'Pick the group the trainer assigned, then fill both columns.',
+    layout: 'columns',
+    zones: [
+      { id: 'patterns',   label: 'Possible anti-patterns that can arise',  color: '#c0392b' },
+      { id: 'mitigations',label: 'How an RTE can mitigate these',           color: '#229954' }
+    ]
+  });
+}
+
+/* ---------- Activity 3: Reading ART Planning Board (3 examples × 2 columns) ---------- */
+function renderPlanningBoard(gid) {
+  return renderRteStickyZone(gid, 'planning-board', {
+    title: 'Reading ART Planning Board',
+    help: 'For each of the 3 planning board examples the trainer shares, note problems and possible solutions.',
+    layout: 'columns',
+    zones: [
+      { id: 'ex1-problems',  label: 'Example 1 — Problems',  color: '#c0392b' },
+      { id: 'ex1-solutions', label: 'Example 1 — Solutions', color: '#229954' },
+      { id: 'ex2-problems',  label: 'Example 2 — Problems',  color: '#c0392b' },
+      { id: 'ex2-solutions', label: 'Example 2 — Solutions', color: '#229954' },
+      { id: 'ex3-problems',  label: 'Example 3 — Problems',  color: '#c0392b' },
+      { id: 'ex3-solutions', label: 'Example 3 — Solutions', color: '#229954' }
+    ]
+  });
+}
+
+/* ---------- Activity 9: RTE & ART Group Dynamics (4 columns) ---------- */
+function renderGroupDynamics(gid) {
+  return renderRteStickyZone(gid, 'group-dynamics', {
+    title: 'RTE & ART Group Dynamics — Tuckman stages',
+    help: 'For each stage, what would you observe that tells you the ART is here?',
+    layout: 'columns',
+    zones: [
+      { id: 'forming',    label: 'Forming',    color: '#3498db' },
+      { id: 'storming',   label: 'Storming',   color: '#e67e22' },
+      { id: 'norming',    label: 'Norming',    color: '#f1c40f' },
+      { id: 'performing', label: 'Performing', color: '#229954' }
+    ]
+  });
+}
+
+/* ---------- Activity 4: ROAM ART PI Risks ---------- */
+function renderRoamRisks(gid) {
+  const data = state.groups[gid].activities['roam-risks'];
+  const risks = data.risks || [];
+  const cardHTML = (r) => {
+    const cat = ROAM_CATEGORIES.find(c => c.id === r.category);
+    const badgeColor = cat ? cat.color : '#7f8c8d';
+    const badgeLabel = cat ? cat.label : 'Pick a category';
+    return `
+      <div class="roam-card" data-id="${r.id}">
+        <button class="roam-close" onclick="event.stopPropagation(); deleteRoamRisk('${gid}','${r.id}')" title="Delete">×</button>
+        <div class="roam-row">
+          <div class="roam-cat-block">
+            <label class="roam-label">ROAM</label>
+            <select class="roam-select" onchange="updateRoamRisk('${gid}','${r.id}','category',this.value)">
+              <option value="" ${!r.category?'selected':''}>— Pick —</option>
+              ${ROAM_CATEGORIES.map(c => `<option value="${c.id}" ${r.category===c.id?'selected':''}>${c.label}</option>`).join('')}
+            </select>
+          </div>
+          <span class="roam-badge" style="background:${badgeColor}">${badgeLabel}</span>
+        </div>
+        <div class="roam-row">
+          <label class="roam-label">Risk + why</label>
+          <textarea class="roam-text" placeholder="Describe the risk, then explain why this ROAM decision..."
+                    oninput="onRoamRiskInput('${gid}','${r.id}', this)"
+                    onblur="onRoamRiskBlur('${gid}','${r.id}', this)">${escHTML(r.reason || '')}</textarea>
+        </div>
+      </div>`;
+  };
+  return `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">ROAM ART PI Risks</span>
+      <span class="fs-help-text">Categorise each risk as Resolved, Owned, Mitigated, or Accepted — and explain why.</span>
+      <button class="btn small" style="margin-left:auto" onclick="addRoamRisk('${gid}')">+ Add Risk</button>
+    </div>
+    <div class="roam-grid">
+      ${risks.length ? risks.map(cardHTML).join('') : '<div class="rte-empty" style="grid-column:1/-1">No risks yet. Click "+ Add Risk".</div>'}
+    </div>`;
+}
+function addRoamRisk(gid) {
+  const data = state.groups[gid].activities['roam-risks'];
+  if (!Array.isArray(data.risks)) data.risks = [];
+  data.risks.push({ id: uid(), category: '', reason: '' });
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function deleteRoamRisk(gid, rid) {
+  const data = state.groups[gid].activities['roam-risks'];
+  data.risks = data.risks.filter(r => r.id !== rid);
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function updateRoamRisk(gid, rid, field, value) {
+  const data = state.groups[gid].activities['roam-risks'];
+  const r = data.risks.find(x => x.id === rid);
+  if (!r) return;
+  r[field] = value;
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+function onRoamRiskInput(gid, rid, ta) {
+  const data = state.groups[gid].activities['roam-risks'];
+  const r = data.risks.find(x => x.id === rid);
+  if (r) r.reason = ta.value;
+  autoGrowTextarea(ta);
+}
+function onRoamRiskBlur(gid, rid, ta) {
+  const data = state.groups[gid].activities['roam-risks'];
+  const r = data.risks.find(x => x.id === rid);
+  if (r) { r.reason = ta.value; save({ type: 'group', id: gid }); }
+}
+function attachRoamHandlers(gid) {
+  const view = document.getElementById('view-group-' + gid);
+  if (!view) return;
+  view.querySelectorAll('.roam-text').forEach(autoGrowTextarea);
+}
+
+/* ---------- Activity 5: Mapping the Flow of Events ---------- */
+function renderFlowEvents(gid) {
+  const data = state.groups[gid].activities['flow-events'];
+  const ZONES = [
+    { id: 'purpose',     label: 'Purpose & agenda' },
+    { id: 'attendees',   label: 'Attendees' },
+    { id: 'io',          label: 'Inputs & outputs' },
+    { id: 'antipatterns',label: 'Anti-patterns' },
+    { id: 'success',     label: 'Success criteria' },
+    { id: 'tips',        label: 'Tips' }
+  ];
+  const stickies = data.stickies || [];
+  const sticky = (s) => stickyHTML(s, gid, 'flow-events');
+  const inZone = (z) => stickies.filter(s => s.zone === z);
+
+  const eventOptions = RTE_ART_EVENTS.map(e => `<option value="${e}" ${data.event===e?'selected':''}>${e}</option>`).join('');
+  return `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">Mapping the Flow of Events</span>
+      <div class="rte-event-select">
+        <label>ART event:</label>
+        <select onchange="updateFlowEvent('${gid}','event',this.value)">
+          <option value="">— Pick one —</option>
+          ${eventOptions}
+        </select>
+      </div>
+      <button class="fs-add-btn" onclick="addSticky('${gid}','flow-events','yellow','purpose')">+ Yellow</button>
+      <button class="fs-add-btn green" onclick="addSticky('${gid}','flow-events','green','purpose')">+ Green</button>
+      <span class="fs-help-text">Pick an event, then drop stickies into the lanes below.</span>
+    </div>
+    <div class="rte-grid columns-3">
+      ${ZONES.map(z => `
+        <div class="rte-lane">
+          <div class="rte-lane-header">${z.label}</div>
+          <div class="rte-lane-body drop-target" data-zone="${z.id}" data-group="${gid}" data-activity="flow-events">
+            ${inZone(z.id).map(sticky).join('')}
+            ${inZone(z.id).length === 0 ? '<div class="rte-empty-small">drop here</div>' : ''}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+function updateFlowEvent(gid, field, value) {
+  const data = state.groups[gid].activities['flow-events'];
+  data[field] = value;
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+
+/* ---------- Activity 6: Measuring the Flow of Value ---------- */
+function renderFlowMetrics(gid) {
+  const data = state.groups[gid].activities['flow-metrics'];
+  const ZONES = [
+    { id: 'purpose', label: 'Purpose — what question does this metric answer?' },
+    { id: 'source',  label: 'Data source — where do you collect it?' },
+    { id: 'action',  label: 'Action — how would you use the result?' }
+  ];
+  const stickies = data.stickies || [];
+  const sticky = (s) => stickyHTML(s, gid, 'flow-metrics');
+  const inZone = (z) => stickies.filter(s => s.zone === z);
+
+  return `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">Measuring the Flow of Value</span>
+      <span class="fs-help-text">Pick the metric your group thinks provides the most value, then capture purpose / source / action.</span>
+    </div>
+    <div class="rte-pill-row">
+      ${RTE_FLOW_METRICS.map(m => `
+        <button class="rte-pill ${data.metric===m?'active':''}" onclick="updateFlowMetric('${gid}',${JSON.stringify(m)})">${m}</button>
+      `).join('')}
+    </div>
+    <div class="rte-grid columns-3">
+      ${ZONES.map(z => `
+        <div class="rte-lane">
+          <div class="rte-lane-header">${z.label}</div>
+          <div class="rte-lane-body drop-target" data-zone="${z.id}" data-group="${gid}" data-activity="flow-metrics">
+            ${inZone(z.id).map(sticky).join('')}
+            ${inZone(z.id).length === 0 ? '<div class="rte-empty-small">drop or dbl-click to add</div>' : ''}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+function updateFlowMetric(gid, value) {
+  const data = state.groups[gid].activities['flow-metrics'];
+  data.metric = value;
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+
+/* ---------- Activity 7: Flow Accelerators (multi-select per problem row) ---------- */
+function renderFlowAccelerators(gid) {
+  const data = state.groups[gid].activities['flow-accelerators'];
+  const selections = data.selections || {};
+  return `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">Flow Accelerators</span>
+      <span class="fs-help-text">For each problem, click one or more accelerators that would address it.</span>
+    </div>
+    <div class="acc-table-wrap">
+      <table class="acc-table">
+        <thead>
+          <tr>
+            <th style="width:50%">Problem Surfaced</th>
+            <th>Flow Accelerator(s)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${RTE_PROBLEMS.map((p, idx) => {
+            const key = 'p' + (idx + 1);
+            const sel = Array.isArray(selections[key]) ? selections[key] : [];
+            return `
+              <tr>
+                <td><span class="acc-problem-num">${idx+1}.</span> ${escHTML(p)}</td>
+                <td>
+                  <div class="acc-options">
+                    ${RTE_FLOW_ACCELERATORS.map(a => `
+                      <button class="acc-opt ${sel.includes(a.id)?'selected':''}"
+                              onclick="toggleAccelerator('${gid}','${key}','${a.id}')">${a.label}</button>
+                    `).join('')}
+                  </div>
+                </td>
+              </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+function toggleAccelerator(gid, problemKey, acceleratorId) {
+  const data = state.groups[gid].activities['flow-accelerators'];
+  if (!data.selections) data.selections = {};
+  if (!Array.isArray(data.selections[problemKey])) data.selections[problemKey] = [];
+  const list = data.selections[problemKey];
+  const idx = list.indexOf(acceleratorId);
+  if (idx >= 0) list.splice(idx, 1);
+  else list.push(acceleratorId);
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
+
+/* ---------- Activity 8: Problem Solving Workshop (stickies + voting) ---------- */
+function renderProblemSolving(gid) {
+  const data = state.groups[gid].activities['problem-solving'];
+  const stickies = data.stickies || [];
+  // Render with a vote ribbon overlay on each sticky.
+  const sticky = (s) => {
+    const widthStyle  = s.w ? `;width:${s.w}px`  : '';
+    const heightStyle = s.h ? `;height:${s.h}px` : '';
+    const votes = Number(s.votes || 0);
+    return `<div class="sticky ${s.color || 'yellow'}"
+         data-id="${s.id}" data-activity="problem-solving"
+         style="left:${s.x}px;top:${s.y}px${widthStyle}${heightStyle}">
+      <div class="sticky-handle">
+        <button class="sticky-close" onclick="event.stopPropagation(); deleteSticky('${gid}','problem-solving','${s.id}')" title="Delete">×</button>
+      </div>
+      <textarea class="sticky-text" draggable="false"
+                oninput="onStickyTextInput('${gid}','problem-solving','${s.id}', this)"
+                onblur="onStickyTextBlur('${gid}','problem-solving','${s.id}', this)"
+                placeholder="...">${escHTML(s.text || '')}</textarea>
+      <div class="sticky-vote">
+        <button class="sticky-vote-btn" onclick="event.stopPropagation(); votePS('${gid}','${s.id}',1)" title="Vote up">👍</button>
+        <span class="sticky-vote-count">${votes}</span>
+        <button class="sticky-vote-btn" onclick="event.stopPropagation(); votePS('${gid}','${s.id}',-1)" title="Remove a vote">−</button>
+      </div>
+    </div>`;
+  };
+  return `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">Problem Solving Workshop</span>
+      <button class="fs-add-btn"       onclick="addSticky('${gid}','problem-solving','yellow','main')">+ Yellow</button>
+      <button class="fs-add-btn green" onclick="addSticky('${gid}','problem-solving','green','main')">+ Green</button>
+      <button class="fs-add-btn blue"  onclick="addSticky('${gid}','problem-solving','blue','main')">+ Blue</button>
+      <button class="fs-add-btn pink"  onclick="addSticky('${gid}','problem-solving','pink','main')">+ Pink</button>
+      <span class="fs-help-text">Drop stickies, then 👍 to vote. Highest-voted problems rise to the top.</span>
+    </div>
+    <div class="rte-zone drop-target" data-zone="main" data-group="${gid}" data-activity="problem-solving">
+      ${stickies.map(sticky).join('')}
+      ${stickies.length === 0 ? '<div class="rte-empty">Add problems as stickies. Each person votes 👍 on the ones to tackle.</div>' : ''}
+    </div>`;
+}
+function votePS(gid, sid, delta) {
+  const data = state.groups[gid].activities['problem-solving'];
+  const s = data.stickies.find(x => x.id === sid);
+  if (!s) return;
+  s.votes = Math.max(0, Number(s.votes || 0) + delta);
+  save({ type: 'group', id: gid });
+  renderActivityBody();
+}
 
 /* ============================================================
    TIMER  (game-level, trainer controls, all see)
