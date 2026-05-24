@@ -1400,10 +1400,34 @@
     color: #2c3e50;
     padding: 8px 14px; border-radius: 20px;
     font-size: 13px; font-weight: 600; cursor: pointer;
-    transition: border-color 0.1s, background 0.1s, color 0.1s;
+    transition: border-color 0.1s, background 0.1s, color 0.1s, transform 0.05s;
   }
   .rte-pill:hover { border-color: #1f5fa8; }
-  .rte-pill.active { background: #1f5fa8; color: white; border-color: #1f5fa8; }
+  .rte-pill.active {
+    background: #1f5fa8; color: white; border-color: #1f5fa8;
+    box-shadow: 0 3px 8px rgba(31,95,168,0.35);
+    transform: translateY(-1px);
+  }
+  .rte-pill.active:hover { background: #154378; border-color: #154378; }
+
+  /* Selected-metrics reference banner (sticky reference while filling stickies) */
+  .flow-metrics-ref {
+    position: sticky; top: 8px; z-index: 5;
+    background: #eef4fb; border: 1.5px solid #1f5fa8;
+    border-radius: 8px; padding: 10px 14px;
+    margin: 4px 0 14px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    box-shadow: 0 2px 6px rgba(31,95,168,0.12);
+  }
+  .flow-metrics-ref-label {
+    font-weight: 700; color: #1f5fa8; font-size: 13px;
+    letter-spacing: 0.3px;
+  }
+  .flow-metrics-ref-pill {
+    background: #1f5fa8; color: white;
+    padding: 5px 12px; border-radius: 14px;
+    font-size: 12px; font-weight: 600;
+  }
 
   /* ---------- Flow Accelerators table (Activity 7) ---------- */
   .acc-table-wrap { overflow-x: auto; }
@@ -3941,6 +3965,21 @@ function attachRoamHandlers(gid) {
   attachStickyHandlers(gid, 'roam-risks');
 }
 
+/* ---------- Activity 9: RTE & ART Group Dynamics (4 Tuckman columns) ---------- */
+function renderGroupDynamics(gid) {
+  return renderRteStickyZone(gid, 'group-dynamics', {
+    title: 'RTE & ART Group Dynamics — Tuckman stages',
+    help: 'For each stage, capture what you would observe that indicates the ART is at this stage.',
+    layout: 'columns',
+    zones: [
+      { id: 'forming',    label: 'Forming',    color: '#3498db' },
+      { id: 'storming',   label: 'Storming',   color: '#e67e22' },
+      { id: 'norming',    label: 'Norming',    color: '#f1c40f' },
+      { id: 'performing', label: 'Performing', color: '#229954' }
+    ]
+  });
+}
+
 /* ---------- Activity 5: Mapping the Flow of Events ---------- */
 function renderFlowEvents(gid) {
   const data = state.groups[gid].activities['flow-events'];
@@ -4002,16 +4041,25 @@ function renderFlowMetrics(gid) {
   const sticky = (s) => stickyHTML(s, gid, 'flow-metrics');
   const inZone = (z) => stickies.filter(s => s.zone === z);
 
+  const refBanner = selected.length > 0 ? `
+    <div class="flow-metrics-ref">
+      <span class="flow-metrics-ref-label">Working on:</span>
+      ${selected.map(m => `<span class="flow-metrics-ref-pill">${escHTML(m)}</span>`).join('')}
+    </div>` : '';
+
   return `
     <div class="fs-toolbar">
       <span class="fs-tb-label">Measuring the Flow of Value</span>
-      <span class="fs-help-text">Pick one or more metrics your group thinks provides the most value, then capture purpose / source / action as stickies.</span>
+      <span class="fs-help-text">Click one or more metrics below to select them. Selected metrics stay visible as a reference while you fill in stickies.</span>
     </div>
     <div class="rte-pill-row">
       ${RTE_FLOW_METRICS.map(m => `
-        <button class="rte-pill ${selected.includes(m)?'active':''}" onclick="toggleFlowMetric('${gid}',${JSON.stringify(m)})">${m}</button>
+        <button class="rte-pill ${selected.includes(m)?'active':''}" onclick="toggleFlowMetric('${gid}',${JSON.stringify(m)})">
+          ${selected.includes(m) ? '✓ ' : ''}${m}
+        </button>
       `).join('')}
     </div>
+    ${refBanner}
     <div class="rte-grid columns-3">
       ${ZONES.map(z => `
         <div class="rte-lane">
