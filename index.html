@@ -1139,6 +1139,133 @@
     min-height: 480px;
     padding: 16px;
   }
+  .rte-zone.has-bg-image {
+    background-color: #fafafa;
+    min-height: 600px;
+    padding: 20px;
+  }
+
+  /* ART roles banner (Activity 2) */
+  .rte-roles-banner {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: #eef4fb; border: 1px solid #c8d6e8;
+    border-radius: 6px; padding: 10px 14px;
+    margin-bottom: 12px;
+  }
+  .rte-roles-title {
+    font-weight: 700; color: #1f5fa8; font-size: 13px;
+    letter-spacing: 0.3px;
+  }
+  .rte-role-pill {
+    background: white; border: 1px solid #c8d6e8;
+    padding: 5px 12px; border-radius: 16px;
+    font-size: 12px; font-weight: 600; color: #1a3a52;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .rte-role-icon { font-size: 14px; }
+
+  /* Planning Board rows (Activity 3) */
+  .pb-rows { display: flex; flex-direction: column; gap: 14px; }
+  .pb-row {
+    display: grid;
+    grid-template-columns: 70px minmax(220px, 1fr) 1fr 1fr;
+    gap: 10px;
+    background: white;
+    border: 1px solid #d1d8e0;
+    border-radius: 8px;
+    padding: 10px;
+    align-items: stretch;
+  }
+  @media (max-width: 950px) {
+    .pb-row { grid-template-columns: 1fr; }
+  }
+  .pb-row-label {
+    background: #1f5fa8; color: white;
+    border-radius: 4px;
+    font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 8px 4px;
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    letter-spacing: 1px;
+  }
+  @media (max-width: 950px) {
+    .pb-row-label { writing-mode: horizontal-tb; transform: none; padding: 6px; }
+  }
+  .pb-image-pane {
+    background: #f4f7fb;
+    border: 2px dashed #c0cdd9;
+    border-radius: 6px;
+    min-height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+    position: relative;
+  }
+  .pb-image-pane.has-image {
+    border-style: solid;
+    background-color: white;
+  }
+  .pb-image-placeholder {
+    text-align: center; color: #6c7a89; font-size: 13px;
+    padding: 14px;
+  }
+  .pb-image-edit {
+    position: absolute; top: 6px; right: 6px;
+    background: rgba(255,255,255,0.85); border: 1px solid #ccd5dd;
+    border-radius: 4px; padding: 4px 8px;
+    cursor: pointer; font-size: 12px;
+  }
+  .pb-image-edit:hover { background: white; }
+  .pb-col {
+    display: flex; flex-direction: column;
+    border: 1px solid #ccd5dd; border-radius: 6px;
+    overflow: hidden; background: white;
+    min-height: 180px;
+  }
+
+  /* ROAM stack (Activity 4 — new vertical layout) */
+  .roam-stack { display: flex; flex-direction: column; gap: 14px; }
+  .roam-block {
+    background: white;
+    border: 1px solid #d1d8e0;
+    border-radius: 8px;
+    padding: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+    position: relative;
+  }
+  .roam-block-header { margin-bottom: 12px; }
+  .roam-block-close {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.08); border: none; color: #555;
+    cursor: pointer; font-size: 14px; line-height: 1;
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .roam-block-close:hover { background: rgba(192,57,43,0.85); color: white; }
+  .roam-risk-title-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; padding-right: 30px; }
+  .roam-risk-title {
+    flex: 1; border: 1px solid #ccd5dd;
+    padding: 8px 10px; border-radius: 4px;
+    font-family: inherit; font-size: 14px; resize: none;
+    min-height: 40px; line-height: 1.45; outline: none;
+    overflow: hidden; font-weight: 600;
+  }
+  .roam-risk-title:focus { border-color: #1f5fa8; }
+  .roam-cat-row { display: flex; align-items: center; gap: 10px; }
+  .roam-reasons-label {
+    font-size: 12px; color: #6c7a89;
+    font-weight: 600; margin: 8px 0 6px;
+  }
+  .roam-reasons-toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .roam-reasons-zone {
+    position: relative;
+    background: #f9fbfd;
+    border: 1px solid #ccd5dd; border-radius: 4px;
+    min-height: 140px;
+    padding: 12px;
+    transition: background 0.1s, outline 0.1s;
+  }
+  .roam-reasons-zone.dragging-over { background: #d4e8f7; outline: 2px dashed #1f5fa8; outline-offset: -3px; }
   .rte-zone.dragging-over { background: #d4e8f7; outline: 2px dashed #1f5fa8; outline-offset: -3px; }
   .rte-empty { color: #95a5a6; font-style: italic; font-size: 13px; text-align: center; padding: 60px 20px; pointer-events: none; }
   .rte-empty-small { color: #95a5a6; font-style: italic; font-size: 11px; padding: 8px 6px; pointer-events: none; }
@@ -1557,12 +1684,12 @@ function defaultRteActivityState() {
   return {
     'rte-responsibilities': { stickies: [] },
     'art-collaborations':   { stickies: [] },
-    'planning-board':       { stickies: [] },
-    'roam-risks':           { risks: [] },
+    'planning-board':       { stickies: [], images: { ex1:'', ex2:'', ex3:'' } },
+    'roam-risks':           { risks: [], stickies: [] },
     'flow-events':          { event: '', stickies: [] },
-    'flow-metrics':         { metric: '', stickies: [] },
+    'flow-metrics':         { metrics: [], stickies: [] },
     'flow-accelerators':    { selections: {} },
-    'problem-solving':      { stickies: [] },
+    'problem-solving':      { stickies: [], bgImage: '' },
     'group-dynamics':       { stickies: [] }
   };
 }
@@ -1672,17 +1799,33 @@ function ensureStateStructure() {
     }
 
     if (state.course === 'RTE') {
-      ['rte-responsibilities','art-collaborations','planning-board','problem-solving','group-dynamics'].forEach(k => {
+      ['rte-responsibilities','art-collaborations','group-dynamics'].forEach(k => {
         if (!acts[k]) acts[k] = { stickies: [] };
         if (!Array.isArray(acts[k].stickies)) acts[k].stickies = [];
       });
-      if (!acts['roam-risks']) acts['roam-risks'] = { risks: [] };
+      // Planning Board: stickies + per-example image URLs
+      if (!acts['planning-board']) acts['planning-board'] = { stickies: [], images: { ex1:'', ex2:'', ex3:'' } };
+      if (!Array.isArray(acts['planning-board'].stickies)) acts['planning-board'].stickies = [];
+      if (!acts['planning-board'].images) acts['planning-board'].images = { ex1:'', ex2:'', ex3:'' };
+      // Problem Solving: stickies + optional background image
+      if (!acts['problem-solving']) acts['problem-solving'] = { stickies: [], bgImage: '' };
+      if (!Array.isArray(acts['problem-solving'].stickies)) acts['problem-solving'].stickies = [];
+      if (typeof acts['problem-solving'].bgImage !== 'string') acts['problem-solving'].bgImage = '';
+      // ROAM Risks: now has both risks list and stickies (for reason zones per risk)
+      if (!acts['roam-risks']) acts['roam-risks'] = { risks: [], stickies: [] };
       if (!Array.isArray(acts['roam-risks'].risks)) acts['roam-risks'].risks = [];
+      if (!Array.isArray(acts['roam-risks'].stickies)) acts['roam-risks'].stickies = [];
       if (!acts['flow-events']) acts['flow-events'] = { event: '', stickies: [] };
       if (typeof acts['flow-events'].event !== 'string') acts['flow-events'].event = '';
       if (!Array.isArray(acts['flow-events'].stickies)) acts['flow-events'].stickies = [];
-      if (!acts['flow-metrics']) acts['flow-metrics'] = { metric: '', stickies: [] };
-      if (typeof acts['flow-metrics'].metric !== 'string') acts['flow-metrics'].metric = '';
+      // Flow Metrics: now multi-select (array)
+      if (!acts['flow-metrics']) acts['flow-metrics'] = { metrics: [], stickies: [] };
+      if (!Array.isArray(acts['flow-metrics'].metrics)) {
+        // migrate old single-value 'metric' field if present
+        const old = acts['flow-metrics'].metric;
+        acts['flow-metrics'].metrics = old ? [old] : [];
+        delete acts['flow-metrics'].metric;
+      }
       if (!Array.isArray(acts['flow-metrics'].stickies)) acts['flow-metrics'].stickies = [];
       if (!acts['flow-accelerators']) acts['flow-accelerators'] = { selections: {} };
       if (!acts['flow-accelerators'].selections || typeof acts['flow-accelerators'].selections !== 'object') {
@@ -2638,20 +2781,8 @@ function onStickyTextBlur(gid, activityId, sid, textarea) {
 
 function adjustRefinementLanes(view) {
   if (!view) return;
-  view.querySelectorAll('.refinement-lane').forEach(lane => {
-    let maxBottom = 110; // default lane min height
-    lane.querySelectorAll('.sticky').forEach(stickyEl => {
-      const top = parseFloat(stickyEl.style.top || '0');
-      const height = stickyEl.offsetHeight || 90;
-      const bottom = top + height + 24;
-      if (bottom > maxBottom) maxBottom = bottom;
-    });
-    lane.style.minHeight = maxBottom + 'px';
-  });
-  // Also auto-adjust the storming-zone-body when stickies grow
-  view.querySelectorAll('.activity-zone-body.drop-target').forEach(zone => {
-    if (zone.classList.contains('refinement-zone')) return;
-    let maxBottom = 360;
+  const measureZone = (zone, defaultMin) => {
+    let maxBottom = defaultMin;
     zone.querySelectorAll('.sticky').forEach(stickyEl => {
       const top = parseFloat(stickyEl.style.top || '0');
       const height = stickyEl.offsetHeight || 90;
@@ -2659,7 +2790,20 @@ function adjustRefinementLanes(view) {
       if (bottom > maxBottom) maxBottom = bottom;
     });
     zone.style.minHeight = maxBottom + 'px';
+  };
+  view.querySelectorAll('.refinement-lane').forEach(lane => measureZone(lane, 110));
+  view.querySelectorAll('.activity-zone-body.drop-target').forEach(zone => {
+    if (zone.classList.contains('refinement-zone')) return;
+    measureZone(zone, 360);
   });
+  // RTE multi-column lanes
+  view.querySelectorAll('.rte-lane-body').forEach(lane => measureZone(lane, 180));
+  // RTE single-zone activities (Responsibilities, Problem Solving)
+  view.querySelectorAll('.rte-zone').forEach(zone => measureZone(zone, 360));
+  // Common parking-lot / working-agreement
+  view.querySelectorAll('.cm-sticky-zone').forEach(zone => measureZone(zone, 360));
+  // ROAM risk reason zones
+  view.querySelectorAll('.roam-reasons-zone').forEach(zone => measureZone(zone, 140));
 }
 
 /* ---------- DRAG-AND-DROP for stickies (activity-aware) ---------- */
@@ -3608,9 +3752,16 @@ function renderRteResponsibilities(gid) {
 
 /* ---------- Activity 2: Key ART Collaborations (2 columns) ---------- */
 function renderArtCollaborations(gid) {
-  return renderRteStickyZone(gid, 'art-collaborations', {
+  const rolesBanner = `
+    <div class="rte-roles-banner">
+      <span class="rte-roles-title">3 ART roles:</span>
+      <span class="rte-role-pill"><span class="rte-role-icon">🚂</span> RTE</span>
+      <span class="rte-role-pill"><span class="rte-role-icon">📋</span> Product Manager</span>
+      <span class="rte-role-pill"><span class="rte-role-icon">🏛</span> System Architect</span>
+    </div>`;
+  return rolesBanner + renderRteStickyZone(gid, 'art-collaborations', {
     title: 'Key ART Collaborations',
-    help: 'Pick the group the trainer assigned, then fill both columns.',
+    help: 'Fill both columns with stickies. Lanes grow as you add stickies.',
     layout: 'columns',
     zones: [
       { id: 'patterns',   label: 'Possible anti-patterns that can arise',  color: '#c0392b' },
@@ -3619,21 +3770,70 @@ function renderArtCollaborations(gid) {
   });
 }
 
-/* ---------- Activity 3: Reading ART Planning Board (3 examples × 2 columns) ---------- */
+/* ---------- Activity 3: Reading ART Planning Board (3 rows: Image | Problems | Solutions) ---------- */
 function renderPlanningBoard(gid) {
-  return renderRteStickyZone(gid, 'planning-board', {
-    title: 'Reading ART Planning Board',
-    help: 'For each of the 3 planning board examples the trainer shares, note problems and possible solutions.',
-    layout: 'columns',
-    zones: [
-      { id: 'ex1-problems',  label: 'Example 1 — Problems',  color: '#c0392b' },
-      { id: 'ex1-solutions', label: 'Example 1 — Solutions', color: '#229954' },
-      { id: 'ex2-problems',  label: 'Example 2 — Problems',  color: '#c0392b' },
-      { id: 'ex2-solutions', label: 'Example 2 — Solutions', color: '#229954' },
-      { id: 'ex3-problems',  label: 'Example 3 — Problems',  color: '#c0392b' },
-      { id: 'ex3-solutions', label: 'Example 3 — Solutions', color: '#229954' }
-    ]
-  });
+  const data = state.groups[gid].activities['planning-board'];
+  const stickies = data.stickies || [];
+  const images = data.images || { ex1:'', ex2:'', ex3:'' };
+  const inZone = (z) => stickies.filter(s => s.zone === z);
+  const sticky = (s) => stickyHTML(s, gid, 'planning-board');
+
+  const rowHTML = (num, imgKey, probZone, solZone) => {
+    const imgUrl = images[imgKey] || '';
+    const imgPane = imgUrl
+      ? `<div class="pb-image-pane has-image" style="background-image:url('${escAttr(imgUrl)}')">
+           <button class="pb-image-edit" onclick="setPlanningBoardImage('${gid}','${imgKey}')" title="Change image">✎</button>
+         </div>`
+      : `<div class="pb-image-pane">
+           <div class="pb-image-placeholder">
+             <div style="font-size:32px;margin-bottom:6px">📋</div>
+             <div style="font-weight:700;margin-bottom:8px">Example ${num}</div>
+             <button class="btn small" onclick="setPlanningBoardImage('${gid}','${imgKey}')">Paste image URL</button>
+           </div>
+         </div>`;
+    return `
+      <div class="pb-row">
+        <div class="pb-row-label">Example ${num}</div>
+        ${imgPane}
+        <div class="pb-col">
+          <div class="rte-lane-header" style="background:#c0392b">Problems</div>
+          <div class="rte-lane-body drop-target" data-zone="${probZone}" data-group="${gid}" data-activity="planning-board">
+            ${inZone(probZone).map(sticky).join('')}
+            ${inZone(probZone).length === 0 ? '<div class="rte-empty-small">drop or dbl-click to add</div>' : ''}
+          </div>
+        </div>
+        <div class="pb-col">
+          <div class="rte-lane-header" style="background:#229954">Solutions</div>
+          <div class="rte-lane-body drop-target" data-zone="${solZone}" data-group="${gid}" data-activity="planning-board">
+            ${inZone(solZone).map(sticky).join('')}
+            ${inZone(solZone).length === 0 ? '<div class="rte-empty-small">drop or dbl-click to add</div>' : ''}
+          </div>
+        </div>
+      </div>`;
+  };
+
+  return `
+    <div class="fs-toolbar">
+      <span class="fs-tb-label">Reading ART Planning Board</span>
+      <span class="fs-help-text">For each example, paste the planning board image URL and capture problems + solutions as stickies.</span>
+      <button class="fs-add-btn"        onclick="addSticky('${gid}','planning-board','yellow','ex1-problems')">+ Yellow</button>
+      <button class="fs-add-btn green"  onclick="addSticky('${gid}','planning-board','green','ex1-solutions')">+ Green</button>
+    </div>
+    <div class="pb-rows">
+      ${rowHTML(1, 'ex1', 'ex1-problems', 'ex1-solutions')}
+      ${rowHTML(2, 'ex2', 'ex2-problems', 'ex2-solutions')}
+      ${rowHTML(3, 'ex3', 'ex3-problems', 'ex3-solutions')}
+    </div>`;
+}
+function setPlanningBoardImage(gid, key) {
+  const data = state.groups[gid].activities['planning-board'];
+  if (!data.images) data.images = {};
+  const current = data.images[key] || '';
+  const url = prompt('Paste the image URL for this example (or leave empty to clear):', current);
+  if (url === null) return; // cancelled
+  data.images[key] = url.trim();
+  save({ type: 'group', id: gid });
+  renderActivityBody();
 }
 
 /* ---------- Activity 9: RTE & ART Group Dynamics (4 columns) ---------- */
@@ -3655,51 +3855,73 @@ function renderGroupDynamics(gid) {
 function renderRoamRisks(gid) {
   const data = state.groups[gid].activities['roam-risks'];
   const risks = data.risks || [];
-  const cardHTML = (r) => {
+  const allStickies = data.stickies || [];
+  const sticky = (s) => stickyHTML(s, gid, 'roam-risks');
+
+  const riskBlockHTML = (r) => {
     const cat = ROAM_CATEGORIES.find(c => c.id === r.category);
     const badgeColor = cat ? cat.color : '#7f8c8d';
-    const badgeLabel = cat ? cat.label : 'Pick a category';
+    const badgeLabel = cat ? cat.label : 'Pick';
+    const reasonZone = 'risk-' + r.id;
+    const reasonStickies = allStickies.filter(s => s.zone === reasonZone);
     return `
-      <div class="roam-card" data-id="${r.id}">
-        <button class="roam-close" onclick="event.stopPropagation(); deleteRoamRisk('${gid}','${r.id}')" title="Delete">×</button>
-        <div class="roam-row">
-          <div class="roam-cat-block">
+      <div class="roam-block" data-risk-id="${r.id}">
+        <div class="roam-block-header">
+          <button class="roam-block-close" onclick="event.stopPropagation(); deleteRoamRisk('${gid}','${r.id}')" title="Delete this risk">×</button>
+          <div class="roam-risk-title-row">
+            <label class="roam-label">Risk</label>
+            <textarea class="roam-risk-title" placeholder="Describe the risk..."
+                      oninput="onRoamRiskTitleInput('${gid}','${r.id}', this)"
+                      onblur="onRoamRiskTitleBlur('${gid}','${r.id}', this)">${escHTML(r.title || '')}</textarea>
+          </div>
+          <div class="roam-cat-row">
             <label class="roam-label">ROAM</label>
             <select class="roam-select" onchange="updateRoamRisk('${gid}','${r.id}','category',this.value)">
-              <option value="" ${!r.category?'selected':''}>— Pick —</option>
+              <option value="" ${!r.category?'selected':''}>— Pick category —</option>
               ${ROAM_CATEGORIES.map(c => `<option value="${c.id}" ${r.category===c.id?'selected':''}>${c.label}</option>`).join('')}
             </select>
+            <span class="roam-badge" style="background:${badgeColor}">${badgeLabel}</span>
           </div>
-          <span class="roam-badge" style="background:${badgeColor}">${badgeLabel}</span>
         </div>
-        <div class="roam-row">
-          <label class="roam-label">Risk + why</label>
-          <textarea class="roam-text" placeholder="Describe the risk, then explain why this ROAM decision..."
-                    oninput="onRoamRiskInput('${gid}','${r.id}', this)"
-                    onblur="onRoamRiskBlur('${gid}','${r.id}', this)">${escHTML(r.reason || '')}</textarea>
+        <div class="roam-reasons-label">Why this ROAM? Add reasons as stickies:</div>
+        <div class="roam-reasons-toolbar">
+          <button class="fs-add-btn"        onclick="addSticky('${gid}','roam-risks','yellow','${reasonZone}')">+ Yellow</button>
+          <button class="fs-add-btn green"  onclick="addSticky('${gid}','roam-risks','green','${reasonZone}')">+ Green</button>
+          <button class="fs-add-btn blue"   onclick="addSticky('${gid}','roam-risks','blue','${reasonZone}')">+ Blue</button>
+          <button class="fs-add-btn pink"   onclick="addSticky('${gid}','roam-risks','pink','${reasonZone}')">+ Pink</button>
+        </div>
+        <div class="roam-reasons-zone drop-target" data-zone="${reasonZone}" data-group="${gid}" data-activity="roam-risks">
+          ${reasonStickies.map(sticky).join('')}
+          ${reasonStickies.length === 0 ? '<div class="rte-empty-small">drop stickies or dbl-click to add reasons</div>' : ''}
         </div>
       </div>`;
   };
+
   return `
     <div class="fs-toolbar">
       <span class="fs-tb-label">ROAM ART PI Risks</span>
-      <span class="fs-help-text">Categorise each risk as Resolved, Owned, Mitigated, or Accepted — and explain why.</span>
+      <span class="fs-help-text">List risks one by one. Pick a ROAM category and add reasons as stickies. Zones grow with content.</span>
       <button class="btn small" style="margin-left:auto" onclick="addRoamRisk('${gid}')">+ Add Risk</button>
     </div>
-    <div class="roam-grid">
-      ${risks.length ? risks.map(cardHTML).join('') : '<div class="rte-empty" style="grid-column:1/-1">No risks yet. Click "+ Add Risk".</div>'}
+    <div class="roam-stack">
+      ${risks.length ? risks.map(riskBlockHTML).join('') : '<div class="rte-empty">No risks yet. Click "+ Add Risk" to begin.</div>'}
     </div>`;
 }
 function addRoamRisk(gid) {
   const data = state.groups[gid].activities['roam-risks'];
   if (!Array.isArray(data.risks)) data.risks = [];
-  data.risks.push({ id: uid(), category: '', reason: '' });
+  if (!Array.isArray(data.stickies)) data.stickies = [];
+  data.risks.push({ id: uid(), category: '', title: '' });
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
 function deleteRoamRisk(gid, rid) {
+  if (!confirm('Delete this risk and all its reason stickies?')) return;
   const data = state.groups[gid].activities['roam-risks'];
   data.risks = data.risks.filter(r => r.id !== rid);
+  if (Array.isArray(data.stickies)) {
+    data.stickies = data.stickies.filter(s => s.zone !== ('risk-' + rid));
+  }
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
@@ -3711,21 +3933,23 @@ function updateRoamRisk(gid, rid, field, value) {
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
-function onRoamRiskInput(gid, rid, ta) {
+function onRoamRiskTitleInput(gid, rid, ta) {
   const data = state.groups[gid].activities['roam-risks'];
   const r = data.risks.find(x => x.id === rid);
-  if (r) r.reason = ta.value;
+  if (r) r.title = ta.value;
   autoGrowTextarea(ta);
 }
-function onRoamRiskBlur(gid, rid, ta) {
+function onRoamRiskTitleBlur(gid, rid, ta) {
   const data = state.groups[gid].activities['roam-risks'];
   const r = data.risks.find(x => x.id === rid);
-  if (r) { r.reason = ta.value; save({ type: 'group', id: gid }); }
+  if (r) { r.title = ta.value; save({ type: 'group', id: gid }); }
 }
 function attachRoamHandlers(gid) {
   const view = document.getElementById('view-group-' + gid);
   if (!view) return;
-  view.querySelectorAll('.roam-text').forEach(autoGrowTextarea);
+  view.querySelectorAll('.roam-risk-title').forEach(autoGrowTextarea);
+  // ROAM reuses standard sticky handlers for reason stickies
+  attachStickyHandlers(gid, 'roam-risks');
 }
 
 /* ---------- Activity 5: Mapping the Flow of Events ---------- */
@@ -3779,6 +4003,7 @@ function updateFlowEvent(gid, field, value) {
 /* ---------- Activity 6: Measuring the Flow of Value ---------- */
 function renderFlowMetrics(gid) {
   const data = state.groups[gid].activities['flow-metrics'];
+  const selected = Array.isArray(data.metrics) ? data.metrics : [];
   const ZONES = [
     { id: 'purpose', label: 'Purpose — what question does this metric answer?' },
     { id: 'source',  label: 'Data source — where do you collect it?' },
@@ -3791,11 +4016,11 @@ function renderFlowMetrics(gid) {
   return `
     <div class="fs-toolbar">
       <span class="fs-tb-label">Measuring the Flow of Value</span>
-      <span class="fs-help-text">Pick the metric your group thinks provides the most value, then capture purpose / source / action.</span>
+      <span class="fs-help-text">Pick one or more metrics your group thinks provides the most value, then capture purpose / source / action as stickies.</span>
     </div>
     <div class="rte-pill-row">
       ${RTE_FLOW_METRICS.map(m => `
-        <button class="rte-pill ${data.metric===m?'active':''}" onclick="updateFlowMetric('${gid}',${JSON.stringify(m)})">${m}</button>
+        <button class="rte-pill ${selected.includes(m)?'active':''}" onclick="toggleFlowMetric('${gid}',${JSON.stringify(m)})">${m}</button>
       `).join('')}
     </div>
     <div class="rte-grid columns-3">
@@ -3809,9 +4034,12 @@ function renderFlowMetrics(gid) {
         </div>`).join('')}
     </div>`;
 }
-function updateFlowMetric(gid, value) {
+function toggleFlowMetric(gid, value) {
   const data = state.groups[gid].activities['flow-metrics'];
-  data.metric = value;
+  if (!Array.isArray(data.metrics)) data.metrics = [];
+  const idx = data.metrics.indexOf(value);
+  if (idx >= 0) data.metrics.splice(idx, 1);
+  else data.metrics.push(value);
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
@@ -3866,10 +4094,11 @@ function toggleAccelerator(gid, problemKey, acceleratorId) {
   renderActivityBody();
 }
 
-/* ---------- Activity 8: Problem Solving Workshop (stickies + voting) ---------- */
+/* ---------- Activity 8: Problem Solving Workshop (stickies + voting + bg image) ---------- */
 function renderProblemSolving(gid) {
   const data = state.groups[gid].activities['problem-solving'];
   const stickies = data.stickies || [];
+  const bgImage = data.bgImage || '';
   // Render with a vote ribbon overlay on each sticky.
   const sticky = (s) => {
     const widthStyle  = s.w ? `;width:${s.w}px`  : '';
@@ -3892,6 +4121,8 @@ function renderProblemSolving(gid) {
       </div>
     </div>`;
   };
+  const bgStyle = bgImage ? `style="background-image:url('${escAttr(bgImage)}');background-size:contain;background-repeat:no-repeat;background-position:center top"` : '';
+  const bgClass = bgImage ? 'has-bg-image' : '';
   return `
     <div class="fs-toolbar">
       <span class="fs-tb-label">Problem Solving Workshop</span>
@@ -3899,12 +4130,23 @@ function renderProblemSolving(gid) {
       <button class="fs-add-btn green" onclick="addSticky('${gid}','problem-solving','green','main')">+ Green</button>
       <button class="fs-add-btn blue"  onclick="addSticky('${gid}','problem-solving','blue','main')">+ Blue</button>
       <button class="fs-add-btn pink"  onclick="addSticky('${gid}','problem-solving','pink','main')">+ Pink</button>
-      <span class="fs-help-text">Drop stickies, then 👍 to vote. Highest-voted problems rise to the top.</span>
+      <button class="btn small secondary" style="margin-left:auto" onclick="setProblemSolvingBgImage('${gid}')">
+        ${bgImage ? '✎ Change background' : '🖼 Set background image'}
+      </button>
     </div>
-    <div class="rte-zone drop-target" data-zone="main" data-group="${gid}" data-activity="problem-solving">
+    <div class="rte-zone drop-target ${bgClass}" ${bgStyle} data-zone="main" data-group="${gid}" data-activity="problem-solving">
       ${stickies.map(sticky).join('')}
-      ${stickies.length === 0 ? '<div class="rte-empty">Add problems as stickies. Each person votes 👍 on the ones to tackle.</div>' : ''}
+      ${stickies.length === 0 && !bgImage ? '<div class="rte-empty">Set a workshop template as background, then add problems as stickies. Vote 👍 on top priorities.</div>' : ''}
     </div>`;
+}
+function setProblemSolvingBgImage(gid) {
+  const data = state.groups[gid].activities['problem-solving'];
+  const current = data.bgImage || '';
+  const url = prompt('Paste the workshop template image URL (or leave empty to clear):', current);
+  if (url === null) return;
+  data.bgImage = url.trim();
+  save({ type: 'group', id: gid });
+  renderActivityBody();
 }
 function votePS(gid, sid, delta) {
   const data = state.groups[gid].activities['problem-solving'];
