@@ -2190,6 +2190,22 @@ async function joinGame(code, urlAdminSecret) {
     }
     setConnectionStatus('online');
     const remote = snap2.data();
+    // Before applying remote, snapshot which sticky textarea is currently focused (so we preserve user's in-progress typing)
+    const ae = document.activeElement;
+    let inFlightEdit = null;
+    if (ae && ae.matches && ae.matches('textarea, input') && ae.classList.contains('sticky-text')) {
+      const stickyEl = ae.closest('.sticky');
+      if (stickyEl && stickyEl.dataset.id) {
+        inFlightEdit = {
+          stickyId: stickyEl.dataset.id,
+          activityId: stickyEl.dataset.activity,
+          gid: (stickyEl.closest('[id^="view-group-"]') || {}).id?.replace('view-group-',''),
+          value: ae.value,
+          selStart: ae.selectionStart,
+          selEnd: ae.selectionEnd
+        };
+      }
+    }
     let changed = false;
     GROUPS.forEach(g => {
       if (!remote.groups || !remote.groups[g.id]) return;
@@ -2198,6 +2214,15 @@ async function joinGame(code, urlAdminSecret) {
         changed = true;
       }
     });
+    // If user was typing in a sticky, keep their in-progress text in local state so the rerender shows it
+    if (inFlightEdit && inFlightEdit.gid && inFlightEdit.activityId && inFlightEdit.stickyId) {
+      const acts = state.groups[inFlightEdit.gid] && state.groups[inFlightEdit.gid].activities;
+      const ad = acts && acts[inFlightEdit.activityId];
+      if (ad && Array.isArray(ad.stickies)) {
+        const s = ad.stickies.find(x => x.id === inFlightEdit.stickyId);
+        if (s) s.text = inFlightEdit.value;
+      }
+    }
     if (typeof remote.enabledGroupCount === 'number' && remote.enabledGroupCount !== state.enabledGroupCount) {
       state.enabledGroupCount = remote.enabledGroupCount;
       changed = true;
@@ -2212,8 +2237,8 @@ async function joinGame(code, urlAdminSecret) {
     }
     if (changed) {
       ensureStateStructure();
-      if (isActivelyEditing) { pendingRemoteUpdate = true; }
-      else { rerenderActiveView(); }
+      // Always re-render. Focus + cursor will be restored by rerenderActiveView using inFlightEdit captured above.
+      rerenderActiveView(inFlightEdit);
     }
   }, (err) => {
     console.error('Firestore listener error:', err);
@@ -2847,20 +2872,30 @@ function deleteSticky(gid, activityId, sid) {
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
+let stickyTextSaveTimers = {}; // gid:activityId:sid -> setTimeout handle
 function onStickyTextInput(gid, activityId, sid, textarea) {
   const data = getActivityData(gid, activityId);
   const s = data.stickies.find(x => x.id === sid);
-  if (s) s.text = textarea.value; // local-only until blur
+  if (s) s.text = textarea.value; // immediate local
   autoGrowTextarea(textarea);
-  // After grow, possibly extend the lane height (Feature Splitting / Storming refinement lanes)
   const view = document.getElementById('view-group-' + gid);
   if (view) adjustRefinementLanes(view);
+  // Debounced save: push to Firestore 700ms after last keystroke so other users see typing without waiting for blur
+  const key = gid + ':' + activityId + ':' + sid;
+  if (stickyTextSaveTimers[key]) clearTimeout(stickyTextSaveTimers[key]);
+  stickyTextSaveTimers[key] = setTimeout(() => {
+    delete stickyTextSaveTimers[key];
+    save({ type: 'group', id: gid });
+  }, 700);
 }
 function onStickyTextBlur(gid, activityId, sid, textarea) {
   const data = getActivityData(gid, activityId);
   const s = data.stickies.find(x => x.id === sid);
   if (s) {
     s.text = textarea.value;
+    // Cancel any pending debounced save — blur saves immediately
+    const key = gid + ':' + activityId + ':' + sid;
+    if (stickyTextSaveTimers[key]) { clearTimeout(stickyTextSaveTimers[key]); delete stickyTextSaveTimers[key]; }
     save({ type: 'group', id: gid });
   }
 }
@@ -4417,29 +4452,24 @@ async function endGameNow() {
   }
 }
 
-document.addEventListener('focusin', e => {
-  if (e.target.matches('input, textarea')) isActivelyEditing = true;
-});
-document.addEventListener('focusout', e => {
-  if (e.target.matches('input, textarea')) {
-    isActivelyEditing = false;
-    if (pendingRemoteUpdate) { pendingRemoteUpdate = false; rerenderActiveView(); }
-  }
-});
+// (Focus-based render gating removed in favor of per-textarea focus preservation in rerenderActiveView.
+// Re-renders now always proceed; rerenderActiveView restores the user's cursor + in-progress text.)
 
-function rerenderActiveView() {
+function rerenderActiveView(restoreFocus) {
   // If currently in a group view, re-render it
   const activeGroupView = document.querySelector('.view.active[id^="view-group-"]');
   if (activeGroupView) {
     const gid = activeGroupView.id.replace('view-group-', '');
     if (!isGroupEnabled(gid)) { showGameMenu(); return; }
     renderGroupView(gid);
+    restoreStickyFocus(restoreFocus);
     return;
   }
   // If in the common view, re-render it
   const commonView = document.getElementById('view-common');
   if (commonView && commonView.classList.contains('active')) {
     renderCommonView();
+    restoreStickyFocus(restoreFocus);
     return;
   }
   // Otherwise re-render the game menu
@@ -4450,6 +4480,21 @@ function rerenderActiveView() {
     renderGroupGrid();
     renderGameInfoBar();
   }
+}
+function restoreStickyFocus(info) {
+  if (!info || !info.stickyId) return;
+  const sticky = document.querySelector('.sticky[data-id="' + info.stickyId + '"]');
+  if (!sticky) return;
+  const ta = sticky.querySelector('textarea.sticky-text');
+  if (!ta) return;
+  // Restore the user's in-progress text + selection if changed by rerender
+  if (typeof info.value === 'string' && ta.value !== info.value) ta.value = info.value;
+  ta.focus();
+  try {
+    const s = Math.min(info.selStart || 0, ta.value.length);
+    const e = Math.min(info.selEnd || s, ta.value.length);
+    ta.setSelectionRange(s, e);
+  } catch (e) { /* selection may not be supported on some inputs */ }
 }
 
 /* ============================================================
