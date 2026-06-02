@@ -2206,6 +2206,13 @@ async function joinGame(code, urlAdminSecret) {
         };
       }
     }
+    // Also capture a locally-typed timer duration if the admin is mid-typing in the timer input,
+    // so an incoming remote snapshot doesn't reset it back to the old value (the "always 10 min" bug).
+    let typedTimerMs = null;
+    if (ae && ae.id === 'timerDurationInput') {
+      const m = Math.max(1, Math.min(240, Number(ae.value) || 10));
+      typedTimerMs = m * 60000;
+    }
     let changed = false;
     GROUPS.forEach(g => {
       if (!remote.groups || !remote.groups[g.id]) return;
@@ -2229,6 +2236,8 @@ async function joinGame(code, urlAdminSecret) {
     }
     if (remote.timer && JSON.stringify(remote.timer) !== JSON.stringify(state.timer)) {
       state.timer = remote.timer;
+      // If the admin is currently typing a new duration, don't let the remote copy reset it to the old value.
+      if (typedTimerMs !== null) state.timer.lastDurationMs = typedTimerMs;
       changed = true;
     }
     if (remote.common && JSON.stringify(remote.common) !== JSON.stringify(state.common)) {
@@ -2239,6 +2248,11 @@ async function joinGame(code, urlAdminSecret) {
       ensureStateStructure();
       // Always re-render. Focus + cursor will be restored by rerenderActiveView using inFlightEdit captured above.
       rerenderActiveView(inFlightEdit);
+      // If the admin was typing in the timer input, return focus to it after the re-render.
+      if (typedTimerMs !== null) {
+        const t = document.getElementById('timerDurationInput');
+        if (t) t.focus();
+      }
     }
   }, (err) => {
     console.error('Firestore listener error:', err);
