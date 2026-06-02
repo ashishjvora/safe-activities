@@ -2190,22 +2190,30 @@ async function joinGame(code, urlAdminSecret) {
     }
     setConnectionStatus('online');
     const remote = snap2.data();
-    // Before applying remote, snapshot which sticky textarea is currently focused (so we preserve user's in-progress typing)
+    // Before applying remote, snapshot the locally-edited sticky text (if any) so we can preserve
+    // an in-progress edit when the remote version differs.
     const ae = document.activeElement;
-    let inFlightEdit = null;
-    if (ae && ae.matches && ae.matches('textarea, input') && ae.classList.contains('sticky-text')) {
+    let editingStickyText = null;
+    if (ae && ae.classList && ae.classList.contains('sticky-text')) {
       const stickyEl = ae.closest('.sticky');
-      if (stickyEl && stickyEl.dataset.id) {
-        inFlightEdit = {
-          stickyId: stickyEl.dataset.id,
+      const groupEl = stickyEl && stickyEl.closest('[id^="view-group-"]');
+      if (stickyEl && stickyEl.dataset.id && groupEl) {
+        editingStickyText = {
+          gid: groupEl.id.replace('view-group-',''),
           activityId: stickyEl.dataset.activity,
-          gid: (stickyEl.closest('[id^="view-group-"]') || {}).id?.replace('view-group-',''),
-          value: ae.value,
-          selStart: ae.selectionStart,
-          selEnd: ae.selectionEnd
+          stickyId: stickyEl.dataset.id,
+          value: ae.value
         };
       }
     }
+    // Similarly, preserve locally-typed timer duration if user is mid-typing
+    const editingTimerEl = document.activeElement;
+    let localTimerDurationMs = null;
+    if (editingTimerEl && editingTimerEl.id === 'timerDurationInput') {
+      const min = Math.max(1, Math.min(240, Number(editingTimerEl.value) || 10));
+      localTimerDurationMs = min * 60000;
+    }
+
     let changed = false;
     GROUPS.forEach(g => {
       if (!remote.groups || !remote.groups[g.id]) return;
@@ -2214,13 +2222,13 @@ async function joinGame(code, urlAdminSecret) {
         changed = true;
       }
     });
-    // If user was typing in a sticky, keep their in-progress text in local state so the rerender shows it
-    if (inFlightEdit && inFlightEdit.gid && inFlightEdit.activityId && inFlightEdit.stickyId) {
-      const acts = state.groups[inFlightEdit.gid] && state.groups[inFlightEdit.gid].activities;
-      const ad = acts && acts[inFlightEdit.activityId];
+    // Overlay the in-progress sticky text back into state so the re-render doesn't wipe it.
+    if (editingStickyText) {
+      const acts = state.groups[editingStickyText.gid] && state.groups[editingStickyText.gid].activities;
+      const ad = acts && acts[editingStickyText.activityId];
       if (ad && Array.isArray(ad.stickies)) {
-        const s = ad.stickies.find(x => x.id === inFlightEdit.stickyId);
-        if (s) s.text = inFlightEdit.value;
+        const s = ad.stickies.find(x => x.id === editingStickyText.stickyId);
+        if (s) s.text = editingStickyText.value;
       }
     }
     if (typeof remote.enabledGroupCount === 'number' && remote.enabledGroupCount !== state.enabledGroupCount) {
@@ -2229,6 +2237,8 @@ async function joinGame(code, urlAdminSecret) {
     }
     if (remote.timer && JSON.stringify(remote.timer) !== JSON.stringify(state.timer)) {
       state.timer = remote.timer;
+      // Preserve locally-typed duration during keystroke window so user's typing isn't wiped.
+      if (localTimerDurationMs !== null) state.timer.lastDurationMs = localTimerDurationMs;
       changed = true;
     }
     if (remote.common && JSON.stringify(remote.common) !== JSON.stringify(state.common)) {
@@ -2237,8 +2247,7 @@ async function joinGame(code, urlAdminSecret) {
     }
     if (changed) {
       ensureStateStructure();
-      // Always re-render. Focus + cursor will be restored by rerenderActiveView using inFlightEdit captured above.
-      rerenderActiveView(inFlightEdit);
+      rerenderActiveView();
     }
   }, (err) => {
     console.error('Firestore listener error:', err);
@@ -2412,6 +2421,9 @@ function renderGroupView(gid) {
       `).join('')}
     </div>`;
 
+  // Capture before destructive replacement of the group-view tree.
+  const focusSnap = captureActiveEditFocus();
+
   view.innerHTML = `
     <div class="group-header">
       <h2>${g.name} — ${course.name}</h2>
@@ -2430,6 +2442,9 @@ function renderGroupView(gid) {
     `}
   `;
   renderActivityBody();
+  // Best-effort restore (renderActivityBody also tries; this catches the case where
+  // the focused element was outside .activity-body too, though that's rare).
+  restoreActiveEditFocus(focusSnap);
 }
 function setActiveActivity(activityId) {
   activeActivityId = activityId;
@@ -2474,6 +2489,9 @@ function renderCommonView() {
   else if (activeCommonTab === 'parking')  bodyHTML = renderParkingLot();
   else if (activeCommonTab === 'agreement')bodyHTML = renderWorkingAgreement();
 
+  // Capture focus before destructive innerHTML replacement (preserves Common-card typing too).
+  const focusSnap = captureCommonCardFocus();
+
   view.innerHTML = `
     <div class="group-header">
       <h2>🟦 Common Workspace</h2>
@@ -2490,6 +2508,28 @@ function renderCommonView() {
     <div class="activity-body">${bodyHTML}</div>
   `;
   attachCommonHandlers();
+  restoreCommonCardFocus(focusSnap);
+}
+function captureCommonCardFocus() {
+  const ae = document.activeElement;
+  if (!ae || !ae.matches || !ae.matches('textarea')) return null;
+  const card = ae.closest('.cm-card');
+  if (!card || !card.dataset.id) return null;
+  return { cardId: card.dataset.id, value: ae.value, selStart: ae.selectionStart, selEnd: ae.selectionEnd };
+}
+function restoreCommonCardFocus(snap) {
+  if (!snap) return;
+  const card = document.querySelector('.cm-card[data-id="' + snap.cardId + '"]');
+  if (!card) return;
+  const ta = card.querySelector('textarea');
+  if (!ta) return;
+  if (typeof snap.value === 'string' && ta.value !== snap.value) ta.value = snap.value;
+  ta.focus();
+  try {
+    const s = Math.min(snap.selStart || 0, ta.value.length);
+    const e = Math.min(snap.selEnd || s, ta.value.length);
+    ta.setSelectionRange(s, e);
+  } catch (e) {}
 }
 
 /* ---------- COMMON CARD primitives (stack-based, no free positioning) ---------- */
@@ -2746,6 +2786,56 @@ function ensureValidActiveActivity() {
   }
 }
 
+// Helpers to preserve user's in-progress edits (timer input, sticky textareas, ROAM titles, etc.) across re-renders.
+function captureActiveEditFocus() {
+  const ae = document.activeElement;
+  if (!ae || !ae.matches) return null;
+  if (ae.id === 'timerDurationInput') {
+    return { kind: 'timer', value: ae.value, selStart: ae.selectionStart, selEnd: ae.selectionEnd };
+  }
+  if (ae.classList && ae.classList.contains('sticky-text')) {
+    const stickyEl = ae.closest('.sticky');
+    if (stickyEl && stickyEl.dataset.id) {
+      return {
+        kind: 'sticky',
+        stickyId: stickyEl.dataset.id,
+        value: ae.value,
+        selStart: ae.selectionStart,
+        selEnd: ae.selectionEnd
+      };
+    }
+  }
+  if (ae.classList && ae.classList.contains('roam-risk-title')) {
+    const block = ae.closest('.roam-block');
+    const riskId = block && block.getAttribute('data-risk-id');
+    if (riskId) {
+      return { kind: 'roam-title', riskId, value: ae.value, selStart: ae.selectionStart, selEnd: ae.selectionEnd };
+    }
+  }
+  return null;
+}
+function restoreActiveEditFocus(snap) {
+  if (!snap) return;
+  let target = null;
+  if (snap.kind === 'timer') {
+    target = document.getElementById('timerDurationInput');
+  } else if (snap.kind === 'sticky') {
+    const sticky = document.querySelector('.sticky[data-id="' + snap.stickyId + '"]');
+    if (sticky) target = sticky.querySelector('textarea.sticky-text');
+  } else if (snap.kind === 'roam-title') {
+    const block = document.querySelector('.roam-block[data-risk-id="' + snap.riskId + '"]');
+    if (block) target = block.querySelector('textarea.roam-risk-title');
+  }
+  if (!target) return;
+  if (typeof snap.value === 'string' && target.value !== snap.value) target.value = snap.value;
+  target.focus();
+  try {
+    const s = Math.min(snap.selStart || 0, target.value.length);
+    const e = Math.min(snap.selEnd || s, target.value.length);
+    target.setSelectionRange(s, e);
+  } catch (e) { /* setSelectionRange not always supported */ }
+}
+
 function renderActivityBody() {
   if (!activeGroupId) return;
   const view = document.getElementById('view-group-' + activeGroupId);
@@ -2764,6 +2854,9 @@ function renderActivityBody() {
       </div>`;
     return;
   }
+
+  // Capture focus before destructive innerHTML replacement.
+  const focusSnap = captureActiveEditFocus();
 
   const timerHTML = renderTimerBar();
   let activityHTML = '';
@@ -2795,6 +2888,9 @@ function renderActivityBody() {
   } else {
     attachStickyHandlers(activeGroupId, activity.id);
   }
+
+  // Restore focus + value + cursor so typing/editing isn't lost when other state changes trigger a re-render.
+  restoreActiveEditFocus(focusSnap);
 }
 
 /* ============================================================
@@ -4332,15 +4428,23 @@ function renderTimerBar() {
       ${controls}
     </div>`;
 }
+let timerDurationSaveTimer = null;
 function onDurationLocal(minStr) {
   // Update local state on every keystroke so re-renders preserve the typed value.
   const min = Math.max(1, Math.min(240, Number(minStr) || 10));
   if (!state.timer) state.timer = {};
   state.timer.lastDurationMs = min * 60000;
+  // Debounce save so other clients pick up the chosen duration even if user hasn't clicked Start yet.
+  if (timerDurationSaveTimer) clearTimeout(timerDurationSaveTimer);
+  timerDurationSaveTimer = setTimeout(() => {
+    timerDurationSaveTimer = null;
+    save({ type: 'timer' });
+  }, 500);
 }
 function onDurationCommit(minStr) {
   // Persist on blur/Enter so other clients pick up the trainer's chosen default.
   onDurationLocal(minStr);
+  if (timerDurationSaveTimer) { clearTimeout(timerDurationSaveTimer); timerDurationSaveTimer = null; }
   save({ type: 'timer' });
 }
 function startTimer() {
@@ -4455,24 +4559,22 @@ async function endGameNow() {
 // (Focus-based render gating removed in favor of per-textarea focus preservation in rerenderActiveView.
 // Re-renders now always proceed; rerenderActiveView restores the user's cursor + in-progress text.)
 
-function rerenderActiveView(restoreFocus) {
-  // If currently in a group view, re-render it
+function rerenderActiveView() {
+  // Focus + cursor preservation is now handled inside renderActivityBody/renderCommonView
+  // via captureActiveEditFocus / restoreActiveEditFocus, so this function no longer
+  // needs to capture or pass focus state.
   const activeGroupView = document.querySelector('.view.active[id^="view-group-"]');
   if (activeGroupView) {
     const gid = activeGroupView.id.replace('view-group-', '');
     if (!isGroupEnabled(gid)) { showGameMenu(); return; }
     renderGroupView(gid);
-    restoreStickyFocus(restoreFocus);
     return;
   }
-  // If in the common view, re-render it
   const commonView = document.getElementById('view-common');
   if (commonView && commonView.classList.contains('active')) {
     renderCommonView();
-    restoreStickyFocus(restoreFocus);
     return;
   }
-  // Otherwise re-render the game menu
   if (document.getElementById('view-game-menu').classList.contains('active')) {
     buildNav();
     buildCountSelector();
@@ -4480,21 +4582,6 @@ function rerenderActiveView(restoreFocus) {
     renderGroupGrid();
     renderGameInfoBar();
   }
-}
-function restoreStickyFocus(info) {
-  if (!info || !info.stickyId) return;
-  const sticky = document.querySelector('.sticky[data-id="' + info.stickyId + '"]');
-  if (!sticky) return;
-  const ta = sticky.querySelector('textarea.sticky-text');
-  if (!ta) return;
-  // Restore the user's in-progress text + selection if changed by rerender
-  if (typeof info.value === 'string' && ta.value !== info.value) ta.value = info.value;
-  ta.focus();
-  try {
-    const s = Math.min(info.selStart || 0, ta.value.length);
-    const e = Math.min(info.selEnd || s, ta.value.length);
-    ta.setSelectionRange(s, e);
-  } catch (e) { /* selection may not be supported on some inputs */ }
 }
 
 /* ============================================================
