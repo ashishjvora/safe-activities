@@ -2095,7 +2095,6 @@ function showLobby(courseId) {
 }
 
 async function createGameClicked() {
-  console.log('[create] clicked');
   if (!FIREBASE_CONFIGURED) { showToast('Firebase is not configured — multi-group play is unavailable.'); return; }
   if (CREATE_PASSWORD) {
     const inp = document.getElementById('createPassword');
@@ -2106,7 +2105,6 @@ async function createGameClicked() {
       return;
     }
   }
-  console.log('[create] password ok, pendingCourseSelection =', pendingCourseSelection);
   if (!pendingCourseSelection) { showToast('Pick a course first.'); return; }
   const courseId = pendingCourseSelection;
 
@@ -2116,7 +2114,6 @@ async function createGameClicked() {
     let code, attempts = 0;
     while (attempts < 8) {
       code = generateCode();
-      console.log('[create] checking code availability:', code);
       const snap = await db.collection(FIRESTORE_COLLECTION).doc(code).get();
       if (!snap.exists) break;
       attempts++; code = null;
@@ -2124,7 +2121,6 @@ async function createGameClicked() {
     if (!code) { showToast('Could not allocate a game code. Try again.'); btn.disabled = false; btn.textContent = 'Create Game'; return; }
 
     const adminSecret = generateCode() + generateCode(); // 8 chars
-    console.log('[create] building default state for', courseId);
     const fresh = defaultGameState(courseId);
     const payload = {
       code, adminSecret, course: courseId,
@@ -2132,13 +2128,11 @@ async function createGameClicked() {
       groups: fresh.groups,
       enabledGroupCount: fresh.enabledGroupCount
     };
-    console.log('[create] writing doc to Firestore', { code, courseId, payloadSize: JSON.stringify(payload).length });
     await db.collection(FIRESTORE_COLLECTION).doc(code).set(payload);
-    console.log('[create] Firestore write succeeded, redirecting');
     rememberAdmin(code, adminSecret);
     window.location.href = window.location.pathname + '?game=' + code;
   } catch (e) {
-    console.error('[create] error:', e);
+    console.error(e);
     showToast('Failed to create game: ' + (e.message || 'unknown'));
     btn.disabled = false; btn.textContent = 'Create Game';
   }
@@ -2189,79 +2183,37 @@ async function joinGame(code, urlAdminSecret) {
   setTopbarBadge(code);
 
   unsubscribeListener = gameDocRef.onSnapshot((snap2) => {
-    try {
-      if (!snap2.exists) {
-        if (unsubscribeListener) { unsubscribeListener(); unsubscribeListener = null; }
-        showExpired(code);
-        return;
-      }
-      setConnectionStatus('online');
-      const remote = snap2.data();
-      console.log('[sync] snapshot received', { fromCache: snap2.metadata && snap2.metadata.fromCache, hasPendingWrites: snap2.metadata && snap2.metadata.hasPendingWrites });
-      // Preserve locally-edited sticky text (if any) before applying remote
-      let editingStickyText = null;
-      try {
-        const ae = document.activeElement;
-        if (ae && ae.classList && ae.classList.contains('sticky-text')) {
-          const stickyEl = ae.closest('.sticky');
-          const groupEl = stickyEl && stickyEl.closest('[id^="view-group-"]');
-          if (stickyEl && stickyEl.dataset.id && groupEl) {
-            editingStickyText = {
-              gid: groupEl.id.replace('view-group-',''),
-              activityId: stickyEl.dataset.activity,
-              stickyId: stickyEl.dataset.id,
-              value: ae.value
-            };
-          }
-        }
-      } catch (e) { /* defensive */ }
-      // Preserve locally-typed timer duration if user is mid-typing
-      let localTimerDurationMs = null;
-      try {
-        const t = document.getElementById('timerDurationInput');
-        if (t && document.activeElement === t) {
-          const min = Math.max(1, Math.min(240, Number(t.value) || 10));
-          localTimerDurationMs = min * 60000;
-        }
-      } catch (e) { /* defensive */ }
-
-      let changed = false;
-      GROUPS.forEach(g => {
-        if (!remote.groups || !remote.groups[g.id]) return;
-        if (JSON.stringify(remote.groups[g.id]) !== JSON.stringify(state.groups[g.id])) {
-          state.groups[g.id] = remote.groups[g.id];
-          changed = true;
-        }
-      });
-      // Overlay in-progress sticky text back into state so rerender doesn't wipe it
-      if (editingStickyText) {
-        const acts = state.groups[editingStickyText.gid] && state.groups[editingStickyText.gid].activities;
-        const ad = acts && acts[editingStickyText.activityId];
-        if (ad && Array.isArray(ad.stickies)) {
-          const s = ad.stickies.find(x => x.id === editingStickyText.stickyId);
-          if (s) s.text = editingStickyText.value;
-        }
-      }
-      if (typeof remote.enabledGroupCount === 'number' && remote.enabledGroupCount !== state.enabledGroupCount) {
-        state.enabledGroupCount = remote.enabledGroupCount;
+    if (!snap2.exists) {
+      if (unsubscribeListener) { unsubscribeListener(); unsubscribeListener = null; }
+      showExpired(code);
+      return;
+    }
+    setConnectionStatus('online');
+    const remote = snap2.data();
+    let changed = false;
+    GROUPS.forEach(g => {
+      if (!remote.groups || !remote.groups[g.id]) return;
+      if (JSON.stringify(remote.groups[g.id]) !== JSON.stringify(state.groups[g.id])) {
+        state.groups[g.id] = remote.groups[g.id];
         changed = true;
       }
-      if (remote.timer && JSON.stringify(remote.timer) !== JSON.stringify(state.timer)) {
-        state.timer = remote.timer;
-        if (localTimerDurationMs !== null) state.timer.lastDurationMs = localTimerDurationMs;
-        changed = true;
-      }
-      if (remote.common && JSON.stringify(remote.common) !== JSON.stringify(state.common)) {
-        state.common = remote.common;
-        changed = true;
-      }
-      console.log('[sync] changed =', changed);
-      if (changed) {
-        ensureStateStructure();
-        rerenderActiveView();
-      }
-    } catch (err) {
-      console.error('[sync] snapshot handler threw:', err);
+    });
+    if (typeof remote.enabledGroupCount === 'number' && remote.enabledGroupCount !== state.enabledGroupCount) {
+      state.enabledGroupCount = remote.enabledGroupCount;
+      changed = true;
+    }
+    if (remote.timer && JSON.stringify(remote.timer) !== JSON.stringify(state.timer)) {
+      state.timer = remote.timer;
+      changed = true;
+    }
+    if (remote.common && JSON.stringify(remote.common) !== JSON.stringify(state.common)) {
+      state.common = remote.common;
+      changed = true;
+    }
+    if (changed) {
+      ensureStateStructure();
+      if (isActivelyEditing) { pendingRemoteUpdate = true; }
+      else { rerenderActiveView(); }
     }
   }, (err) => {
     console.error('Firestore listener error:', err);
@@ -2435,9 +2387,6 @@ function renderGroupView(gid) {
       `).join('')}
     </div>`;
 
-  // Capture before destructive replacement of the group-view tree.
-  const focusSnap = captureActiveEditFocus();
-
   view.innerHTML = `
     <div class="group-header">
       <h2>${g.name} — ${course.name}</h2>
@@ -2456,9 +2405,6 @@ function renderGroupView(gid) {
     `}
   `;
   renderActivityBody();
-  // Best-effort restore (renderActivityBody also tries; this catches the case where
-  // the focused element was outside .activity-body too, though that's rare).
-  restoreActiveEditFocus(focusSnap);
 }
 function setActiveActivity(activityId) {
   activeActivityId = activityId;
@@ -2503,9 +2449,6 @@ function renderCommonView() {
   else if (activeCommonTab === 'parking')  bodyHTML = renderParkingLot();
   else if (activeCommonTab === 'agreement')bodyHTML = renderWorkingAgreement();
 
-  // Capture focus before destructive innerHTML replacement (preserves Common-card typing too).
-  const focusSnap = captureCommonCardFocus();
-
   view.innerHTML = `
     <div class="group-header">
       <h2>🟦 Common Workspace</h2>
@@ -2522,28 +2465,6 @@ function renderCommonView() {
     <div class="activity-body">${bodyHTML}</div>
   `;
   attachCommonHandlers();
-  restoreCommonCardFocus(focusSnap);
-}
-function captureCommonCardFocus() {
-  const ae = document.activeElement;
-  if (!ae || !ae.matches || !ae.matches('textarea')) return null;
-  const card = ae.closest('.cm-card');
-  if (!card || !card.dataset.id) return null;
-  return { cardId: card.dataset.id, value: ae.value, selStart: ae.selectionStart, selEnd: ae.selectionEnd };
-}
-function restoreCommonCardFocus(snap) {
-  if (!snap) return;
-  const card = document.querySelector('.cm-card[data-id="' + snap.cardId + '"]');
-  if (!card) return;
-  const ta = card.querySelector('textarea');
-  if (!ta) return;
-  if (typeof snap.value === 'string' && ta.value !== snap.value) ta.value = snap.value;
-  ta.focus();
-  try {
-    const s = Math.min(snap.selStart || 0, ta.value.length);
-    const e = Math.min(snap.selEnd || s, ta.value.length);
-    ta.setSelectionRange(s, e);
-  } catch (e) {}
 }
 
 /* ---------- COMMON CARD primitives (stack-based, no free positioning) ---------- */
@@ -2800,66 +2721,6 @@ function ensureValidActiveActivity() {
   }
 }
 
-// Helpers to preserve user's in-progress edits (timer input, sticky textareas, ROAM titles, etc.) across re-renders.
-function captureActiveEditFocus() {
-  try {
-    const ae = document.activeElement;
-    if (!ae || !ae.matches) return null;
-    if (ae.id === 'timerDurationInput') {
-      // number inputs throw on selectionStart in some browsers; don't read it
-      return { kind: 'timer', value: ae.value };
-    }
-    if (ae.classList && ae.classList.contains('sticky-text')) {
-      const stickyEl = ae.closest('.sticky');
-      if (stickyEl && stickyEl.dataset.id) {
-        return {
-          kind: 'sticky',
-          stickyId: stickyEl.dataset.id,
-          value: ae.value,
-          selStart: ae.selectionStart,
-          selEnd: ae.selectionEnd
-        };
-      }
-    }
-    if (ae.classList && ae.classList.contains('roam-risk-title')) {
-      const block = ae.closest('.roam-block');
-      const riskId = block && block.getAttribute('data-risk-id');
-      if (riskId) {
-        return { kind: 'roam-title', riskId, value: ae.value, selStart: ae.selectionStart, selEnd: ae.selectionEnd };
-      }
-    }
-  } catch (e) { console.warn('captureActiveEditFocus error', e); }
-  return null;
-}
-function restoreActiveEditFocus(snap) {
-  try {
-    if (!snap) return;
-    let target = null;
-    if (snap.kind === 'timer') {
-      target = document.getElementById('timerDurationInput');
-      if (!target) return;
-      if (typeof snap.value === 'string' && target.value !== snap.value) target.value = snap.value;
-      target.focus();
-      // Skip setSelectionRange on number inputs (throws in some browsers)
-      return;
-    } else if (snap.kind === 'sticky') {
-      const sticky = document.querySelector('.sticky[data-id="' + snap.stickyId + '"]');
-      if (sticky) target = sticky.querySelector('textarea.sticky-text');
-    } else if (snap.kind === 'roam-title') {
-      const block = document.querySelector('.roam-block[data-risk-id="' + snap.riskId + '"]');
-      if (block) target = block.querySelector('textarea.roam-risk-title');
-    }
-    if (!target) return;
-    if (typeof snap.value === 'string' && target.value !== snap.value) target.value = snap.value;
-    target.focus();
-    try {
-      const s = Math.min(snap.selStart || 0, target.value.length);
-      const e = Math.min(snap.selEnd || s, target.value.length);
-      target.setSelectionRange(s, e);
-    } catch (e) { /* setSelectionRange not always supported */ }
-  } catch (e) { console.warn('restoreActiveEditFocus error', e); }
-}
-
 function renderActivityBody() {
   if (!activeGroupId) return;
   const view = document.getElementById('view-group-' + activeGroupId);
@@ -2878,9 +2739,6 @@ function renderActivityBody() {
       </div>`;
     return;
   }
-
-  // Capture focus before destructive innerHTML replacement.
-  const focusSnap = captureActiveEditFocus();
 
   const timerHTML = renderTimerBar();
   let activityHTML = '';
@@ -2912,9 +2770,6 @@ function renderActivityBody() {
   } else {
     attachStickyHandlers(activeGroupId, activity.id);
   }
-
-  // Restore focus + value + cursor so typing/editing isn't lost when other state changes trigger a re-render.
-  restoreActiveEditFocus(focusSnap);
 }
 
 /* ============================================================
@@ -2992,30 +2847,19 @@ function deleteSticky(gid, activityId, sid) {
   save({ type: 'group', id: gid });
   renderActivityBody();
 }
-let stickyTextSaveTimers = {}; // gid:activityId:sid -> setTimeout handle
 function onStickyTextInput(gid, activityId, sid, textarea) {
   const data = getActivityData(gid, activityId);
   const s = data.stickies.find(x => x.id === sid);
-  if (s) s.text = textarea.value; // immediate local
+  if (s) s.text = textarea.value; // local-only until blur
   autoGrowTextarea(textarea);
   const view = document.getElementById('view-group-' + gid);
   if (view) adjustRefinementLanes(view);
-  // Debounced save: push to Firestore 700ms after last keystroke so other users see typing without waiting for blur
-  const key = gid + ':' + activityId + ':' + sid;
-  if (stickyTextSaveTimers[key]) clearTimeout(stickyTextSaveTimers[key]);
-  stickyTextSaveTimers[key] = setTimeout(() => {
-    delete stickyTextSaveTimers[key];
-    save({ type: 'group', id: gid });
-  }, 700);
 }
 function onStickyTextBlur(gid, activityId, sid, textarea) {
   const data = getActivityData(gid, activityId);
   const s = data.stickies.find(x => x.id === sid);
   if (s) {
     s.text = textarea.value;
-    // Cancel any pending debounced save — blur saves immediately
-    const key = gid + ':' + activityId + ':' + sid;
-    if (stickyTextSaveTimers[key]) { clearTimeout(stickyTextSaveTimers[key]); delete stickyTextSaveTimers[key]; }
     save({ type: 'group', id: gid });
   }
 }
@@ -4452,23 +4296,15 @@ function renderTimerBar() {
       ${controls}
     </div>`;
 }
-let timerDurationSaveTimer = null;
 function onDurationLocal(minStr) {
   // Update local state on every keystroke so re-renders preserve the typed value.
   const min = Math.max(1, Math.min(240, Number(minStr) || 10));
   if (!state.timer) state.timer = {};
   state.timer.lastDurationMs = min * 60000;
-  // Debounce save so other clients pick up the chosen duration even if user hasn't clicked Start yet.
-  if (timerDurationSaveTimer) clearTimeout(timerDurationSaveTimer);
-  timerDurationSaveTimer = setTimeout(() => {
-    timerDurationSaveTimer = null;
-    save({ type: 'timer' });
-  }, 500);
 }
 function onDurationCommit(minStr) {
   // Persist on blur/Enter so other clients pick up the trainer's chosen default.
   onDurationLocal(minStr);
-  if (timerDurationSaveTimer) { clearTimeout(timerDurationSaveTimer); timerDurationSaveTimer = null; }
   save({ type: 'timer' });
 }
 function startTimer() {
@@ -4522,7 +4358,7 @@ function resetTimer() {
    SAVE  (field-scoped, no TTL — manual cleanup only)
    ============================================================ */
 function save(scope) {
-  if (!gameDocRef || !currentGame) { console.warn('[save] no gameDocRef/currentGame', { scope }); return; }
+  if (!gameDocRef || !currentGame) return;
   if (!scope) scope = { type: 'full' };
   const update = { updatedAt: Date.now() };
 
@@ -4537,10 +4373,7 @@ function save(scope) {
       common: state.common,
       updatedAt: Date.now()
     };
-    console.log('[save] full', { code: payload.code });
-    gameDocRef.set(payload, { merge: true })
-      .then(() => console.log('[save] full done'))
-      .catch(err => { console.error('[save] full error', err); setConnectionStatus('error'); });
+    gameDocRef.set(payload, { merge: true }).catch(err => { console.error(err); setConnectionStatus('error'); });
     return;
   }
   if (scope.type === 'group') update['groups.' + scope.id] = state.groups[scope.id];
@@ -4548,18 +4381,15 @@ function save(scope) {
   else if (scope.type === 'timer') update.timer = state.timer;
   else if (scope.type === 'common') update.common = state.common;
 
-  console.log('[save] ' + scope.type, scope.id ? { id: scope.id } : {});
-  gameDocRef.update(update)
-    .then(() => console.log('[save] ' + scope.type + ' done'))
-    .catch(err => {
-      if (err && (err.code === 'not-found' || /No document/.test(err.message || ''))) {
-        if (unsubscribeListener) { unsubscribeListener(); unsubscribeListener = null; }
-        showExpired(currentGame.code);
-        return;
-      }
-      console.error('[save] ' + scope.type + ' error', err);
-      setConnectionStatus('error');
-    });
+  gameDocRef.update(update).catch(err => {
+    if (err && (err.code === 'not-found' || /No document/.test(err.message || ''))) {
+      if (unsubscribeListener) { unsubscribeListener(); unsubscribeListener = null; }
+      showExpired(currentGame.code);
+      return;
+    }
+    console.error('Sync error:', err);
+    setConnectionStatus('error');
+  });
 }
 
 function resetGame() {
@@ -4586,8 +4416,15 @@ async function endGameNow() {
   }
 }
 
-// (Focus-based render gating removed in favor of per-textarea focus preservation in rerenderActiveView.
-// Re-renders now always proceed; rerenderActiveView restores the user's cursor + in-progress text.)
+document.addEventListener('focusin', e => {
+  if (e.target.matches && e.target.matches('input, textarea')) isActivelyEditing = true;
+});
+document.addEventListener('focusout', e => {
+  if (e.target.matches && e.target.matches('input, textarea')) {
+    isActivelyEditing = false;
+    if (pendingRemoteUpdate) { pendingRemoteUpdate = false; rerenderActiveView(); }
+  }
+});
 
 function rerenderActiveView() {
   // Focus + cursor preservation is now handled inside renderActivityBody/renderCommonView
